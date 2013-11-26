@@ -29,13 +29,29 @@
 							</builder>
 							<tool id="de.innot.avreclipse.tool.assembler.winavr.app.release.481489541" name="AVR Assembler" superClass="de.innot.avreclipse.tool.assembler.winavr.app.release">
 								<option id="de.innot.avreclipse.assembler.option.debug.level.1497847539" name="Generate Debugging Info" superClass="de.innot.avreclipse.assembler.option.debug.level" value="de.innot.avreclipse.assembler.option.debug.level.g2" valueType="enumerated"/>
-								<option id="de.innot.avreclipse.asm.option.include.paths.2027337659" name="#include paths for preprocessor(-I)" superClass="de.innot.avreclipse.asm.option.include.paths" valueType="includePath"/>
+								<option id="de.innot.avreclipse.asm.option.include.paths.2027337659" name="#include paths for preprocessor(-I)" superClass="de.innot.avreclipse.asm.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/ext-lib/FreeRTOS_extension/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/ext-lib/FreeRTOSV7.3.0/FreeRTOS/Source/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/Autopilot/config/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/Arduino/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/Autopilot}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/ext-lib/mavlink/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/Arduino/variant/mega}&quot;"/>
+								</option>
 								<inputType id="de.innot.avreclipse.tool.assembler.input.624730134" superClass="de.innot.avreclipse.tool.assembler.input"/>
 							</tool>
 							<tool id="de.innot.avreclipse.tool.compiler.winavr.app.release.499173467" name="AVR Compiler" superClass="de.innot.avreclipse.tool.compiler.winavr.app.release">
 								<option id="de.innot.avreclipse.compiler.option.debug.level.978570260" name="Generate Debugging Info" superClass="de.innot.avreclipse.compiler.option.debug.level" value="de.innot.avreclipse.compiler.option.debug.level.g2" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.compiler.option.optimize.1978393164" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize" value="de.innot.avreclipse.compiler.optimize.size" valueType="enumerated"/>
-								<option id="de.innot.avreclipse.compiler.option.incpath.2011890278" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath"/>
+								<option id="de.innot.avreclipse.compiler.option.incpath.2011890278" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/ext-lib/FreeRTOS_extension/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/ext-lib/FreeRTOSV7.3.0/FreeRTOS/Source/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/Autopilot/config/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/Arduino/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/Autopilot}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/ext-lib/mavlink/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/Arduino/variant/mega}&quot;"/>
+								</option>
 								<option id="de.innot.avreclipse.compiler.option.optimize.shortenums.139192209" name="Short enums (-fshort-enums)" superClass="de.innot.avreclipse.compiler.option.optimize.shortenums" value="false" valueType="boolean"/>
 								<option id="de.innot.avreclipse.compiler.option.optimize.packstruct.1657743812" name="Pack structs (-fpack-struct)" superClass="de.innot.avreclipse.compiler.option.optimize.packstruct" value="false" valueType="boolean"/>
 								<option id="de.innot.avreclipse.compiler.option.optimize.other.1731769501" name="Other Optimization Flags" superClass="de.innot.avreclipse.compiler.option.optimize.other" value="-ffunction-sections -fdata-sections" valueType="string"/>
@@ -49,7 +65,15 @@
 							<tool id="de.innot.avreclipse.tool.cppcompiler.app.release.2065725243" name="AVR C++ Compiler" superClass="de.innot.avreclipse.tool.cppcompiler.app.release">
 								<option id="de.innot.avreclipse.cppcompiler.option.debug.level.1792193848" name="Generate Debugging Info" superClass="de.innot.avreclipse.cppcompiler.option.debug.level" value="de.innot.avreclipse.cppcompiler.option.debug.level.g2" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.cppcompiler.option.optimize.1482791886" name="Optimization Level" superClass="de.innot.avreclipse.cppcompiler.option.optimize" value="de.innot.avreclipse.cppcompiler.optimize.size" valueType="enumerated"/>
-								<option id="de.innot.avreclipse.cppcompiler.option.incpath.168271104" name="Include Paths (-I)" superClass="de.innot.avreclipse.cppcompiler.option.incpath" valueType="includePath"/>
+								<option id="de.innot.avreclipse.cppcompiler.option.incpath.168271104" name="Include Paths (-I)" superClass="de.innot.avreclipse.cppcompiler.option.incpath" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/ext-lib/FreeRTOS_extension/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/ext-lib/FreeRTOSV7.3.0/FreeRTOS/Source/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/Autopilot/config/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/Arduino/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/Autopilot}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/ext-lib/mavlink/include}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/autopilot/Arduino/variant/mega}&quot;"/>
+								</option>
 								<option id="de.innot.avreclipse.cppcompiler.option.optimize.shortenums.662825130" name="Short enums (-fshort-enums)" superClass="de.innot.avreclipse.cppcompiler.option.optimize.shortenums" value="false" valueType="boolean"/>
 								<option id="de.innot.avreclipse.cppcompiler.option.optimize.packstruct.1159716665" name="Pack structs (-fpack-struct)" superClass="de.innot.avreclipse.cppcompiler.option.optimize.packstruct" value="false" valueType="boolean"/>
 								<option id="de.innot.avreclipse.cppcompiler.option.optimize.other.2016372948" name="Other Optimization Flags" superClass="de.innot.avreclipse.cppcompiler.option.optimize.other" value="-ffunction-sections -fdata-sections" valueType="string"/>
@@ -66,7 +90,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Arduino/mega2560_16MHz}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/FreeRTOS/mega2560_16MHz}&quot;"/>
 								</option>
-								<option id="de.innot.avreclipse.cpplinker.option.libs.2107768609" name="Libraries (-l)" superClass="de.innot.avreclipse.cpplinker.option.libs" valueType="libs"/>
+								<option id="de.innot.avreclipse.cpplinker.option.libs.2107768609" name="Libraries (-l)" superClass="de.innot.avreclipse.cpplinker.option.libs"/>
 								<option id="de.innot.avreclipse.cpplinker.option.otherlinkargs.1415926203" name="Other Arguments" superClass="de.innot.avreclipse.cpplinker.option.otherlinkargs" value="-Wl,--gc-sections" valueType="string"/>
 								<inputType id="de.innot.avreclipse.tool.cpplinker.input.1212413649" name="OBJ Files" superClass="de.innot.avreclipse.tool.cpplinker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -81,8 +105,44 @@
 							<tool id="de.innot.avreclipse.tool.avrdude.app.release.860097352" name="AVRDude" superClass="de.innot.avreclipse.tool.avrdude.app.release"/>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="de.innot.avreclipse.configuration.app.release.176210629.405655380" name="/" resourcePath="ext-lib/old/portable">
+						<toolChain id="de.innot.avreclipse.toolchain.winavr.app.release.1091494513" name="AVR-GCC Toolchain" superClass="de.innot.avreclipse.toolchain.winavr.app.release" unusedChildren="">
+							<option id="de.innot.avreclipse.toolchain.options.toolchain.objcopy.flash.app.release.639620267.1485715920" name="Generate HEX file for Flash memory" superClass="de.innot.avreclipse.toolchain.options.toolchain.objcopy.flash.app.release.639620267"/>
+							<option id="de.innot.avreclipse.toolchain.options.toolchain.objcopy.eeprom.app.release.670991131.224369814" name="Generate HEX file for EEPROM" superClass="de.innot.avreclipse.toolchain.options.toolchain.objcopy.eeprom.app.release.670991131"/>
+							<option id="de.innot.avreclipse.toolchain.options.toolchain.objdump.app.release.1229354555.1152290111" name="Generate Extended Listing (Source + generated Assembler)" superClass="de.innot.avreclipse.toolchain.options.toolchain.objdump.app.release.1229354555"/>
+							<option id="de.innot.avreclipse.toolchain.options.toolchain.size.app.release.1788669680.598308665" name="Print Size" superClass="de.innot.avreclipse.toolchain.options.toolchain.size.app.release.1788669680"/>
+							<option id="de.innot.avreclipse.toolchain.options.toolchain.avrdude.app.release.1252965022.659609496" name="AVRDude" superClass="de.innot.avreclipse.toolchain.options.toolchain.avrdude.app.release.1252965022"/>
+							<targetPlatform id="de.innot.avreclipse.targetplatform.winavr.app.release" name="AVR Cross-Target" superClass="de.innot.avreclipse.targetplatform.winavr.app.release"/>
+							<tool id="de.innot.avreclipse.tool.assembler.winavr.app.release.2003677435" name="AVR Assembler" superClass="de.innot.avreclipse.tool.assembler.winavr.app.release.481489541">
+								<inputType id="de.innot.avreclipse.tool.assembler.input.281034534" superClass="de.innot.avreclipse.tool.assembler.input"/>
+							</tool>
+							<tool id="de.innot.avreclipse.tool.compiler.winavr.app.release.219491771" name="AVR Compiler" superClass="de.innot.avreclipse.tool.compiler.winavr.app.release.499173467">
+								<inputType id="de.innot.avreclipse.compiler.winavr.input.950715844" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
+							</tool>
+							<tool id="de.innot.avreclipse.tool.cppcompiler.app.release.757442195" name="AVR C++ Compiler" superClass="de.innot.avreclipse.tool.cppcompiler.app.release.2065725243">
+								<inputType id="de.innot.avreclipse.cppcompiler.input.635153529" superClass="de.innot.avreclipse.cppcompiler.input"/>
+							</tool>
+							<tool id="de.innot.avreclipse.tool.linker.winavr.app.release.1023393395" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.release.2013705515"/>
+							<tool id="de.innot.avreclipse.tool.cpplinker.app.release.1930040113" name="AVR C++ Linker" superClass="de.innot.avreclipse.tool.cpplinker.app.release.715645597"/>
+							<tool id="de.innot.avreclipse.tool.archiver.winavr.base.1368581440" name="AVR Archiver" superClass="de.innot.avreclipse.tool.archiver.winavr.base.1891334887"/>
+							<tool id="de.innot.avreclipse.tool.objdump.winavr.app.release.1039884127" name="AVR Create Extended Listing" superClass="de.innot.avreclipse.tool.objdump.winavr.app.release.508303882"/>
+							<tool id="de.innot.avreclipse.tool.objcopy.flash.winavr.app.release.1452958394" name="AVR Create Flash image" superClass="de.innot.avreclipse.tool.objcopy.flash.winavr.app.release.1934617231"/>
+							<tool id="de.innot.avreclipse.tool.objcopy.eeprom.winavr.app.release.1094613719" name="AVR Create EEPROM image" superClass="de.innot.avreclipse.tool.objcopy.eeprom.winavr.app.release.879129630"/>
+							<tool id="de.innot.avreclipse.tool.size.winavr.app.release.1830954372" name="Print Size" superClass="de.innot.avreclipse.tool.size.winavr.app.release.1662123214"/>
+							<tool id="de.innot.avreclipse.tool.avrdude.app.release.1535179878" name="AVRDude" superClass="de.innot.avreclipse.tool.avrdude.app.release.860097352"/>
+						</toolChain>
+					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Arduino/include"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Arduino/src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Arduino/variant"/>
+						<entry excluding="math/include|math/src|physics/include|physics/src" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="Autopilot"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Autopilot/math/include"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Autopilot/math/src"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Autopilot/physics/include"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Autopilot/physics/src"/>
+						<entry excluding="portable/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="ext-lib/FreeRTOSV7.3.0/FreeRTOS/Source"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="ext-lib/FreeRTOS_extension/portable/GCC/ATMega2560"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -102,9 +162,6 @@
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
-	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
-		<buildTargets/>
-	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.pathentry"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
@@ -114,5 +171,17 @@
 		<scannerConfigBuildInfo instanceId="de.innot.avreclipse.configuration.app.release.176210629;de.innot.avreclipse.configuration.app.release.176210629.;de.innot.avreclipse.tool.compiler.winavr.app.release.499173467;de.innot.avreclipse.compiler.winavr.input.708227283">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="de.innot.avreclipse.core.AVRGCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
+		<buildTargets>
+			<target name="all" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>make</buildCommand>
+				<buildArguments>-f Makefile</buildArguments>
+				<buildTarget>all</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>true</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+		</buildTargets>
 	</storageModule>
 </cproject>

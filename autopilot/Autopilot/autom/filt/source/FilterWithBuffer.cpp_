@@ -1,0 +1,58 @@
+/*
+ * FilterWithBuffer.cpp
+ *
+ *  Created on: 11 janv. 2013
+ *      Author: Aberzen
+ */
+
+#include <MathUtils.hpp>
+
+// Constructor
+template <class T, uint8_t FILTER_SIZE>
+FilterWithBuffer<T,FILTER_SIZE>::FilterWithBuffer() :
+    Filter<T>(),
+    sample_index(0)
+{
+    // clear sample buffer
+    reset();
+}
+
+// Destructor
+template <class T, uint8_t FILTER_SIZE>
+FilterWithBuffer<T,FILTER_SIZE>::~FilterWithBuffer()
+{
+
+}
+
+// reset - clear all samples from the buffer
+template <class T, uint8_t FILTER_SIZE>
+void FilterWithBuffer<T,FILTER_SIZE>::reset()
+{
+    // call base class reset
+    Filter<T>::reset();
+
+    // clear samples buffer
+    for( int8_t i=0; i<FILTER_SIZE; i++ ) {
+        samples[i] = 0;
+    }
+
+    // reset index back to beginning of the array
+    sample_index = 0;
+}
+
+// apply - take in a new raw sample, and return the filtered results
+template <class T, uint8_t FILTER_SIZE>
+T FilterWithBuffer<T,FILTER_SIZE>::apply(T sample)
+{
+    // add sample to array
+    samples[sample_index++] = sample;
+
+    // wrap index if necessary
+    if( sample_index >= FILTER_SIZE )
+    	sample_index = 0;
+
+    // base class doesn't know what filtering to do so we just return the raw sample
+    return sample;
+}
+
+

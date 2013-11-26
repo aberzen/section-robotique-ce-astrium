@@ -1,0 +1,30 @@
+/*
+ * Delay.cpp
+ *
+ *  Created on: 11 janv. 2013
+ *      Author: Aberzen
+ */
+
+// Constructor
+template <class T, uint8_t DELAY_STEP>
+Delay<T,DELAY_STEP>::Delay() :
+    FilterWithBuffer<T,DELAY_STEP>(),
+    sample_index(0){
+    // clear sample buffer
+    this->reset();
+}
+
+// Destructor
+template <class T, uint8_t DELAY_STEP>
+Delay<T,DELAY_STEP>::~Delay(){
+}
+
+// compute - Called by apply to compute the output from updated buffer
+template <class T, uint8_t DELAY_STEP>
+T Delay<T,DELAY_STEP>::apply(T sample){
+	FilterWithBuffer<T,DELAY_STEP>::apply(sample);
+
+	/* Return the oldest samples */
+	return samples[sample_index];
+}
+

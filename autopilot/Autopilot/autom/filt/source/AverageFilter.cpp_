@@ -1,0 +1,53 @@
+/*
+ * AverageFilter.cpp
+ *
+ *  Created on: 11 janv. 2013
+ *      Author: Aberzen
+ */
+
+
+// constructor
+template <class T, class U, uint8_t FILTER_SIZE>
+AverageFilter<T,U,FILTER_SIZE>::AverageFilter() :
+	FilterWithBuffer<T,FILTER_SIZE>(),
+	_num_samples(0) {
+};
+
+// Destructor
+template <class T, class U, uint8_t FILTER_SIZE>
+AverageFilter<T,U,FILTER_SIZE>::~AverageFilter(){
+}
+
+template <class T, class U, uint8_t FILTER_SIZE>
+T AverageFilter<T,U,FILTER_SIZE>::apply(T sample)
+{
+    U        result = 0;
+    uint8_t sampleIdx;
+
+    // call parent's apply function to get the sample into the array
+    FilterWithBuffer<T,FILTER_SIZE>::apply(sample);
+
+    // increment the number of samples so far
+    if( _num_samples < FILTER_SIZE)
+        _num_samples++;
+
+    // get sum of all values - there is a risk of overflow here that we ignore
+    for(sampleIdx=0; sampleIdx<FILTER_SIZE; sampleIdx++)
+        result += FilterWithBuffer<T,FILTER_SIZE>::samples[sampleIdx];
+
+    return (T)(result / _num_samples);
+}
+
+// reset - clear all samples
+template <class T, class U, uint8_t FILTER_SIZE>
+void AverageFilter<T,U,FILTER_SIZE>::reset()
+{
+    // call parent's apply function to get the sample into the array
+    FilterWithBuffer<T,FILTER_SIZE>::reset();
+
+    // clear our variable
+    _num_samples = 0;
+}
+
+
+

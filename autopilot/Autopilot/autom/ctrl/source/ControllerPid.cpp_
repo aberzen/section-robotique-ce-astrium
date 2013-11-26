@@ -1,0 +1,63 @@
+/*
+ * ControllerPid.cpp
+ *
+ *  Created on: 16 janv. 2013
+ *      Author: Aberzen
+ */
+
+#include <MathUtils.hpp>
+
+namespace autom {
+
+template <typename T>
+ControllerPid<T>::ControllerPid(
+		T dt,
+		T Kp,
+		T Kd,
+		T Ki,
+		T maxI,
+		bool useOfRb,
+		T Krb,
+		T rbThd,
+		T rb) :
+		_dt(dt),
+		_Kp(Kp),
+		_Kd(Kd),
+		_Ki(Ki),
+		_maxI(maxI),
+		_useOfRb(useOfRb),
+		_Krb(Krb),
+		_rbThd(rbThd),
+		_rb(rb),
+		_intCtrlErr((T)0)
+		 {
+}
+
+template <typename T>
+ControllerPid<T>::~ControllerPid(){
+}
+
+/** @brief Compute the controller value */
+template <typename T>
+T ControllerPid<T>::compute(T ctrlErr, T derivCtrlErr, T dt) {
+	T result;
+	/* 1) Compute integral term */
+	_intCtrlErr += ctrlErr * this->_dt;
+
+	/* 2) Saturation of integral term */
+	if (math_abs(_intCtrlErr)>_maxI){
+		_intCtrlErr  = math_sign(_intCtrlErr) * _maxI;
+	}
+
+	/* 3) Make use of  RB when necessary */
+	if (this->_useOfRb && (math_abs(ctrlErr) > this->_rbThd)) {
+		/* 3b) Rate bias */
+		result = this->_Krb * (derivCtrlErr + math_sign(ctrlErr)*this->_rb);
+	}
+	else {
+		/* 3a) No rate bias */
+		result = this->_Kp * ctrlErr + this->_Kd * derivCtrlErr + this->_Ki * this->_intCtrlErr;
+	}
+}
+
+} /* namespace autom */

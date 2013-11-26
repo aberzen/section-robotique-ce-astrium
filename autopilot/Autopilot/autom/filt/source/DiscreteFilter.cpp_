@@ -1,0 +1,138 @@
+/*
+ * DiscreteFilter.cpp
+ *
+ *  Created on: 12 janv. 2013
+ *      Author: Aberzen
+ */
+
+template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
+DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::DiscreteFilter(
+		T coeffX[FILTER_SIZE_X],
+		T coeffY[FILTER_SIZE_Y],
+		T initCondX[FILTER_SIZE_X],
+		T initCondY[FILTER_SIZE_Y]):
+	Filter<T>(),
+	_sampleIdxX(0),
+	_sampleIdxY(0),
+	_coeffX(coeffX), // (implicit call to memcpy)
+	_coeffY(coeffY), // (implicit call to memcpy)
+	_initCondX(initCondX), // (implicit call to memcpy)
+	_initCondY(initCondY), // (implicit call to memcpy)
+	_valuesX(initCondX), // (implicit call to memcpy)
+	_valuesY(initCondY) // (implicit call to memcpy)
+{
+}
+template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
+DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::DiscreteFilter(
+		T coeffX[FILTER_SIZE_X],
+		T coeffY[FILTER_SIZE_Y]):
+	Filter<T>(),
+	_sampleIdxX(0),
+	_sampleIdxY(0)
+{
+	uint8_t idx;
+	memcpy(_coeffX,coeffX, sizeof(T[FILTER_SIZE_X]));
+	memcpy(_coeffY,coeffY, sizeof(T[FILTER_SIZE_Y]));
+
+	/* Initialize to zero */
+	for (idx=0 ; idx<FILTER_SIZE_X ; idx++)
+	{
+		_initCondX[idx] = (T) 0;
+		_valuesX[idx] = (T) 0;
+	}
+
+	for (idx=0 ; idx<FILTER_SIZE_Y ; idx++)
+	{
+		_initCondY[idx] = (T) 0;
+		_valuesY[idx] = (T) 0;
+	}
+}
+template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
+DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::~DiscreteFilter(){
+}
+
+// setCoeff - setter method for coefficient
+template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
+void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::setCoeff(T coeffX[FILTER_SIZE_X],T coeffY[FILTER_SIZE_Y]){
+	this->_coeffX = coeffX; // (implicit call to memcpy)
+	this->_coeffY = coeffY; // (implicit call to memcpy)
+}
+
+// setCoeff - setter method for coefficient
+template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
+void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::setInitCond(T initCondX[FILTER_SIZE_X],T initCondY[FILTER_SIZE_Y]){
+	this->_initCondX = initCondX; // (implicit call to memcpy)
+	this->_initCondY = initCondY; // (implicit call to memcpy)
+}
+
+/** apply - Add a new raw value to the filter, retrieve the filtered result
+ * The filter is:
+ * Y(z)   a0 + a1*(1/z) + ... + an*(1/z)^n
+ * ---- = --------------------------------
+ * X(z)   b0 + b1*(1/z) + ... + bn*(1/z)^n
+ *
+ * which can be rewritten as:
+ * Y(t) = [ (a0*X(t)+a1*X(t-T)+...+an*X(t-nT)) - (b1*Y(t-T)+...+bn*Y(t-nT)) ] / b0
+ */
+template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
+T DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::apply(T sample){
+    U        sum = (U) 0;
+    uint8_t coefIdx;
+    uint8_t valIdx;
+    T result;
+
+    // Update X(t) value
+    _valuesX[_sampleIdxX] = sample;
+
+    // Compute (b1*Y(t-T)+...+bn*Y(t-nT))
+	if (_sampleIdxY == 0)
+		valIdx = FILTER_SIZE_Y - 1;
+	else
+		valIdx = _sampleIdxY-1;
+
+    for(coefIdx=1; coefIdx<FILTER_SIZE_Y; coefIdx++)
+    {
+    	sum += _coeffY[coefIdx]*_valuesY[valIdx];
+    	if (valIdx==0)
+    		valIdx = FILTER_SIZE_Y;
+    	valIdx--;
+    }
+
+    // Opposite value
+    sum = -sum;
+    // Add (a0*X(t)+a1*X(t-T)+...+an*X(t-nT))
+	valIdx = _sampleIdxX;
+    for(coefIdx=0; coefIdx<FILTER_SIZE_X; coefIdx++)
+    {
+    	sum += _coeffX[coefIdx]*_valuesX[valIdx];
+    	if (valIdx==0)
+    		valIdx = FILTER_SIZE_X;
+    	valIdx--;
+    }
+
+    // Divide by b0 and save
+    result = (T)(sum/_coeffY[0]);
+    _valuesY[_sampleIdxY] = result;
+
+    // Update to next sample idx
+    _sampleIdxX++;
+    if (_sampleIdxX==FILTER_SIZE_X)
+    	_sampleIdxX = 0;
+    _sampleIdxY++;
+    if (_sampleIdxY==FILTER_SIZE_Y)
+    	_sampleIdxY = 0;
+
+    // Return the value
+     return result;
+}
+
+// reset - clear the filter
+template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
+void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::reset(){
+	// Copy the initial condition to the state
+	memcpy(_valuesX,_initCondX, sizeof(T[FILTER_SIZE_X]));
+	memcpy(_valuesY,_initCondY, sizeof(T[FILTER_SIZE_Y]));
+	// Reset sampling idx to zero
+	_sampleIdxX = 0;
+	_sampleIdxY = 0;
+}

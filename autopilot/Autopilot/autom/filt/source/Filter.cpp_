@@ -1,0 +1,28 @@
+/*
+ * Filter.cpp
+ *
+ *  Created on: 11 janv. 2013
+ *      Author: Aberzen
+ */
+
+// constructor
+template <class T>
+Filter<T>::Filter() {
+};
+
+// destructor
+template <class T>
+Filter<T>::~Filter() {
+};
+
+// apply - Add a new raw value to the filter, retrieve the filtered result
+template <class T>
+T Filter<T>::apply(T sample) {
+	/* Default returns identity */
+	return sample;
+};
+
+// reset - clear the filter
+template <class T>
+void Filter<T>::reset() {
+};
