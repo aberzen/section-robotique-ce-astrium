@@ -15,6 +15,8 @@
 
 #include <inttypes.h>
 
+namespace autom {
+
 template <class T>
 class Filter
 {
@@ -35,6 +37,7 @@ public:
 /* Implementation and declaration of classes with template must be in the same file */
 #include "../source/Filter.cpp_"
 
+} /* namespace autom */
 #endif
 
 

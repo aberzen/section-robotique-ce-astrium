@@ -10,7 +10,7 @@
 
 #include <avr/pgmspace.h>
 
-#include <arch/include/Process.hpp>
+#include <arch/app/include/Process.hpp>
 #include "Channel.hpp"
 
 #include "ModeMgt.hpp"
@@ -24,7 +24,7 @@
 
 namespace mavlink {
 
-class MavServiceManager : arch::Process {
+class MavServiceManager : infra::Process {
 
 protected:
 	typedef enum {
@@ -48,10 +48,10 @@ public:
 	virtual ~MavServiceManager();
 
 	/** @brief Execute the process */
-	virtual status initialize();
+	virtual infra::status initialize();
 
 	/** @brief Execute the process */
-	virtual status execute();
+	virtual infra::status execute();
 protected:
 	/* ---------------------------------------------------------------- *
 	 * GLOBAL SECTION                                                   *
@@ -243,7 +243,7 @@ protected:
 			uint8_t type,
 			uint8_t autopilot,
 			uint8_t base_mode,
-			uint8_t system_status,
+			uint8_t status,
 			uint8_t mavlink_version
 	);
 

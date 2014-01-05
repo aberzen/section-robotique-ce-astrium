@@ -6,7 +6,7 @@
  */
 
 #include <gcs/include/Channel.hpp>
-#include <mavlink/v1.0/protocol.h>
+#include <protocol.h>
 
 namespace mavlink {
 

@@ -46,13 +46,13 @@ MavServiceManager::~MavServiceManager()
 }
 
 /** @brief Execute the process */
-status MavServiceManager::initialize()
+infra::status MavServiceManager::initialize()
 {
 	return 0;
 }
 
 /** @brief Execute the process */
-status MavServiceManager::execute() {
+infra::status MavServiceManager::execute() {
 	/* First look at message reception */
 	{
 		Channel* channel;

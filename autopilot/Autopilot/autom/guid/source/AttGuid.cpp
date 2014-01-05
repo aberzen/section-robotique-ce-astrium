@@ -9,9 +9,19 @@
 
 namespace autom {
 
-AttGuid::AttGuid() {
-	// TODO Auto-generated constructor stub
-
+AttGuid::AttGuid(
+		/* Inputs */
+		const hw::Pwm::Output& rc,
+		const autom::NavGuid::Output& nav,
+		const ::math::Vector3f& frcDem_I,
+		/* Outputs */
+		Output& out) :
+Process(),
+_nav(nav),
+_frcDem_I(frcDem_I),
+_rc(rc),
+_out(out)
+{
 }
 
 } /* namespace autom */

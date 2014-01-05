@@ -199,17 +199,24 @@ namespace hw {
 #define TEMP_OFFSET (36.53)
 
 
-HalImuMpu6000::HalImuMpu6000(SpiSlave& spiSlave, T_GYR_CNF gyrCnf, T_ACC_CNF accCnf, T_UPT_FREQ freq):
-		HalImu(),
+HalImuMpu6000::HalImuMpu6000(
+		/* Dependencies */
+		SpiSlave& spiSlave,
+		/* Inputs */
+		/* Outputs */
+		HalImu::Output& out,
+		HalImu::RawOutput& rawOut,
+		/* Parameters */
+		const HalImuMpu6000::Param& param):
+		HalImu(out, rawOut),
 		_intRdyCnt(0),
 		_spiSlave(spiSlave),
-		_freq(freq),
-		_gyrCnf(gyrCnf),
-		_accCnf(accCnf)
-{
+		_param(param),
+		_productId(0)
+		{
 
 	/* Set gyro LSB */
-	switch(_gyrCnf){
+	switch(param.gyrCnf){
 	case E_GYR_CNF_250DPS:
 		_gyrLsb = GYRO_SCALE_250DPS;
 		break;
@@ -225,7 +232,7 @@ HalImuMpu6000::HalImuMpu6000(SpiSlave& spiSlave, T_GYR_CNF gyrCnf, T_ACC_CNF acc
 	}
 
 	/* Set acco LSB */
-	switch(_accCnf) {
+	switch(param.accCnf) {
 	case E_ACC_CNF_2G:
 		_accLsb = PHYSICS_GRAVITY/16364.;
 		break;
@@ -246,17 +253,9 @@ HalImuMpu6000::~HalImuMpu6000() {
 }
 
 /** @brief Init the process */
-status HalImuMpu6000::initialize()
+infra::status HalImuMpu6000::initialize()
 {
-	/* Initialize super */
-	if (0>HalImu::initialize())
-		return -1;
-
-    // Chip reset
-    register_write(MPUREG_PWR_MGMT_1, BIT_PWR_MGMT_1_DEVICE_RESET);
-
-    // Wait 100 ms
-    infra::Task::delay(configTICK_RATE_HZ / 10);
+	reset();
 
     // Wake up device and select GyroZ clock (better performance)
     register_write(MPUREG_PWR_MGMT_1, BIT_PWR_MGMT_1_CLK_ZGYRO);
@@ -274,10 +273,11 @@ status HalImuMpu6000::initialize()
     // 8kHz instead of 1kHz)
     //register_write(MPUREG_SMPLRT_DIV, (_freq+1)*8-1);
 //    register_write(MPUREG_SMPLRT_DIV, _freq);
-    register_write(MPUREG_SMPLRT_DIV, 0x4F);
+//    register_write(MPUREG_SMPLRT_DIV, 0x4F);
+    register_write(MPUREG_SMPLRT_DIV, _param.frequence);
 
     // Gyro scale
-    register_write(MPUREG_GYRO_CONFIG, _gyrCnf);
+    register_write(MPUREG_GYRO_CONFIG, _param.gyrCnf);
 
     // read the product ID rev c has 1/2 the sensitivity of rev d
     _productId = register_read(MPUREG_PRODUCT_ID);
@@ -286,9 +286,9 @@ status HalImuMpu6000::initialize()
     if ((_productId == MPU6000ES_REV_C4) || (_productId == MPU6000ES_REV_C5) ||
         (_productId == MPU6000_REV_C4)   || (_productId == MPU6000_REV_C5)) {
         // Rev C has different scaling than rev D
-        register_write(MPUREG_ACCEL_CONFIG,_accCnf<<2);
+        register_write(MPUREG_ACCEL_CONFIG,_param.accCnf<<2);
     } else {
-        register_write(MPUREG_ACCEL_CONFIG,_accCnf<<3);
+        register_write(MPUREG_ACCEL_CONFIG,_param.accCnf<<3);
     }
 
     // Disable all interrupt
@@ -300,23 +300,37 @@ status HalImuMpu6000::initialize()
     attachInterrupt(6,handleReadyInterrupt,RISING);
     // clear interrupt on any read
     register_write(MPUREG_INT_PIN_CFG, BIT_INT_RD_CLEAR);
+
+    // Mark as no measurements available
+    _out.isAvailable = false;
     // configure interrupt to fire when new data arrives
     register_write(MPUREG_INT_ENABLE, BIT_RAW_RDY_EN);
 
 	return 0;
 }
+/** @brief Reset the process */
+infra::status HalImuMpu6000::reset()
+{
+    // Chip reset
+    register_write(MPUREG_PWR_MGMT_1, BIT_PWR_MGMT_1_DEVICE_RESET);
 
+    // Wait 100 ms
+    infra::Task::delay(configTICK_RATE_HZ / 10);
+
+    _out.isAvailable = false;
+	return 0;
+}
 /** @brief Execute the process */
-status HalImuMpu6000::execute()
+infra::status HalImuMpu6000::execute()
 {
 	int16_t data[7];
 
 	infra::Task::disableInterrupt();
-	_isAvailable = (_intRdyCnt != 0);
+	_out.isAvailable = (_intRdyCnt != 0);
 	_intRdyCnt = 0;
 	infra::Task::enableInterrupt();
 
-	if (_isAvailable)
+	if (_out.isAvailable)
 	{
 		if (!_spiSlave.select(1))
 		{
@@ -329,33 +343,33 @@ status HalImuMpu6000::execute()
 		_spiSlave.release();
 
 		/* Store raw linear acceleration */
-		_rawAccMeas(
-				data[0],
+		_rawOut.accoMeas_B(
 				data[1],
+				-data[0],
 				data[2]);
 
 		/* Store temperature */
-		_rawTempMeas = data[3];
+		_rawOut.temperature = data[3];
 
 		/* Store angular rate */
-		_rawRateMeas(
-				data[4],
+		_rawOut.gyroMeas_B(
 				data[5],
+				-data[4],
 				data[6]);
 
 		/* Convert linear acceleration */
-		_accMeas(
-				data[0] * _accLsb,
+		_out.accoMeas_B(
 				data[1] * _accLsb,
+				-data[0] * _accLsb,
 				data[2] * _accLsb);
 
 		/* Convert temperature (does not depend of config) */
-		_tempMeas = data[3] * TEMP_SCALE + TEMP_OFFSET;
+		_out.temperature = (data[3] * TEMP_SCALE + TEMP_OFFSET)/100.;
 
 		/* Convert angular rate */
-		_rateMeas(
-				data[4] * _gyrLsb,
+		_out.gyroMeas_B(
 				data[5] * _gyrLsb,
+				-data[4] * _gyrLsb,
 				data[6] * _gyrLsb);
 	}
 

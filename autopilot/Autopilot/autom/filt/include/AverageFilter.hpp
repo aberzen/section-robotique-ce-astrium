@@ -14,6 +14,7 @@
 
 #include "FilterWithBuffer.hpp"
 
+namespace autom {
 // 1st parameter <T> is the type of data being filtered.
 // 2nd parameter <U> is a larger data type used during summation to prevent overflows
 // 3rd parameter <FILTER_SIZE> is the number of elements in the filter
@@ -71,4 +72,5 @@ typedef AverageFilter<uint32_t,float,5> AverageFilterUInt32_Size5;
 typedef AverageFilter<float,float,5> AverageFilterFloat_Size5;
 
 
+} /* namespace autom */
 #endif

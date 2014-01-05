@@ -5,12 +5,16 @@
  *      Author: Aberzen
  */
 
+#include <string.h>
+
+namespace autom {
+
 template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
 DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::DiscreteFilter(
-		T coeffX[FILTER_SIZE_X],
-		T coeffY[FILTER_SIZE_Y],
-		T initCondX[FILTER_SIZE_X],
-		T initCondY[FILTER_SIZE_Y]):
+		const T coeffX[FILTER_SIZE_X],
+		const T coeffY[FILTER_SIZE_Y],
+		const T initCondX[FILTER_SIZE_X],
+		const T initCondY[FILTER_SIZE_Y]):
 	Filter<T>(),
 	_sampleIdxX(0),
 	_sampleIdxY(0),
@@ -24,8 +28,8 @@ DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::DiscreteFilter(
 }
 template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
 DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::DiscreteFilter(
-		T coeffX[FILTER_SIZE_X],
-		T coeffY[FILTER_SIZE_Y]):
+		const T coeffX[FILTER_SIZE_X],
+		const T coeffY[FILTER_SIZE_Y]):
 	Filter<T>(),
 	_sampleIdxX(0),
 	_sampleIdxY(0)
@@ -53,14 +57,14 @@ DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::~DiscreteFilter(){
 
 // setCoeff - setter method for coefficient
 template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
-void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::setCoeff(T coeffX[FILTER_SIZE_X],T coeffY[FILTER_SIZE_Y]){
+void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::setCoeff(const T coeffX[FILTER_SIZE_X],const T coeffY[FILTER_SIZE_Y]){
 	this->_coeffX = coeffX; // (implicit call to memcpy)
 	this->_coeffY = coeffY; // (implicit call to memcpy)
 }
 
 // setCoeff - setter method for coefficient
 template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
-void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::setInitCond(T initCondX[FILTER_SIZE_X],T initCondY[FILTER_SIZE_Y]){
+void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::setInitCond(const T initCondX[FILTER_SIZE_X],const T initCondY[FILTER_SIZE_Y]){
 	this->_initCondX = initCondX; // (implicit call to memcpy)
 	this->_initCondY = initCondY; // (implicit call to memcpy)
 }
@@ -136,3 +140,6 @@ void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::reset(){
 	_sampleIdxX = 0;
 	_sampleIdxY = 0;
 }
+
+} /* namespace autom */
+

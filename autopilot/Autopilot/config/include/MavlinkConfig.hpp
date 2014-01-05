@@ -10,6 +10,6 @@
 
 #define MAVLINK_USE_CONVENIENCE_FUNCTIONS
 // Support common features only
-#include <mavlink/v1.0/common/mavlink.h>
+#include <common/mavlink.h>
 
 #endif /* MAVLINKCONFIG_HPP_ */

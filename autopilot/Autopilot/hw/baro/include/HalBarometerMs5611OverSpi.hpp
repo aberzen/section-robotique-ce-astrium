@@ -36,24 +36,33 @@ protected:
 	} T_CONVERT_STATE;
 
 public:
-	HalBarometerMs5611OverSpi(SpiSlave& spi);
+	HalBarometerMs5611OverSpi(
+			/* Inputs */
+			SpiSlave& spi,
+			/* Outputs */
+			Output& out
+			/* Parameters */
+			);
 	virtual ~HalBarometerMs5611OverSpi();
 
 	/** @brief Initialize the sensor. */
-	virtual status initialize();
+	virtual infra::status initialize();
 
 	/** @brief Reset the sensor. */
-	virtual status reset();
+	virtual infra::status reset();
 
 	/** @brief Execute the process */
-	virtual status execute();
+	virtual infra::status execute();
 
 	/** @brief Get a coefficient */
 	inline uint16_t getCoeff(T_COEFF coeffId);
 
 protected:
+	/** @brief Convert the raw measurements into nominal measurements */
+	void convertRaw();
+
 	/** @brief Initialize the sensor. */
-	status readRom();
+	infra::status readRom();
 
 protected:
 	/** Current convertion state */
@@ -64,6 +73,12 @@ protected:
 
 	/** @brief ROM correction values */
 	uint16_t _coeffs[MS5611_ROM_SIZE];
+
+	/** @brief Raw pressure */
+	uint32_t _rawPressure;
+
+	/** @brief Raw temperature */
+	uint32_t _rawTemperature;
 };
 
 /** @brief Get a coefficient */

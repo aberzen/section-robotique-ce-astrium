@@ -19,17 +19,22 @@ namespace hw {
 
 class HalMagHMC5883L : public HalMagnetometer {
 public:
-	HalMagHMC5883L(I2C& bus);
+	HalMagHMC5883L(
+			/* Dependencies */
+			I2C& bus,
+			/* Outputs */
+			HalMagnetometer::Output& out,
+			HalMagnetometer::RawOutput& rawOut);
 	virtual ~HalMagHMC5883L();
 
 	/** @brief Initialize the HW */
-	virtual status initialize();
+	virtual infra::status initialize();
 
 	/** @brief Reset the HW */
-	virtual status reset();
+	virtual infra::status reset();
 
 	/** @brief Execute the driver */
-	virtual status execute();
+	virtual infra::status execute();
 
 protected:
 	/** @brief Read register value */
@@ -39,10 +44,10 @@ protected:
 	bool write_register(uint8_t address, uint8_t value);
 
 	/** @brief Program a measurement */
-	status commandSample();
+	infra::status commandSample();
 
 	/** @brief Read raw measurement */
-	status readRaw();
+	infra::status readRaw();
 
 	/** @brief Scale raw measurement into SI */
 	void scaleRaw();

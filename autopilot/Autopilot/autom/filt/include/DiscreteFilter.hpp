@@ -8,7 +8,9 @@
 #ifndef DISCRETEFILTER_H_
 #define DISCRETEFILTER_H_
 
-#include <Filter.hpp>
+#include "Filter.hpp"
+
+namespace autom {
 
 /** @brief Implement generic discrete filter
  *
@@ -28,22 +30,22 @@ template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
 class DiscreteFilter : public Filter<T> {
 public:
 	DiscreteFilter(
-			T coeffX[FILTER_SIZE_X],
-			T coeffY[FILTER_SIZE_Y],
-			T initCondX[FILTER_SIZE_X],
-			T initCondY[FILTER_SIZE_Y]
+			const T coeffX[FILTER_SIZE_X],
+			const T coeffY[FILTER_SIZE_Y],
+			const T initCondX[FILTER_SIZE_X],
+			const T initCondY[FILTER_SIZE_Y]
 			);
 	DiscreteFilter(
-			T coeffX[FILTER_SIZE_Y],
-			T coeffY[FILTER_SIZE_X]
+			const T coeffX[FILTER_SIZE_Y],
+			const T coeffY[FILTER_SIZE_X]
 			);
 	virtual ~DiscreteFilter();
 
 	// setCoeff - setter method for coefficient
-	void setCoeff(T coeffX[FILTER_SIZE_X], T coeffY[FILTER_SIZE_Y]);
+	void setCoeff(const T coeffX[FILTER_SIZE_X], const T coeffY[FILTER_SIZE_Y]);
 
 	// setCoeff - setter method for coefficient
-	void setInitCond(T initCondX[FILTER_SIZE_X], T initCondY[FILTER_SIZE_Y]);
+	void setInitCond(const T initCondX[FILTER_SIZE_X], const T initCondY[FILTER_SIZE_Y]);
 
 	// apply - Add a new raw value to the filter, retrieve the filtered result
     virtual T apply(T sample);
@@ -72,6 +74,8 @@ protected:
     /** @brief Saved X(t-Kt) values */
     T _valuesX[FILTER_SIZE_X];
 };
+
+} /* namespace autom */
 
 /* Implementation and declaration of classes with template must be in the same file */
 #include "../source/DiscreteFilter.cpp_"

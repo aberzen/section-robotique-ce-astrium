@@ -33,6 +33,24 @@
 
 #include "Vector3.hpp"
 
+#define MATRIX_ROTATION_NONE               Matrix3f(1, 0, 0, 0, 1, 0, 0,0, 1)
+#define MATRIX_ROTATION_YAW_45             Matrix3f(M_SQRT2/2, -M_SQRT2/2, 0, M_SQRT2/2, M_SQRT2/2, 0, 0, 0, 1)
+#define MATRIX_ROTATION_YAW_90             Matrix3f(0, -1, 0, 1, 0, 0, 0, 0, 1)
+#define MATRIX_ROTATION_YAW_135            Matrix3f(-M_SQRT2/2, -M_SQRT2/2, 0, M_SQRT2/2, -M_SQRT2/2, 0, 0, 0, 1)
+#define MATRIX_ROTATION_YAW_180            Matrix3f(-1, 0, 0, 0, -1, 0, 0, 0, 1)
+#define MATRIX_ROTATION_YAW_225            Matrix3f(-M_SQRT2/2, M_SQRT2/2, 0, -M_SQRT2/2, -M_SQRT2/2, 0, 0, 0, 1)
+#define MATRIX_ROTATION_YAW_270            Matrix3f(0, 1, 0, -1, 0, 0, 0, 0, 1)
+#define MATRIX_ROTATION_YAW_315            Matrix3f(M_SQRT2/2, M_SQRT2/2, 0, -M_SQRT2/2, M_SQRT2/2, 0, 0, 0, 1)
+#define MATRIX_ROTATION_ROLL_180           Matrix3f(1, 0, 0, 0, -1, 0, 0, 0, -1)
+#define MATRIX_ROTATION_ROLL_180_YAW_45    Matrix3f(M_SQRT2/2, M_SQRT2/2, 0, M_SQRT2/2, -M_SQRT2/2, 0, 0, 0, -1)
+#define MATRIX_ROTATION_ROLL_180_YAW_90    Matrix3f(0, 1, 0, 1, 0, 0, 0, 0, -1)
+#define MATRIX_ROTATION_ROLL_180_YAW_135   Matrix3f(-M_SQRT2/2, M_SQRT2/2, 0, M_SQRT2/2, M_SQRT2/2, 0, 0, 0, -1)
+#define MATRIX_ROTATION_PITCH_180          Matrix3f(-1, 0, 0, 0, 1, 0, 0, 0, -1)
+#define MATRIX_ROTATION_ROLL_180_YAW_225   Matrix3f(-M_SQRT2/2, -M_SQRT2/2, 0, -M_SQRT2/2, M_SQRT2/2, 0, 0, 0, -1)
+#define MATRIX_ROTATION_ROLL_180_YAW_270   Matrix3f(0, -1, 0, -1, 0, 0, 0, 0, -1)
+#define MATRIX_ROTATION_ROLL_180_YAW_315   Matrix3f(M_SQRT2/2, -M_SQRT2/2, 0, -M_SQRT2/2, -M_SQRT2/2, 0, 0, 0, -1)
+
+
 namespace math {
 
 // 3x3 matrix with elements of type T

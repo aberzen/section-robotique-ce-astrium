@@ -59,11 +59,12 @@ void MavTask::init(void)
 //	_hkMgt.initialize();
 
 	/* @TEST */
-	//_hkMgt.setDataStream(100,MAV_DATA_STREAM_ALL,true);
+//	system::System::system.getMavHouseKeeping().setDataStream(100,MAV_DATA_STREAM_ALL,true);
 
 	/* Initialize the Mavlink service management */
 //	_mavSvcMgt.initialize();
 
+//	system::System::system.initialize();
 	/* Mark as initialized */
 	Task::init();
 }
@@ -77,7 +78,9 @@ void MavTask::run(void)
 //#if 0
 		/* Run mavlink */
 		system::System::system.getMavSvcMgr().execute();
+//		system::System::system.getMavHouseKeeping().execute();
 //#endif
+		infra::Task::delay(10);
 	}
 }
 

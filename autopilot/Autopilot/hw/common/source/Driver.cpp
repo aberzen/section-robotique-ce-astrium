@@ -9,7 +9,8 @@
 
 namespace hw {
 
-Driver::Driver() {
+Driver::Driver()
+{
 }
 
 Driver::~Driver() {

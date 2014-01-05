@@ -16,7 +16,6 @@ namespace hw {
 
 class HalImuMpu6000: public HalImu {
 public:
-public:
 	typedef enum {
 		E_GYR_CNF_250DPS = 0x00,
 		E_GYR_CNF_500DPS = 0x08,
@@ -39,15 +38,32 @@ public:
 		E_UPT_FREQ_100HZ = 0x09,
 		E_UPT_FREQ_50HZ = 0x13
 	} T_UPT_FREQ;
+
+	typedef struct {
+		T_GYR_CNF gyrCnf;
+		T_ACC_CNF accCnf;
+		T_UPT_FREQ frequence;
+	} Param;
 public:
-	HalImuMpu6000(SpiSlave& spiSlave, T_GYR_CNF gyrCnf, T_ACC_CNF accCnf, T_UPT_FREQ freq);
+	HalImuMpu6000(
+			/* Dependencies */
+			SpiSlave& spiSlave,
+			/* Inputs */
+			/* Outputs */
+			HalImu::Output& out,
+			HalImu::RawOutput& rawOut,
+			/* Parameters */
+			const Param& param);
 	virtual ~HalImuMpu6000();
 
 	/** @brief Init the process */
-	virtual status initialize();
+	virtual infra::status initialize();
 
 	/** @brief Execute the process */
-	virtual status execute();
+	virtual infra::status execute();
+
+	/** @brief Reset the process */
+	virtual infra::status reset();
 
 protected:
 	/** @brief Write the register */
@@ -63,14 +79,8 @@ protected:
 	/** @brief SPI slave */
 	SpiSlave _spiSlave;
 
-	/** @brief Update frequency */
-	T_UPT_FREQ _freq;
-
-    /** @brief Gyro configuration */
-    T_GYR_CNF _gyrCnf;
-
-    /** @brief Acco configuration */
-    T_ACC_CNF _accCnf;
+	/** @brief Parameters */
+	const Param& _param;
 
     /** @brief Configured gyro LSB */
     float _gyrLsb;

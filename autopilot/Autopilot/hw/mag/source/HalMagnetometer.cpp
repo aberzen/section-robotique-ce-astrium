@@ -9,10 +9,10 @@
 
 namespace hw {
 
-HalMagnetometer::HalMagnetometer() :
-	SensorDriver(),
-	_rawMagFieldMeas(0,0,0),
-	_magFieldMeas(0.,0.,0.)
+HalMagnetometer::HalMagnetometer(Output& out, RawOutput& rawOut) :
+	Driver(),
+	_rawOut(rawOut),
+	_out(out)
 {
 	// TODO Auto-generated constructor stub
 

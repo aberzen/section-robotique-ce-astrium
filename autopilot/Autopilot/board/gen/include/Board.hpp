@@ -8,53 +8,69 @@
 #ifndef BOARD_HPP_
 #define BOARD_HPP_
 
-#include <arch/include/Process.hpp>
-
 #include <hw/imu/include/HalImu.hpp>
 #include <hw/mag/include/HalMagnetometer.hpp>
-#include <sensor/imu/include/Imu.hpp>
-#include <sensor/baro/include/Barometer.hpp>
-#include <sensor/mag/include/Magnetometer.hpp>
-#include <sensor/gps/include/Gps.hpp>
-#include <sensor/sonar/include/Sonar.hpp>
+#include <hw/baro/include/HalBarometer.hpp>
+#include <hw/gps/include/Gps.hpp>
+#include <hw/pwm/include/Pwm.hpp>
 
 namespace board {
 
-class Board : arch::Process {
+class Board {
+public:
+	typedef struct {
+		::hw::HalImu::Output imu;
+		::hw::HalMagnetometer::Output compass;
+		::hw::HalBarometer::Output baro;
+		::hw::Gps::Output gps;
+	} Measurements;
+	typedef struct {
+		::hw::HalImu::RawOutput imu;
+		::hw::HalMagnetometer::RawOutput compass;
+		::hw::HalBarometer::RawOutput baro;
+		::hw::Gps::RawOutput gps;
+	} RawMeasurements;
 public:
 	Board();
 	virtual ~Board();
 
 	/** @brief Init the process */
-	virtual status initialize();
+	virtual infra::status initialize();
 
 	/** @brief Execute the process */
-	virtual status execute();
+	virtual infra::status execute();
 
-	/** @brief Get IMU HAL */
-	virtual inline hw::HalImu& getHalImu() = 0;
+	/** @brief Get IMU */
+	virtual inline hw::HalImu& getImu() = 0;
 
-	/** @brief Get Magnetometer sensor */
-	virtual inline hw::HalMagnetometer& getHalMagnetometer() = 0;
+	/** @brief Get Baro */
+	virtual inline hw::HalBarometer& getBaro() = 0;
 
-	/** @brief Get IMU sensor */
-	virtual inline sensor::Imu& getImu() = 0;
+	/** @brief Get Magnetometer */
+	virtual inline hw::HalMagnetometer& getCompass() = 0;
 
-	/** @brief Get Barometer sensor */
-	virtual inline sensor::Barometer& getBarometer() = 0;
+	/** @brief Get Gps */
+	virtual inline hw::Gps& getGps() = 0;
 
-	/** @brief Get Gps sensor */
-	virtual inline sensor::Gps& getGps() = 0;
+	/** @brief Get Pwm */
+	virtual inline hw::Pwm& getPwm() = 0;
 
-	/** @brief Get Sonar sensor */
-	virtual inline sensor::Sonar& getSonar() = 0;
+public:
+	/* Unique static board */
+	static Board& board;
 
-	/** @brief Get Magnetometer sensor */
-	virtual inline sensor::Magnetometer& getMagnetometer() = 0;
+public:
+	/** @brief Measurements */
+	Measurements meas;
 
-//	/** @brief Get Led1 sensor */
-//	virtual inline sensor::Led& getLed1() = 0;
-//	static Board& board;
+	/** @brief Measurements */
+	RawMeasurements rawMeas;
+
+	/** @brief Pwm Input */
+	hw::Pwm::Input pwmVal;
+
+	/** @brief Pwm Output */
+	hw::Pwm::Output radio;
 };
 
 

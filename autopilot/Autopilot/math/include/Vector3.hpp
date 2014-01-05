@@ -43,6 +43,7 @@
 
 #include <inttypes.h>
 #include <math.h>
+#include <math/include/MathUtils.hpp>
 
 namespace math {
 
@@ -95,6 +96,12 @@ public:
     	return (x!=v.x || y!=v.y || z!=v.z);
     }
 
+    // multiplication term by term
+    Vector3<T>& operator *= (const Vector3<T>& v);
+    // division term by term
+	Vector3<T>& operator /= (const Vector3<T>& v);
+
+
     // negation
     Vector3<T> operator - (void) const
     {
@@ -115,9 +122,10 @@ public:
     	return Vector3<T>(x-v.x, y-v.y, z-v.z);
     }
 
+
     // uniform scaling
     static void multByScalar(T scalar, Vector3<T>& v);
-    Vector3<T> operator *(const T num) const
+    Vector3<T> operator *(const T& num) const
     {
     	Vector3<T> temp(*this);
     	return temp*=num;
@@ -125,7 +133,7 @@ public:
 
     // uniform scaling
     static void divByScalar(T scalar, Vector3<T>& v);
-    Vector3<T> operator /(const T num) const
+    Vector3<T> operator /(const T& num) const
     {
     	Vector3<T> temp(*this);
     	return temp/=num;
@@ -162,7 +170,7 @@ public:
     }
 
     // dot product
-    T operator *(const Vector3<T> &v) const;
+    T operator *(const Vector3<T>& v) const;
 
     // cross product
     Vector3<T> operator %(const Vector3<T> &v) const;
@@ -174,24 +182,18 @@ public:
     }
 
     // gets the norm of this vector
-    float    norm(void) const;
+    T    norm(void) const;
 
     // normalizes this vector
-    void     normalize()
-    {
-    	*this/=norm();
-    }
+    T normalize(int nIter=1, T guess=1.);
+
+    // returns the normalized version of this vector
+    Vector3<T> normalized(int nIter=1, T guess=1.) const;
 
     // zero the vector
     void zero()
     {
     	x = y = z = 0.0;
-    }
-
-    // returns the normalized version of this vector
-    Vector3<T> normalized() const
-    {
-    	return *this/norm();
     }
 
     // reflects this vector about n
@@ -223,7 +225,8 @@ public:
     // computes the angle between this vector and another vector
     T angle(const Vector3<T> &v2)
     {
-    	return (T)acos(((*this)*v2) / (this->norm()*v2.norm()));
+//    	return (T)acos(((*this)*v2) / (this->norm()*v2.norm()));
+    	return (T)atan2( ((*this)%v2).norm(), (*this)*v2);
     }
 
     // computes the angle between 2 arbitrary normalized vectors
@@ -233,13 +236,13 @@ public:
     }
 
     // check if any elements are NAN
-    bool is_nan(void)
+    bool is_nan(void) const
     {
     	return isnan(x) || isnan(y) || isnan(z);
     }
 
     // check if any elements are infinity
-    bool is_inf(void)
+    bool is_inf(void) const
     {
     	return isinf(x) || isinf(y) || isinf(z);
     }
@@ -249,11 +252,25 @@ public:
 
 };
 
-typedef Vector3<int16_t> Vector3i;
-typedef Vector3<uint16_t> Vector3ui;
-typedef Vector3<int32_t> Vector3l;
-typedef Vector3<uint32_t> Vector3ul;
-typedef Vector3<float> Vector3f;
+// multiplication term by term
+template <typename T>
+Vector3<T>& Vector3<T>::operator *= (const Vector3<T>& v)
+{
+	this->x *= v.x;
+	this->y *= v.y;
+	this->z *= v.z;
+	return *this;
+}
+
+// division term by term
+template <typename T>
+Vector3<T>& Vector3<T>::operator /= (const Vector3<T>& v)
+{
+	this->x /= v.x;
+	this->y /= v.y;
+	this->z /= v.z;
+	return *this;
+}
 
 // vector cross product
 template <typename T>
@@ -265,22 +282,48 @@ Vector3<T> Vector3<T>::operator %(const Vector3<T> &v) const
 
 // dot product
 template <typename T>
-T Vector3<T>::operator *(const Vector3<T> &v) const
+T Vector3<T>::operator *(const Vector3<T>& v) const
 {
     return x*v.x + y*v.y + z*v.z;
 }
 
 template <typename T>
-float Vector3<T>::norm(void) const
-{
-    return (T)sqrt(*this * *this);
+T Vector3<T>::norm(void) const {
+	return sqrt(*this * *this);
 }
+
+template <typename T>
+T Vector3<T>::normalize(int nIter, T guess)
+{
+	T res = iter_invSqrt(guess, nIter, *this * *this);
+	*this *= res;
+	return res;
+}
+
+template <typename T>
+Vector3<T> Vector3<T>::normalized(int nIter, T guess) const
+{
+	T invNrm = iter_invSqrt(guess, nIter, *this * *this);
+	Vector3<T> res (*this);
+	res *= invNrm;
+	return res;
+}
+
 
 // only define for signed numbers
 //template void Vector3<float>::rotate(enum Rotation);
-template float Vector3<float>::norm(void) const;
-template Vector3<float> Vector3<float>::operator %(const Vector3<float> &v) const;
-template float Vector3<float>::operator *(const Vector3<float> &v) const;
+//template float Vector3<float>::norm(void) const;
+//template Vector3<float> Vector3<float>::operator %(const Vector3<float> &v) const;
+//template float Vector3<float>::operator *(const Vector3<float> &v) const;
 
 } /* namespace math */
+
+namespace math {
+typedef Vector3<int16_t> Vector3i;
+typedef Vector3<uint16_t> Vector3ui;
+typedef Vector3<int32_t> Vector3l;
+typedef Vector3<uint32_t> Vector3ul;
+typedef Vector3<float> Vector3f;
+}
+
 #endif // VECTOR3_H

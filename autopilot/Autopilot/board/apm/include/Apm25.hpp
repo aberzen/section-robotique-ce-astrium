@@ -14,55 +14,55 @@
 #include <hw/i2c/include/I2C.hpp>
 #include <hw/imu/include/HalImuMpu6000.hpp>
 #include <hw/baro/include/HalBarometerMs5611OverSpi.hpp>
-#include <hw/gps/include/HalGps.hpp>
+#include <hw/gps/include/Gps.hpp>
 #include <hw/mag/include/HalMagHMC5883L.hpp>
-#include <hw/sonar/include/HalSonar.hpp>
+#include <hw/pwm/include/PwmApm25.hpp>
 
-#include <sensor/baro/include/Ms5611Barometer.hpp>
+#include <autom/est/include/Estimator.hpp>
 
 namespace board {
 
 class Apm25 : public Board {
 public:
-	Apm25();
+	typedef struct {
+		::hw::HalImuMpu6000::Param imu;
+	} Param;
+public:
+	Apm25(
+			/* Inputs */
+			/* Outputs */
+			/* Param */
+			Param& param);
 	virtual ~Apm25();
 
 	/** @brief Init the process */
-	virtual status initialize();
+	virtual infra::status initialize();
 
 	/** @brief Execute the process */
-	virtual status execute();
+	virtual infra::status execute();
 
 	/** @brief Get IMU HAL */
-	virtual inline hw::HalImu& getHalImu();
+	virtual inline hw::HalImu& getImu();
 
-	/** @brief Get IMU HAL */
-	virtual inline hw::HalMagnetometer& getHalMagnetometer();
+	/** @brief Get baro */
+	virtual inline hw::HalBarometer& getBaro() ;
 
-	/** @brief Get IMU sensor */
-	virtual inline sensor::Imu& getImu();
-
-	/** @brief Get Barometer sensor */
-	virtual inline sensor::Barometer& getBarometer();
+	/** @brief Get Magnetometer */
+	virtual inline hw::HalMagnetometer& getCompass() ;
 
 	/** @brief Get Gps sensor */
-	virtual inline sensor::Gps& getGps();
+	virtual inline hw::Gps& getGps() ;
 
-	/** @brief Get Sonar sensor */
-	virtual inline sensor::Sonar& getSonar();
+	/** @brief Get Pwm */
+	virtual inline hw::Pwm& getPwm() ;
 
-	/** @brief Get Magnetometer sensor */
-	virtual inline sensor::Magnetometer& getMagnetometer();
+protected:
+	/** @brief I2C Bus */
+	hw::I2C _i2cBus;
 
-//	/** @brief Get Led1 sensor */
-//	virtual inline sensor::Led& getLed1();
-
-//protected:
 	/** @brief Spi Bus */
 	hw::SpiBus _spiBus;
 
-	/** @brief I2C Bus */
-	hw::I2C _i2cBus;
 	/** @brief Spi slave for Imu */
 	hw::SpiSlave _spiSlaveImu;
 
@@ -70,71 +70,49 @@ public:
 	hw::SpiSlave _spiSlaveBaro;
 
 	/** @brief Hal for Imu */
-	hw::HalImuMpu6000 _halImu;
+	hw::HalImuMpu6000 _imu;
 
 	/** @brief Hal for Imu */
-	hw::HalMagHMC5883L _halMag;
+	hw::HalMagHMC5883L _compass;
 
 	/** @brief Hal for Barometer */
-	hw::HalBarometerMs5611OverSpi _halBaro;
-
-	/** @brief Sensor for Imu */
-	sensor::Imu _sensImu;
+	hw::HalBarometerMs5611OverSpi _baro;
 
 	/** @brief Sensor for Barometer */
-	sensor::Ms5611Barometer _sensBaro;
+	hw::Gps _gps;
 
-	/** @brief Sensor for Barometer */
-	sensor::Magnetometer _sensMagnetometer;
-
-	/** @brief Sensor for Barometer */
-	sensor::Gps _sensGps;
-
-	/** @brief Sensor for Barometer */
-	sensor::Sonar _sensSonar;
-
+	/** @brief Pwm */
+	hw::PwmApm25 _pwm;
 };
 
 /** @brief Get IMU HAL */
-inline hw::HalImu& Apm25::getHalImu()
+inline hw::HalImu& Apm25::getImu()
 {
-	return _halImu;
+	return _imu;
 }
 
 /** @brief Get Mag HAL */
-inline hw::HalMagnetometer& Apm25::getHalMagnetometer()
+inline hw::HalMagnetometer& Apm25::getCompass()
 {
-	return _halMag;
-}
-
-/** @brief Get IMU sensor */
-inline sensor::Imu& Apm25::getImu()
-{
-	return _sensImu;
-}
-
-/** @brief Get Barometer sensor */
-inline sensor::Barometer& Apm25::getBarometer()
-{
-	return _sensBaro;
+	return _compass;
 }
 
 /** @brief Get Gps sensor */
-inline sensor::Gps& Apm25::getGps()
+inline hw::Gps& Apm25::getGps()
 {
-	return _sensGps;
+	return _gps;
 }
 
-/** @brief Get Sonar sensor */
-inline sensor::Sonar& Apm25::getSonar()
+/** @brief Get baro */
+inline hw::HalBarometer& Apm25::getBaro()
 {
-	return _sensSonar;
+	return _baro;
 }
 
-/** @brief Get Magnetometer sensor */
-inline sensor::Magnetometer& Apm25::getMagnetometer()
+/** @brief Get Pwm */
+inline hw::Pwm& Apm25::getPwm()
 {
-	return _sensMagnetometer;
+	return _pwm;
 }
 
 } /* namespace board */

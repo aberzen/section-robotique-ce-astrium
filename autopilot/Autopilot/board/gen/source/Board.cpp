@@ -16,14 +16,14 @@ Board::~Board() {
 }
 
 /** @brief Init the process */
-status Board::initialize()
+infra::status Board::initialize()
 {
 
 	return 0;
 }
 
 /** @brief Execute the process */
-status Board::execute()
+infra::status Board::execute()
 {
 
 	return 0;

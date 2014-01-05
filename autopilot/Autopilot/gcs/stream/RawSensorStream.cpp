@@ -9,12 +9,16 @@
 #include "../include/RawSensorStream.hpp"
 #include <system/system/include/System.hpp>
 #include <hw/serial/include/FastSerial.hpp>
-
+#include <Arduino.h>
 
 namespace mavlink {
 
-RawSensorStream::RawSensorStream(mavlink_channel_t port) :
+RawSensorStream::RawSensorStream(mavlink_channel_t port,
+		const board::Board::Measurements& meas,
+		const board::Board::RawMeasurements& rawMeas) :
 	DataStream(port),
+	_meas(meas),
+	_rawMeas(rawMeas),
 	_rawImuAcc(0, 0, 0),
 	_rawImuRate(0, 0, 0),
 	_rawMag(0, 0, 0),
@@ -32,26 +36,23 @@ RawSensorStream::~RawSensorStream() {
 /** @brief Sample the data */
 void RawSensorStream::sampleData()
 {
-	/* Board */
-	board::Board& board = system::System::system.getBoard();
-
 	/* Sample rate */
-	_rawImuRate = board.getHalImu().readRawRate();
+	_rawImuRate = _rawMeas.imu.gyroMeas_B;
 
 	/* Sample acceleration */
-	_rawImuAcc = board.getHalImu().readRawAcc();
+	_rawImuAcc = _rawMeas.imu.accoMeas_B;
 
 	/* Sample magnetic */
-	_rawMag = board.getHalMagnetometer().readRawMagField();
+	_rawMag = _rawMeas.compass.magMeas_B;
 
 	/* Sample baro pressure */
-	_rawBaroPressure = board.getBarometer().readPressure();
+	_rawBaroPressure = _meas.baro.pressure;
 
 	/* Sample baro pressure at ground zero */
 	_rawBaroPressure0 = 0.;
 
 	/* Sample baro temperature */
-	_rawBaroTemperature = board.getBarometer().readTemperature();
+	_rawBaroTemperature = _meas.baro.temperature;
 }
 
 /** @brief Send data */
@@ -62,6 +63,10 @@ void RawSensorStream::sendData()
 //			_rawImuRate.x,
 //			_rawImuRate.y,
 //			_rawImuRate.z);
+
+//	Serial.printf("Raw: %ld\n",_date);
+//	Serial.printf("Raw (avail): %d\n",_meas.imu.isAvailable);
+//	return ;
 
 	/* Send raw Imu data */
 	mavlink_msg_raw_imu_send(

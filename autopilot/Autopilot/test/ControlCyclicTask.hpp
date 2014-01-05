@@ -7,8 +7,9 @@
 
 #ifndef CONTROLCYCLICTASK_HPP_
 #define CONTROLCYCLICTASK_HPP_
-
+#include <math.h>
 #include <infra/include/CyclicTask.hpp>
+#include <autom/mgt/include/Ancs.hpp>
 
 namespace test {
 
@@ -28,7 +29,6 @@ public:
 
 protected:
 	virtual void runCycle(void);
-
 };
 
 } /* namespace test */

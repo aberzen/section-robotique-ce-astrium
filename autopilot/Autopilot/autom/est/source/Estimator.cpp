@@ -9,15 +9,28 @@
 
 namespace autom {
 
-Estimator::Estimator() :
-		_position_I(0.,0.,0.),
-		_velocity_I(0.,0.,0.),
-		_rate_B(0.,0.,0.),
-		_q_BI(1.,0.,0.,0.)
+Estimator::Estimator(
+		/* Inputs */
+		const board::Board::Measurements& meas,
+		/* Outputs */
+		Estimator::Estimations& est,
+		/* Parameters */
+		const float& dt
+		) :
+		_meas(meas),
+		_est(est),
+		_dt(dt)
 {
 }
 
 Estimator::~Estimator() {
+}
+
+/** @brief Init the process */
+infra::status Estimator::initialize()
+{
+	this->_est.isConverged = false;
+	return 0;
 }
 
 

@@ -41,4 +41,14 @@ float safe_sqrt(float v)
     return ret;
 }
 
+
+float iter_invSqrt(float guess, int8_t nIter, const float& S)
+{
+	while(nIter--)
+	{
+		guess = guess * 0.5 * (3.- S * guess * guess);
+	}
+	return guess;
+}
+
 }

@@ -8,16 +8,19 @@
 #ifndef HOUSEKEEPINGMGT_HPP_
 #define HOUSEKEEPINGMGT_HPP_
 
-#include <mavlink/v1.0/common/mavlink.h>
+#include <common/mavlink.h>
 #include "RawSensorStream.hpp"
 #include "EstimatorStream.hpp"
 
 namespace mavlink {
 
 
-class HouseKeepingMgt : public arch::Process {
+class HouseKeepingMgt : public infra::Process {
 public:
-	HouseKeepingMgt(mavlink_channel_t port);
+	HouseKeepingMgt(mavlink_channel_t port,
+			const autom::Estimator::Estimations& est,
+			const board::Board::Measurements& meas,
+			const board::Board::RawMeasurements& rawMeas);
 	virtual ~HouseKeepingMgt();
 
 	void setDataStream(
@@ -30,10 +33,10 @@ public:
 	void update();
 
 	/** @brief Init the process */
-	virtual status initialize();
+	virtual infra::status initialize();
 
 	/** @brief Execute the process */
-	virtual status execute();
+	virtual infra::status execute();
 
 
 //protected:

@@ -10,9 +10,9 @@
 
 #include <stdint.h>
 //#include "AP_Param.hpp"
-#include <mavlink/v1.0/mavlink_types.h>
-#include <mavlink/v1.0/common/mavlink.h>
-#include <arch/include/Process.hpp>
+#include <mavlink_types.h>
+#include <common/mavlink.h>
+#include <arch/app/include/Process.hpp>
 
 namespace mavlink {
 

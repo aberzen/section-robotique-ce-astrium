@@ -21,20 +21,27 @@ FastSerialPort0(Serial);        // FTDI/console
 
 namespace board {
 
-Apm25::Apm25() :
+Apm25::Apm25(
+		/* Inputs */
+		/* Outputs */
+		/* Param */
+		Param& param
+) :
 		Board(),
 		_spiBus(),
 		_i2cBus(),
 		_spiSlaveImu(_spiBus, IMU_MPU6000_SPI_CS_PIN),
 		_spiSlaveBaro(_spiBus, BARO_MS5611_SPI_CS_PIN),
-		_halImu(_spiSlaveImu, IMU_MPU6000_GYR_CNF, IMU_MPU6000_ACC_CNF, IMU_MPU6000_FREQ_CNF),
-		_halBaro(_spiSlaveBaro),
-		_halMag(_i2cBus),
-		_sensImu((hw::HalImu&)_halImu, cnfImuRateMat_UB, cnfImuRateBias_B, cnfImuAccMat_UB, cnfImuAccBias_B),
-		_sensBaro(_halBaro),
-		_sensMagnetometer(_halMag, cnfMagMat_UB, cnfMagBias_B),
-		_sensGps(),
-		_sensSonar()
+		_imu(_spiSlaveImu, meas.imu, rawMeas.imu, param.imu),
+		_baro(_spiSlaveBaro, meas.baro),
+		_compass(_i2cBus, meas.compass, rawMeas.compass),
+		_gps(meas.gps),
+		_pwm(pwmVal,radio)
+//		_sensImu((hw::HalImu&)_imu, cnfImuRateMat_UB, cnfImuRateBias_B, cnfImuAccMat_UB, cnfImuAccBias_B),
+//		_sensBaro(_baro),
+//		_sensMagnetometer(_compass, cnfMagMat_UB, cnfMagBias_B),
+//		_sensGps(),
+//		_sensSonar()
 {
 }
 
@@ -42,7 +49,7 @@ Apm25::~Apm25() {
 }
 
 /** @brief Init the process */
-status Apm25::initialize()
+infra::status Apm25::initialize()
 {
 	/* Initialize Serial */
 	Serial.begin(115200);
@@ -66,69 +73,75 @@ status Apm25::initialize()
 	infra::Task::delay(10);
 
 	/* Init IMU Hal */
-	_halImu.initialize();
+	_imu.initialize();
 
 	/* Init Baro Hal */
-	_halBaro.initialize();
+	_baro.initialize();
 
 	/* Set clock diviser */
     _spiBus.setClockDivider(SPI_CLOCK_DIV16); // 2MHZ SPI rate
 
 	/* Execute Mag Hal */
-	status st = _halMag.initialize();
+	infra::status st = _compass.initialize();
 //	if (st != 0)
 //	{
-//		Serial.printf("_halMag.initialize() returns %d\n",st);
+//		Serial.printf("_compass.initialize() returns %d\n",st);
 //	}
 
-	/* IMU sensor */
-	_sensImu.initialize();
+//	/* IMU sensor */
+//	_sensImu.initialize();
+//
+//	/* Baro sensor */
+//	_sensBaro.initialize();
+//
+//	/* Magnetometer sensor */
+//	_sensMagnetometer.initialize();
+//
+//	/* GPS sensor */
+//	_sensGps.initialize();
+//
+//	/* Sonar sensor */
+//	_sensSonar.initialize();
 
-	/* Baro sensor */
-	_sensBaro.initialize();
-
-	/* Magnetometer sensor */
-	_sensMagnetometer.initialize();
-
-	/* GPS sensor */
-	_sensGps.initialize();
-
-	/* Sonar sensor */
-	_sensSonar.initialize();
+	/* Pwm */
+	_pwm.initialize();
 
 	return 0;
 }
 
 /** @brief Execute the process */
-status Apm25::execute()
+infra::status Apm25::execute()
 {
 	/* Execute IMU Hal */
-	_halImu.execute();
+	_imu.execute();
 
 	/* Execute Baro Hal */
-	_halBaro.execute();
+	_baro.execute();
 
 	/* Execute Mag Hal */
-	status st = _halMag.execute();
+	infra::status st = _compass.execute();
 //	if (st != 0)
 //	{
-//		Serial.printf("_halMag.execute() returns %d\n",st);
+//		Serial.printf("_compass.execute() returns %d\n",st);
 //	}
 
-	/* Execute IMU Sensor */
-	_sensImu.execute();
+//	/* Execute IMU Sensor */
+//	_sensImu.execute();
+//
+//	/* Execute Baro Sensor */
+//	_sensBaro.execute();
+//
+//	/* Execute Magnetometer Sensor */
+//	_sensMagnetometer.execute();
+//
+//	/* Execute GPS Sensor */
+//	_sensGps.execute();
+//
+//	/* Execute Sonar Sensor */
+//	_sensSonar.execute();
 
-	/* Execute Baro Sensor */
-	_sensBaro.execute();
-
-	/* Execute Magnetometer Sensor */
-	_sensMagnetometer.execute();
-
-	/* Execute GPS Sensor */
-	_sensGps.execute();
-
-	/* Execute Sonar Sensor */
-	_sensSonar.execute();
+	/* Pwm */
+	_pwm.execute();
 
 	return 0;
 }

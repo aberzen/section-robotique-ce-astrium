@@ -9,14 +9,32 @@
 
 namespace hw {
 
-HalBarometer::HalBarometer() :
-	SensorDriver(),
-	_rawPressure(0),
-	_rawTemperature(0)
+HalBarometer::HalBarometer(
+		/* Inputs */
+		/* Outputs */
+		Output& out
+		/* Parameters */
+) :
+	Driver(),
+	_out(out)
 {
 }
 
 HalBarometer::~HalBarometer() {
+}
+
+/** @brief Initialize the HW */
+infra::status HalBarometer::initialize()
+{
+	_out.isAvailable = false;
+	return 0;
+}
+
+/** @brief Reset the HW */
+infra::status HalBarometer::reset()
+{
+	_out.isAvailable = false;
+	return 0;
 }
 
 } /* namespace hw */

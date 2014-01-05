@@ -9,10 +9,10 @@
 #define CHANNEL_HPP_
 
 #define MAVLINK_USE_CONVENIENCE_FUNCTIONS
-#include <mavlink/v1.0/mavlink_types.h>
+#include <mavlink_types.h>
 extern void comm_send_ch(mavlink_channel_t chan, uint8_t ch);
 extern mavlink_system_t mavlink_system;
-#include <mavlink/v1.0/ardupilotmega/mavlink.h>
+#include <ardupilotmega/mavlink.h>
 
 namespace mavlink {
 

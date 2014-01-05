@@ -60,8 +60,8 @@ namespace hw {
 #define REG_VAL_MR_MD_IDLE		(0x02<<0) /**< @brief Idle mode */
 
 
-HalMagHMC5883L::HalMagHMC5883L(I2C& bus) :
-	HalMagnetometer(),
+HalMagHMC5883L::HalMagHMC5883L(I2C& bus, HalMagnetometer::Output& out, HalMagnetometer::RawOutput& rawOut) :
+	HalMagnetometer(out, rawOut),
 	_bus(bus)
 {
 }
@@ -93,11 +93,8 @@ bool HalMagHMC5883L::write_register(uint8_t address, uint8_t value)
 }
 
 /** @brief Initialize the HW */
-status HalMagHMC5883L::initialize()
+infra::status HalMagHMC5883L::initialize()
 {
-	if (0>HalMagnetometer::initialize())
-		return -1;
-
     /* Configuration is:
      * - CRA:
      * 		- Sampling average: 1
@@ -125,38 +122,32 @@ status HalMagHMC5883L::initialize()
 }
 
 /** @brief Reset the HW */
-status HalMagHMC5883L::reset()
+infra::status HalMagHMC5883L::reset()
 {
-	if (0>HalMagnetometer::reset())
-		return -1;
-
 	initialize();
 	return 0;
 }
 
 /** @brief Execute the driver */
-status HalMagHMC5883L::execute()
+infra::status HalMagHMC5883L::execute()
 {
 	/* Read data */
+	_out.isAvailable = true;
 	if (0>readRaw())
 	{
-		_isAvailable = false;
+		_out.isAvailable = false;
 		return -1;
 	}
-
-	/* Scale data */
-	scaleRaw();
 
 	/* Command a new read */
 	if (0>commandSample())
 		return -2;
 
-
 	return 0;
 }
 
 /** @brief Program a measurement */
-status HalMagHMC5883L::commandSample()
+infra::status HalMagHMC5883L::commandSample()
 {
     if (!write_register(REG_ADDR_MR, REG_VAL_MR_MD_SM))
     {
@@ -166,7 +157,7 @@ status HalMagHMC5883L::commandSample()
 }
 
 /** @brief Read raw measurement */
-status HalMagHMC5883L::readRaw()
+infra::status HalMagHMC5883L::readRaw()
 {
     uint8_t buff[6];
     uint8_t regValue;
@@ -188,23 +179,15 @@ status HalMagHMC5883L::readRaw()
 	{
         return -3;
     }
-
-    _rawMagFieldMeas.x = (int16_t)(buff[0] << 8) | buff[1];
-    _rawMagFieldMeas.y = (int16_t)(buff[2] << 8) | buff[3];
-    _rawMagFieldMeas.z = (int16_t)(buff[4] << 8) | buff[5];
+    _rawOut.magMeas_B(
+					- (int16_t) ((uint16_t)(buff[4] << 8) | (uint16_t) buff[5]),
+					  (int16_t) ((uint16_t)(buff[0] << 8) | (uint16_t) buff[1]),
+					  (int16_t) ((uint16_t)(buff[2] << 8) | (uint16_t) buff[3]));
+    _out.magMeas_B.x = (float)(_rawOut.magMeas_B.x)*1.9836425781250e-05;
+    _out.magMeas_B.y = (float)(_rawOut.magMeas_B.y)*1.9836425781250e-05;
+    _out.magMeas_B.z = (float)(_rawOut.magMeas_B.z)*1.9836425781250e-05;
 
     return 0;
 }
-
-
-/** @brief Scale raw measurement into SI */
-void HalMagHMC5883L::scaleRaw()
-{
-	_magFieldMeas.x = _rawMagFieldMeas.x * 1.3/65536.;
-	_magFieldMeas.y = _rawMagFieldMeas.y * 1.3/65536.;
-	_magFieldMeas.z = _rawMagFieldMeas.z * 1.3/65536.;
-}
-
-
 
 } /* namespace hw */

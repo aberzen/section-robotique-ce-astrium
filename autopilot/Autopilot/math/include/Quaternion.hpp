@@ -10,8 +10,7 @@
 #ifndef QUATERNION_HPP_
 #define QUATERNION_HPP_
 
-#include "Matrix3.hpp"
-#include "Vector3.hpp"
+#include <math/include/Matrix3.hpp>
 
 namespace math {
 
@@ -27,33 +26,27 @@ public:
     Quaternion(const Quaternion& q);
 
     // setting constructor
-    Quaternion(const float scal, const float vectX, const float vectY, const float vectZ);
+    Quaternion(const float& scal, const float& vectX, const float& vectY, const float& vectZ);
 
     // setting constructor
-    Quaternion(const float scal, const Vector3f& vect);
+    Quaternion(const float& scal, const Vector3f& vect);
 
     // function call operator
-    void operator ()(const float scal, const float vectX, const float vectY, const float vectZ);
+    void operator ()(const float& scal, const float& vectX, const float& vectY, const float& vectZ);
 
     // function call operator
-    void operator ()(const float scal, const Vector3f& vect);
+    void operator ()(const float& scal, const Vector3f& vect);
 
     // Copy existing quaternion
     void operator ()(const Quaternion& q);
 
-    // get vector
-    inline const Vector3f& getVector(void);
-
-    // get Scalar
-    inline float getScalar(void);
-
     /** @brief Addition */
     static void add(const Quaternion& q1, const Quaternion& q2, Quaternion& qRes);
-    Quaternion operator + (const Quaternion& q);
+    Quaternion operator + (const Quaternion& q) const;
 
     /** @brief Substraction */
     static void substract(const Quaternion& q1, const Quaternion& q2, Quaternion& qRes);
-    Quaternion operator - (const Quaternion& q);
+    Quaternion operator - (const Quaternion& q) const;
 
     /** @brief Substract and store */
     Quaternion& operator -= (const Quaternion& q);
@@ -63,18 +56,29 @@ public:
 
     /** @brief Multiplication */
     static void mult(const Quaternion& q1, const Quaternion& q2, Quaternion& qRes);
-    Quaternion operator * (const Quaternion& q);
+    Quaternion operator * (const Quaternion& q) const;
 
     /** @brief Conjugate */
     static void conj(Quaternion& q);
-    Quaternion operator ~ ();
+    Quaternion operator ~ () const;
 
     /** @brief Norm */
     float norm();
 
     /** @brief Normalize */
-    static void normalize(Quaternion& q);
-    Quaternion normalize();
+    float normalize(int8_t nIter = 3, float guess = 1.);
+
+    /** @brief Multiply by scalar and store */
+    Quaternion& operator *= (const float& scal);
+
+    /** @brief Divide by scalar and store */
+    Quaternion& operator /= (const float& scal);
+
+    /** @brief Multiply by scalar */
+    Quaternion operator * (const float& scal);
+
+    /** @brief Divide by scalar */
+    Quaternion operator / (const float& scal);
 
     /** @brief Multiply and store */
     Quaternion& operator *= (const Quaternion& q);
@@ -87,7 +91,7 @@ public:
      *
      * Where q_BI is the rotation from B to I;
      */
-    Vector3f rotateQconjVQ (const Vector3f& v_I);
+    Vector3f rotateQconjVQ (const Vector3f& v_I) const;
 
     /** @brief Rotation using
      * The rotation of V_I such that  V_B = rotate(V_I).
@@ -97,34 +101,26 @@ public:
      *
      * Where q_BI is the rotation from B to I;
      */
-    Vector3f rotateQVQconj (const Vector3f& v_B);
+    Vector3f rotateQVQconj (const Vector3f& v_B) const;
 
-    bool is_nan(void);
-    void to_dcm(Matrix3f& dcm);
+    bool is_nan(void) const;
+    void to_dcm(Matrix3f& dcm) const;
     void from_dcm(const Matrix3f& dcm);
 
     // create a quaternion from Euler angles
-    void from_euler(float roll, float pitch, float yaw);
+    void from_euler(const float& roll, const float& pitch, const float& yaw);
 
     // create eulers from a quaternion
-    void to_euler(float& roll, float& pitch, float& yaw);
+    void to_euler(float& roll, float& pitch, float& yaw) const;
 
 
-protected:
-    /*  */
-    float _scalar;
-    Vector3f _vector;
+public:
+    /** @brief Scalar part of the quaternion */
+    float scalar;
+
+    /** @brief Vector part of the quaternion */
+    Vector3f vector;
 };
-
-// get vector
-inline const Vector3f& Quaternion::getVector(void) {
-	return _vector;
-}
-
-// get Scalar
-inline float Quaternion::getScalar(void) {
-	return _scalar;
-}
 
 }
 

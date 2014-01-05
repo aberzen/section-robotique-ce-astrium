@@ -18,6 +18,8 @@
 #include "Filter.hpp"
 #include <inttypes.h>
 
+namespace autom {
+
 template <class T, uint8_t FILTER_SIZE>
 class FilterWithBuffer : public Filter<T>
 {
@@ -69,6 +71,7 @@ typedef FilterWithBuffer<uint32_t,5> FilterWithBufferUInt32_Size5;
 typedef FilterWithBuffer<uint32_t,6> FilterWithBufferUInt32_Size6;
 typedef FilterWithBuffer<uint32_t,7> FilterWithBufferUInt32_Size7;
 
+} /* namespace autom */
 #endif
 
 

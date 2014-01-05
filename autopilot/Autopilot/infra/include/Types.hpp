@@ -5,14 +5,16 @@
  *      Author: Aberzen
  */
 
-#ifndef TYPES_HPP_
-#define TYPES_HPP_
+#ifndef MY_TYPES_HPP_
+#define MY_TYPES_HPP_
 
 #include <inttypes.h>
+
+namespace infra {
 
 /** Status type (negative for errors, zero for Ok, positive for warning) */
 typedef int8_t status;
 
-
+} /* namespace infra */
 
 #endif /* TYPES_HPP_ */

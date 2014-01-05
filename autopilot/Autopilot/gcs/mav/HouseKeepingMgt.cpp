@@ -9,10 +9,13 @@
 
 namespace mavlink {
 
-HouseKeepingMgt::HouseKeepingMgt(mavlink_channel_t port) :
+HouseKeepingMgt::HouseKeepingMgt(mavlink_channel_t port,
+		const autom::Estimator::Estimations& est,
+		const board::Board::Measurements& meas,
+		const board::Board::RawMeasurements& rawMeas) :
 		_port(port),
-		_rawSensorsStream(port),
-		_estStream(port)
+		_rawSensorsStream(port, meas, rawMeas),
+		_estStream(port, est)
 {
 }
 
@@ -172,7 +175,7 @@ void HouseKeepingMgt::update()
 }
 
 /** @brief Init the process */
-status HouseKeepingMgt::initialize()
+infra::status HouseKeepingMgt::initialize()
 {
 	/* Initialize raw sensors */
 	_rawSensorsStream.initialize();
@@ -183,7 +186,7 @@ status HouseKeepingMgt::initialize()
 }
 
 /** @brief Execute the process */
-status HouseKeepingMgt::execute()
+infra::status HouseKeepingMgt::execute()
 {
 	/* Execute raw sensors data stream */
 	_rawSensorsStream.execute();

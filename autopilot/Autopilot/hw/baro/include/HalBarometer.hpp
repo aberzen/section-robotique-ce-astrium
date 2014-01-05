@@ -8,42 +8,45 @@
 #ifndef HALBAROMETER_HPP_
 #define HALBAROMETER_HPP_
 
-#include <hw/common/include/SensorDriver.hpp>
+#include <hw/common/include/Driver.hpp>
 
 namespace hw {
 
-class HalBarometer : public SensorDriver {
+class HalBarometer : public Driver {
 public:
-	HalBarometer();
+	typedef struct {
+		/** @brief Pressure in mBar */
+		float pressure;
+		/** @brief Temperature in cDeg  */
+		int32_t temperature;
+		/** @brief Are measurement available */
+		bool isAvailable;
+	} Output;
+	typedef struct {
+	} RawOutput;
+
+public:
+	HalBarometer(
+			/* Inputs */
+			/* Outputs */
+			Output& out
+			/* Parameters */
+			);
 	virtual ~HalBarometer();
 
-	/** @brief Raw pressure */
-	inline uint32_t& readRawPressure() ;
+	/** @brief Initialize the HW */
+	virtual ::infra::status initialize() ;
 
-	/** @brief Raw temperature */
-	inline uint32_t& readRawTemperature() ;
+	/** @brief Reset the HW */
+	virtual ::infra::status reset() ;
+
+	/** @brief Execute the driver */
+	virtual ::infra::status execute() = 0;
 
 protected:
-
-	/** @brief Raw pressure */
-	uint32_t _rawPressure;
-
-	/** @brief Raw temperature */
-	uint32_t _rawTemperature;
-
+	/** @brief Output interface*/
+	Output& _out;
 };
-
-/** @brief Raw pressure */
-inline uint32_t& HalBarometer::readRawPressure()
-{
-	return _rawPressure;
-}
-
-/** @brief Raw temperature */
-inline uint32_t& HalBarometer::readRawTemperature()
-{
-	return _rawTemperature;
-}
 
 } /* namespace hw */
 #endif /* HALBAROMETER_HPP_ */

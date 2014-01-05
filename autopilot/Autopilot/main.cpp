@@ -19,7 +19,16 @@
 #include <board/apm/include/Apm25.hpp>
 #include <system/system/include/System.hpp>
 
-static board::Apm25 boardApm25;
+board::Apm25::Param param = {
+	{ /* imu */
+		hw::HalImuMpu6000::E_GYR_CNF_500DPS, /* gyrCnf */
+		hw::HalImuMpu6000::E_ACC_CNF_4G, /* accCnf */
+		hw::HalImuMpu6000::E_UPT_FREQ_100HZ /* frequence */
+	} /* imu */
+};
+static board::Apm25 boardApm25(param);
+board::Board& board::Board::board = boardApm25;
+
 static system::System sys(boardApm25);
 system::System& system::System::system = sys;
 

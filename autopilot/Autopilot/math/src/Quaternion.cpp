@@ -17,86 +17,86 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../include/MathUtils.hpp"
-#include "../include/Quaternion.hpp"
+#include <math/include/Quaternion.hpp>
+#include <math/include/MathUtils.hpp>
 
 namespace math {
 
 // constructor creates a quaternion equivalent
 // to roll=0, pitch=0, yaw=0
 Quaternion::Quaternion() :
-	_scalar(1.),
-	_vector(0.,0.,0.) 
+	scalar(1.),
+	vector(0.,0.,0.)
 	{
 }
 
 // Copy existing quaternion
 Quaternion::Quaternion(const Quaternion& q):
-	_scalar(q._scalar),
-	_vector(q._vector)
+	scalar(q.scalar),
+	vector(q.vector)
 {
 }
 
 // setting constructor
-Quaternion::Quaternion(const float q1, const float q2, const float q3, const float q4) :
-	_scalar(q1),
-	_vector(q2,q3,q4) 
+Quaternion::Quaternion(const float& q1, const float& q2, const float& q3, const float& q4) :
+	scalar(q1),
+	vector(q2,q3,q4)
 	{
 }
 
 // setting constructor
-Quaternion::Quaternion(const float scal, const Vector3f& vect) :
-	_scalar(scal),
-	_vector(vect) 
+Quaternion::Quaternion(const float& scal, const Vector3<float>& vect) :
+	scalar(scal),
+	vector(vect)
 	{
 }
 
 // function call operator
-void Quaternion::operator ()(const float q1, const float q2, const float q3, const float q4)
+void Quaternion::operator ()(const float& q1, const float& q2, const float& q3, const float& q4)
 {
-	_scalar = q1;
-	_vector(q2,q3,q4);
+	scalar = q1;
+	vector(q2,q3,q4);
 }
 
 // function call operator
-void Quaternion::operator ()(const float scal, const Vector3f& vect)
+void Quaternion::operator ()(const float& scal, const Vector3<float>& vect)
 {
-	_scalar = scal;
-	_vector(vect);
+	scalar = scal;
+	vector(vect);
 }
 
 // Copy existing quaternion
 void Quaternion::operator ()(const Quaternion& q)
 {
-	_scalar = q._scalar;
-	_vector = q._vector;
+	scalar = q.scalar;
+	vector = q.vector;
 }
 
 // function addition
 void Quaternion::add(const Quaternion& q1, const Quaternion& q2, Quaternion& qRes) {
-	qRes._scalar = q1._scalar + q2._scalar;
-	Vector3f::add(q1._vector, q2._vector, qRes._vector);
+	qRes.scalar = q1.scalar + q2.scalar;
+	Vector3<float>::add(q1.vector, q2.vector, qRes.vector);
 }
 
 // function addition
-Quaternion Quaternion::operator + (const Quaternion& q)
+Quaternion Quaternion::operator + (const Quaternion& q) const
 {
-	return Quaternion(this->_scalar + q._scalar, this->_vector + q._vector);
+	return Quaternion(this->scalar + q.scalar, this->vector + q.vector);
 }
 
 
 // return the rotation matrix equivalent for this quaternion
-void Quaternion::to_dcm(Matrix3f& m)
+void Quaternion::to_dcm(Matrix3<float>& m) const
 {
-    float q3q3 = _vector.y * _vector.y;
-    float q3q4 = _vector.y * _vector.z;
-    float q2q2 = _vector.x * _vector.x;
-    float q2q3 = _vector.x * _vector.y;
-    float q2q4 = _vector.x * _vector.z;
-    float q1q2 = _scalar * _vector.x;
-    float q1q3 = _scalar * _vector.y;
-    float q1q4 = _scalar * _vector.z;
-    float q4q4 = _vector.z * _vector.z;
+    float q3q3 = vector.y * vector.y;
+    float q3q4 = vector.y * vector.z;
+    float q2q2 = vector.x * vector.x;
+    float q2q3 = vector.x * vector.y;
+    float q2q4 = vector.x * vector.z;
+    float q1q2 = scalar * vector.x;
+    float q1q3 = scalar * vector.y;
+    float q1q4 = scalar * vector.z;
+    float q4q4 = vector.z * vector.z;
 
     m.a.x = 1.-2.*(q3q3 + q4q4);
     m.a.y =    2.*(q2q3 - q1q4);
@@ -110,31 +110,31 @@ void Quaternion::to_dcm(Matrix3f& m)
 }
 
 // return the rotation matrix equivalent for this quaternion
-void Quaternion::from_dcm(const Matrix3f& m)
+void Quaternion::from_dcm(const Matrix3<float>& m)
 {
 	float den;
 	float tmp1 = 1.+m.a.x+m.b.y+m.c.z;
 	float tmp2 = 1.+m.a.x-m.b.y-m.c.z;
 	if (tmp1>tmp2)
 	{
-		_scalar = 0.5 * sqrt(tmp1);
-		den = (4.*_scalar);
-		_vector.x = (m.c.y-m.b.z) / den ;
-		_vector.y = (m.a.z-m.c.x) / den ;
-		_vector.z = (m.b.x-m.a.y) / den ;
+		scalar = 0.5 * sqrt(tmp1);
+		den = (4.*scalar);
+		vector.x = (m.c.y-m.b.z) / den ;
+		vector.y = (m.a.z-m.c.x) / den ;
+		vector.z = (m.b.x-m.a.y) / den ;
 	}
 	else
 	{
-		_vector.x = 0.5 * sqrt(tmp2);
-		den = (4.*_vector.x);
-		_vector.y = (m.a.y+m.b.x) / den ;
-		_vector.z = (m.a.z+m.c.x) / den ;
-		_scalar = (m.c.y-m.b.z) / den ;
+		vector.x = 0.5 * sqrt(tmp2);
+		den = (4.*vector.x);
+		vector.y = (m.a.y+m.b.x) / den ;
+		vector.z = (m.a.z+m.c.x) / den ;
+		scalar = (m.c.y-m.b.z) / den ;
 	}
 }
 
 //// convert a vector from earth to body frame
-//void Quaternion::earth_to_body(Vector3f& v)
+//void Quaternion::earth_to_body(Vector3<float>& v)
 //{
 //    Matrix3f m;
 //    // we reverse z before and afterwards because of the differing
@@ -146,7 +146,7 @@ void Quaternion::from_dcm(const Matrix3f& m)
 //}
 
 // create a quaternion from Euler angles
-void Quaternion::from_euler(float roll, float pitch, float yaw)
+void Quaternion::from_euler(const float& roll, const float& pitch, const float& yaw)
 {
     float cr2 = cos(roll*0.5);
     float cp2 = cos(pitch*0.5);
@@ -155,29 +155,29 @@ void Quaternion::from_euler(float roll, float pitch, float yaw)
     float sp2 = sin(pitch*0.5);
     float sy2 = sin(yaw*0.5);
 
-    _scalar = cr2*cp2*cy2 + sr2*sp2*sy2;
-    _vector.x = sr2*cp2*cy2 - cr2*sp2*sy2;
-    _vector.y = cr2*sp2*cy2 + sr2*cp2*sy2;
-    _vector.z = cr2*cp2*sy2 - sr2*sp2*cy2;
+    scalar = cr2*cp2*cy2 + sr2*sp2*sy2;
+    vector.x = sr2*cp2*cy2 - cr2*sp2*sy2;
+    vector.y = cr2*sp2*cy2 + sr2*cp2*sy2;
+    vector.z = cr2*cp2*sy2 - sr2*sp2*cy2;
 }
 
 // create eulers from a quaternion 3-1-3 convention
-void Quaternion::to_euler(float& roll, float& pitch, float& yaw)
+void Quaternion::to_euler(float& roll, float& pitch, float& yaw) const
 {
-//	roll = (atan2(2.*(_scalar*_vector.x + _vector.y*_vector.z),
-//				   1. - 2.*(_vector.x*_vector.x + _vector.y*_vector.y)));
+//	roll = (atan2(2.*(scalar*vector.x + vector.y*vector.z),
+//				   1. - 2.*(vector.x*vector.x + vector.y*vector.y)));
 //	// we let safe_asin() handle the singularities near 90/-90 in pitch
-//	pitch = safe_asin(2.*(_scalar*_vector.y - _vector.z*_vector.x));
+//	pitch = safe_asin(2.*(scalar*vector.y - vector.z*vector.x));
 //
-//	yaw = atan2(2.*(_scalar*_vector.z + _vector.x*_vector.y),
-//				 1. - 2.*(_vector.y*_vector.y + _vector.z*_vector.z));
-	roll = (atan2((_scalar*_vector.y + _vector.x*_vector.z),
-				   -(_vector.x*_vector.y - _scalar*_vector.z)));
+//	yaw = atan2(2.*(scalar*vector.z + vector.x*vector.y),
+//				 1. - 2.*(vector.y*vector.y + vector.z*vector.z));
+	roll = (atan2((scalar*vector.y + vector.x*vector.z),
+				   -(vector.x*vector.y - scalar*vector.z)));
 	// we let safe_asin() handle the singularities near 90/-90 in pitch
-	pitch = acos(-_scalar*_scalar-_vector.x*_vector.x+_vector.y*_vector.y+_vector.z*_vector.z);
+	pitch = acos(-scalar*scalar-vector.x*vector.x+vector.y*vector.y+vector.z*vector.z);
 
-	yaw = atan2((_scalar*_vector.y - _vector.x*_vector.z),
-				(_vector.x*_vector.y + _scalar*_vector.z));
+	yaw = atan2((scalar*vector.y - vector.x*vector.z),
+				(vector.x*vector.y + scalar*vector.z));
 }
 
 
@@ -187,81 +187,76 @@ void Quaternion::to_euler(float& roll, float& pitch, float& yaw)
 void Quaternion::operator ()(const float scal, const float vectX, const float vectY, const float vectZ);
 
 // function call operator
-void Quaternion::operator ()(const float scal, const Vector3f& vect);
+void Quaternion::operator ()(const float scal, const Vector3<float>& vect);
 */
-
-Quaternion Quaternion::operator - (const Quaternion& q)
+Quaternion Quaternion::operator - (const Quaternion& q) const
 {
-	return Quaternion(_scalar - q._scalar, _vector - q._vector);
+	return Quaternion(scalar - q.scalar, vector - q.vector);
 }
 
 
 /** @brief Substract and store */
 Quaternion& Quaternion::operator -= (const Quaternion& q)
 {
-	_scalar -= q._scalar;
-	_vector -= q._vector;
+	scalar -= q.scalar;
+	vector -= q.vector;
 	return *this;
 }
 
 /** @brief Addition and store */
 Quaternion& Quaternion::operator += (const Quaternion& q)
 {
-	_scalar += q._scalar;
-	_vector += q._vector;
+	scalar += q.scalar;
+	vector += q.vector;
 	return *this;
 }
 
 /** @brief Multiplication */
 void Quaternion::mult(const Quaternion& q1, const Quaternion& q2, Quaternion& qRes)
 {
-	qRes._scalar = q1._scalar*q2._scalar - (q1._vector*q2._vector);
-	qRes._vector = (q1._vector*q2._scalar) + (q2._vector*q1._scalar) + (q1._vector%q2._vector);
+	qRes.scalar = q1.scalar*q2.scalar - (q1.vector*q2.vector);
+	qRes.vector = (q1.vector*q2.scalar) + (q2.vector*q1.scalar) + (q1.vector%q2.vector);
 }
 
-Quaternion Quaternion::operator * (const Quaternion& q)
+Quaternion Quaternion::operator * (const Quaternion& q) const
 {
 	return Quaternion(
-			_scalar*q._scalar - (_vector*q._vector),
-			(_vector*q._scalar) + (q._vector*_scalar) + (_vector%q._vector));
+			scalar*q.scalar - (vector*q.vector),
+			(vector*q.scalar) + (q.vector*scalar) + (vector%q.vector));
 }
 
 
 /** @brief Conjugate */
 void Quaternion::conj(Quaternion& q)
 {
-	q._vector *= (-1.);
+	q.vector *= (-1.);
 }
-Quaternion Quaternion::operator ~ ()
+
+Quaternion Quaternion::operator ~ () const
 {
-	return Quaternion(_scalar, _vector * (-1.));
+	return Quaternion(scalar, vector * (-1.));
 }
 
 /** @brief Norm */
 float Quaternion::norm()
 {
-	return sqrt(_scalar*_scalar+_vector*_vector);
-}
-
-void Quaternion::normalize(Quaternion& q)
-{
-	float norm = q.norm();
-	q._scalar /= norm;
-	q._vector /= norm;
+	return sqrt(scalar*scalar+vector*vector);
 }
 
 /** @brief Normalize */
-Quaternion Quaternion::normalize()
+float Quaternion::normalize(int8_t nIter, float guess)
 {
-	float norm = this->norm();
-	return Quaternion(_scalar/norm, _vector/norm);
+	float invNrm = iter_invSqrt(guess, nIter, scalar * scalar + vector * vector);
+	scalar *= invNrm;
+	vector *= invNrm;
+	return invNrm;
 }
 
 /** @brief Multiply and store */
 Quaternion& Quaternion::operator *= (const Quaternion& q)
 {
-	_scalar = _scalar*q._scalar - (_vector*q._vector);
-	_vector = (_vector*q._scalar) + (q._vector*_scalar) + (_vector%q._vector);
+	scalar = scalar*q.scalar - (vector*q.vector);
+	vector = (vector*q.scalar) + (q.vector*scalar) + (vector%q.vector);
 	return *this;
 }
 
@@ -273,11 +268,11 @@ Quaternion& Quaternion::operator *= (const Quaternion& q)
  *
  * Where q_BI is the rotation from B to I;
  */
-Vector3f Quaternion::rotateQconjVQ (const Vector3f& v_I)
+Vector3<float> Quaternion::rotateQconjVQ (const Vector3<float>& v_I) const
 {
 	Quaternion  qVect_I(0., v_I);
 	Quaternion  qVect_B = (~(*this))*qVect_I*(*this);
-	return qVect_B._vector;
+	return qVect_B.vector;
 }
 
 /** @brief Rotation using
@@ -288,17 +283,17 @@ Vector3f Quaternion::rotateQconjVQ (const Vector3f& v_I)
  *
  * Where q_BI is the rotation from B to I;
  */
-Vector3f Quaternion::rotateQVQconj (const Vector3f& v_B)
+Vector3<float> Quaternion::rotateQVQconj (const Vector3<float>& v_B) const
 {
 	Quaternion  qVect_B(0., v_B);
 	Quaternion  qVect_I = (*this)*qVect_B*(~(*this));
-	return qVect_I._vector;
+	return qVect_I.vector;
 }
 
 
-bool Quaternion::is_nan(void)
+bool Quaternion::is_nan(void) const
 {
-	return isnan(_scalar) || _vector.is_nan();
+	return (isnan(scalar) || vector.is_nan());
 }
 
 /*
@@ -310,5 +305,37 @@ void Quaternion::from_euler(float roll, float pitch, float yaw);
 // create eulers from a quaternion
 void Quaternion::to_euler(float& roll, float& pitch, float& yaw);
 */
+
+/** @brief Multiply by scalar and store */
+Quaternion& Quaternion::operator *= (const float& scal)
+{
+	scalar *= scal;
+	vector *= scal;
+	return *this;
+}
+
+/** @brief Divide by scalar and store */
+Quaternion& Quaternion::operator /= (const float& scal)
+{
+	scalar /= scal;
+	vector /= scal;
+	return *this;
+}
+
+/** @brief Multiply by scalar */
+Quaternion Quaternion::operator * (const float& scal)
+{
+	Quaternion res = *this;
+	res *= scal;
+	return res;
+}
+
+/** @brief Divide by scalar */
+Quaternion Quaternion::operator / (const float& scal)
+{
+	Quaternion res = *this;
+	res /= scal;
+	return res;
+}
 
 }

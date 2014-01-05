@@ -8,12 +8,12 @@
 #ifndef DATASTREAM_HPP_
 #define DATASTREAM_HPP_
 
-#include <mavlink/v1.0/common/mavlink.h>
-#include <arch/include/Process.hpp>
+#include <common/mavlink.h>
+#include <arch/app/include/Process.hpp>
 
 namespace mavlink {
 
-class DataStream : public arch::Process{
+class DataStream : public infra::Process{
 public:
 	DataStream(mavlink_channel_t port);
 	virtual ~DataStream();
@@ -28,10 +28,10 @@ public:
 	void start(uint16_t periodMs);
 
 	/** @brief Init the process */
-	virtual status initialize();
+	virtual infra::status initialize();
 
 	/** @brief Execute the process */
-	virtual status execute();
+	virtual infra::status execute();
 
 protected:
 	/** @brief Sample the stream */

@@ -18,6 +18,8 @@
 #include <inttypes.h>
 #include <FilterWithBuffer.hpp>
 
+namespace autom {
+
 template <class T, uint8_t DELAY_STEP>
 class Delay : public FilterWithBuffer<T,DELAY_STEP>
 {
@@ -66,6 +68,7 @@ typedef Delay<uint32_t,5> DelayUInt32_Size5;
 typedef Delay<uint32_t,6> DelayUInt32_Size6;
 typedef Delay<uint32_t,7> DelayUInt32_Size7;
 
+} /* namespace autom */
 #endif
 
 

@@ -8,6 +8,7 @@
 #ifndef MATHUTILS_HPP_
 #define MATHUTILS_HPP_
 
+#include <stdint.h>
 #include <math/include/MathMacro.hpp>
 
 namespace math {
@@ -23,6 +24,8 @@ extern float safe_asin(float v);
 // code is usually caused by small numerical rounding errors, so the
 // real input should have been zero
 extern float safe_sqrt(float v);
+
+extern float iter_invSqrt(float guess, int8_t nIter, const float& S);
 
 }
 

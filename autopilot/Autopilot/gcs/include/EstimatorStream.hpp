@@ -10,12 +10,13 @@
 
 #include "DataStream.hpp"
 #include <math/include/Quaternion.hpp>
+#include <autom/est/include/Estimator.hpp>
 
 namespace mavlink {
 
 class EstimatorStream : public DataStream {
 public:
-	EstimatorStream(mavlink_channel_t port);
+	EstimatorStream(mavlink_channel_t port, const autom::Estimator::Estimations& est);
 	virtual ~EstimatorStream();
 
 protected:
@@ -26,6 +27,9 @@ protected:
 	virtual void sendData();
 
 protected:
+	/** @brief Estimations */
+	const autom::Estimator::Estimations& _est;
+
 	/** @brief Attitude quaternion */
 	math::Quaternion _q_BI;
 

@@ -8,14 +8,15 @@
 #ifndef SYSTEM_HPP_
 #define SYSTEM_HPP_
 
-#include <arch/include/Process.hpp>
+#include <arch/app/include/Process.hpp>
 #include <board/gen/include/Board.hpp>
 #include <gcs/include/MavServiceManager.hpp>
-#include <autom/est/include/AhrsEstimator.hpp>
+//#include <autom/est/include/AhrsEstimator.hpp>
+#include <autom/mgt/include/Ancs.hpp>
 
 namespace system {
 
-class System : public arch::Process {
+class System : public infra::Process {
 public:
 	static System& system;
 
@@ -24,10 +25,10 @@ public:
 	virtual ~System();
 
 	/** @brief Init the process */
-	virtual status initialize();
+	virtual infra::status initialize();
 
 	/** @brief Execute the process */
-	virtual status execute();
+	virtual infra::status execute();
 
 	/** @brief Get house keeping */
 	inline mavlink::ParameterMgt& getParameterMgt();
@@ -39,14 +40,17 @@ public:
 	inline mavlink::MavServiceManager& getMavSvcMgr();
 
 	/** @brief Estimator */
-	virtual inline autom::Estimator& getEstimator();
+//	virtual inline autom::Estimator& getEstimator();
 
 	/** @brief Get board */
 	inline board::Board& getBoard();
 
+	autom::Ancs _mgt;
+
 protected:
 	/** @brief Board */
 	board::Board& _board;
+
 
 	/** @brief Mode management */
 	mavlink::ModeMgt _modeMgt;
@@ -76,7 +80,8 @@ protected:
 	mavlink::MavServiceManager _mavSvcMgt;
 
 	/** @brief Estimator */
-	autom::AhrsEstimator _est;
+//	autom::AhrsEstimator _est;
+
 
 };
 
@@ -98,11 +103,11 @@ inline mavlink::MavServiceManager& System::getMavSvcMgr()
 	return _mavSvcMgt;
 }
 
-/** @brief Estimator */
-inline autom::Estimator& System::getEstimator()
-{
-	return _est;
-}
+///** @brief Estimator */
+//inline autom::Estimator& System::getEstimator()
+//{
+//	return _est;
+//}
 
 /** @brief Get house keeping */
 inline mavlink::ParameterMgt& System::getParameterMgt()

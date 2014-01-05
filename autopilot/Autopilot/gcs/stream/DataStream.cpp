@@ -62,7 +62,7 @@ void DataStream::sample()
 /** @brief Sample the date */
 void DataStream::sampleDate()
 {
-	_date = (uint64_t) millis();
+	_date = (uint64_t) micros();
 }
 
 /** @brief Update data stream */
@@ -77,7 +77,7 @@ void DataStream::update()
 }
 
 /** @brief Init the process */
-status DataStream::initialize()
+infra::status DataStream::initialize()
 {
 	_counter = 0;
 	_period = 0;
@@ -86,7 +86,7 @@ status DataStream::initialize()
 }
 
 /** @brief Execute the process */
-status DataStream::execute()
+infra::status DataStream::execute()
 {
 	if ((_period != 0) && (_counter == 0))
 	{
