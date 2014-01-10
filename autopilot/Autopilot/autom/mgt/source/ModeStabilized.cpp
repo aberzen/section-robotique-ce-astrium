@@ -5,36 +5,31 @@
  *      Author: Robotique
  */
 
-//#include <hw/serial/include/FastSerial.hpp>
+#include <hw/serial/include/FastSerial.hpp>
 #include <autom/mgt/include/ModeStabilized.hpp>
 
-#define MODE_STABILIZED_RC_PITCH	0
-#define MODE_STABILIZED_RC_YAWRATE	1
+#define MODE_STABILIZED_RC_ROLL		0
+#define MODE_STABILIZED_RC_PITCH	1
 #define MODE_STABILIZED_RC_THRUST	2
-#define MODE_STABILIZED_RC_ROLL		3
+#define MODE_STABILIZED_RC_YAWRATE	3
 
 namespace autom {
+
 
 ModeStabilized::ModeStabilized(
 		/* Input */
 		const Estimator::Estimations& est,
-		const ::math::Vector3f& force_I,
 		/* Outputs */
-		AttGuid::Output& attCtrlIn,
-		NavGuid::Output& navCtrlIn,
+		::math::Vector3f& torque_B,
 		::math::Vector3f& force_B,
 		/* Parameters */
 		const float& dt,
-		const ::autom::ModeStabilized::Param& param,
-		const ControllerPid3Axes::Param& paramAttCtrl,
-		const ControllerPid3Axes::Param& paramNavCtrl,
-		/* Dependencies */
-		AttitudeController& attCtrl,
-		NavigationController& navCtrl
+		const ::autom::ModeStabilized::Param& param
 		)
-: Mode(est, force_I, attCtrlIn, navCtrlIn, force_B, paramAttCtrl, paramNavCtrl, attCtrl, navCtrl),
+: Mode(est, torque_B, force_B),
   _dt(dt),
   _param(param),
+  _attCtrl(_guidAtt, _est, _torque_B, _dt, _param.attCtrl),
   _rotZ(1.,0.,0.,0.),
   _prevInvNormRotZ(1.),
   _prevInvNormGuid(1.),
@@ -51,7 +46,10 @@ ModeStabilized::~ModeStabilized() {
 /** @brief Init the process */
 ::infra::status ModeStabilized::initialize()
 {
-	::infra::status res = Mode::initialize();
+	::infra::status res;
+	/* Reinitialize the attitude controller */
+//	_attCtrl.setParam(_param.attCtrl);
+	res = _attCtrl.initialize();
 	if (res < 0)
 		return res;
 
@@ -82,28 +80,38 @@ ModeStabilized::~ModeStabilized() {
 ::infra::status ModeStabilized::execute()
 {
 	float tmp;
-	float angleRoll = 0.;
-	float anglePitch = 0.;
-	float rateYaw = 0.;
+	float angleRoll = this->_angleRollPrev;
+	float anglePitch = this->_anglePitchPrev;
+	float rateYaw = this->_guidAtt.angRateDem_B.z;
 	float thrust = _thrustPrev;
 
 	hw::Pwm::Output& rc = board::Board::board.radio;
 	if (rc.isAvailable)
 	{
 		/* Compute roll and pitch from user inputs */
-		tmp = (float) (((int16_t)rc.channels[MODE_STABILIZED_RC_ROLL])-((MAX_PULSEWIDTH+MIN_PULSEWIDTH) >> 1));
-		angleRoll = ldexpf(tmp, _param.rollPwmScale);
+		tmp = (float) ((((int16_t)rc.channels[MODE_STABILIZED_RC_ROLL])-((MAX_PULSEWIDTH+MIN_PULSEWIDTH) >> 1)) * _param.rollPwmScale);
+		angleRoll = ldexpf(tmp, _param.rollPwmScaleExp);
 
-		tmp = (float) (((int16_t)rc.channels[MODE_STABILIZED_RC_PITCH])-((MAX_PULSEWIDTH+MIN_PULSEWIDTH) >> 1));
-		anglePitch = ldexpf(tmp, _param.pitchPwmScale);
+		tmp = (float) ((((int16_t)rc.channels[MODE_STABILIZED_RC_PITCH])-((MAX_PULSEWIDTH+MIN_PULSEWIDTH) >> 1)) * _param.pitchPwmScale);
+		anglePitch = ldexpf(tmp, _param.pitchPwmScaleExp);
 
 		/* Compute yaw rate from user inputs */
-		tmp = (float) (((int16_t)rc.channels[MODE_STABILIZED_RC_YAWRATE])-((MAX_PULSEWIDTH+MIN_PULSEWIDTH) >> 1));
-		rateYaw = ldexpf(tmp, _param.yawRatePwmScale);
+		tmp = (float) ((((int16_t)rc.channels[MODE_STABILIZED_RC_YAWRATE])-((MAX_PULSEWIDTH+MIN_PULSEWIDTH) >> 1)) * _param.yawRatePwmScale);
+		if (math_abs(tmp) > 10)
+			rateYaw = ldexpf(tmp, _param.yawRatePwmScaleExp);
+		else
+			rateYaw = 0.;
 
 		/* Compute thrust from user inputs */
-		tmp = (float) (((int16_t)rc.channels[MODE_STABILIZED_RC_THRUST])-MIN_PULSEWIDTH);
-		thrust = ldexpf(tmp, _param.thrustPwmScale);
+		tmp = (float) ((((int16_t)rc.channels[MODE_STABILIZED_RC_THRUST])-MIN_PULSEWIDTH - 300) * _param.thrustPwmScale);
+		thrust = ldexpf(tmp, _param.thrustPwmScaleExp);
+
+
+//		Serial.printf("radio{%d} = [%d %d %d %d]\n", rc.isAvailable, rc.channels[0], rc.channels[1], rc.channels[2], rc.channels[3]);
+//		Serial.printf("anglePitch = %.5f\n", anglePitch);
+//		Serial.printf("angleRoll = %.5f\n", angleRoll);
+//		Serial.printf("rateYaw = %.5f\n", rateYaw);
+//		Serial.printf("thrust= %.5f\n", thrust);
 	}
 
 	/* Compute seat quaternion */
@@ -125,13 +133,13 @@ ModeStabilized::~ModeStabilized() {
 //	Serial.printf("_prevInvNormRotZ = %.5f\n", _prevInvNormRotZ);
 
 	/* Compute commanded attitude */
-	_attCtrlIn.qDem_IB = _rotZ * dQSeat;
+	_guidAtt.qDem_IB = _rotZ * dQSeat;
 //	Serial.printf("_prevInvNormGuid (prev) = %.5f\n", _prevInvNormGuid);
-	_prevInvNormGuid = _attCtrlIn.qDem_IB.normalize(1,_prevInvNormGuid);
+	_prevInvNormGuid = _guidAtt.qDem_IB.normalize(1,_prevInvNormGuid);
 //	Serial.printf("_prevInvNormGuid = %.5f\n", _prevInvNormGuid);
 
 	/* Update acceleration and rate */
-	_attCtrlIn.angRateDem_B((angleRoll-_angleRollPrev)/_dt, (anglePitch-_anglePitchPrev)/_dt, rateYaw);
+	_guidAtt.angRateDem_B((angleRoll-_angleRollPrev)/_dt, (anglePitch-_anglePitchPrev)/_dt, rateYaw);
 	_angleRollPrev = angleRoll;
 	_anglePitchPrev = anglePitch;
 
@@ -140,13 +148,27 @@ ModeStabilized::~ModeStabilized() {
 //	Serial.printf("anglePitch = %.5f\n", anglePitch);
 //	Serial.printf("angleRoll = %.5f\n", angleRoll);
 //	Serial.printf("rateYaw = %.5f\n", rateYaw);
-//	Serial.printf("qDem_IB = {%.5f %.5f %.5f %.5f}\n", _attCtrlIn.qDem_IB.scalar, _attCtrlIn.qDem_IB.vector.x, _attCtrlIn.qDem_IB.vector.y, _attCtrlIn.qDem_IB.vector.z);
-//	Serial.printf("rateDem_B = {%.5f %.5f %.5f}\n", _attCtrlIn.angRateDem_B.x, _attCtrlIn.angRateDem_B.y, _attCtrlIn.angRateDem_B.z);
+//	Serial.printf("qDem_IB = {%.5f %.5f %.5f %.5f}\n", _guidAtt.qDem_IB.scalar, _guidAtt.qDem_IB.vector.x, _guidAtt.qDem_IB.vector.y, _guidAtt.qDem_IB.vector.z);
+//	Serial.printf("rateDem_B = {%.5f %.5f %.5f}\n", _guidAtt.angRateDem_B.x, _guidAtt.angRateDem_B.y, _guidAtt.angRateDem_B.z);
 
 
 	/* Compute demanded force */
-	_force_B = _param.thrustDir_B * (_param.mass*thrust);
+	if (thrust < 0.)
+	{
+		thrust = 0.;
+		_thrustPrev = thrust;
+		this->_force_B(0.,0.,0.);
+		this->_torque_B(0.,0.,0.);
+		return 0;
+	}
+
+	tmp = _param.mass*thrust;
+	this->_force_B(_param.thrustDir_B_x * tmp, _param.thrustDir_B_y * tmp, _param.thrustDir_B_z * tmp);
 	_thrustPrev = thrust;
+//	Serial.printf("_force_B = %.5f %.5f %.5f\n", this->_force_B.x, this->_force_B.y, this->_force_B.z);
+//	Serial.printf("_param.thrustPwm = %d %d\n", _param.thrustPwmScale, _param.thrustPwmScaleExp);
+//	Serial.printf("_param.thrustDir_B = %.5f %.5f %.5f\n", this->_param.thrustDir_B_x, this->_param.thrustDir_B_y, this->_param.thrustDir_B_z);
+//	Serial.printf("_param.mass = %.5f\n", _param.mass);
 
 	/* Execute attitude control */
 	return _attCtrl.execute();

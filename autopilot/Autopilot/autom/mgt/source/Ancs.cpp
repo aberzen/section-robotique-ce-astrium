@@ -8,7 +8,7 @@
 #include <autom/mgt/include/Ancs.hpp>
 #include <board/gen/include/Board.hpp>
 
-//#include <hw/serial/include/FastSerial.hpp>
+#include <infra/include/Task.hpp>
 
 namespace autom {
 
@@ -16,25 +16,6 @@ Ancs::Ancs(
 		const float& dt,
 		const Ancs::Param& param) :
 _param(param),
-_attCtrl(
-		/* Inputs */
-		_demAttData,
-		_estVal,
-		/* Outputs */
-		_torque_B,
-		/* Parameters */
-		dt,
-		_param.stabilized.att),
-_navCtrl(
-		/* Inputs */
-		_demNavData,
-		_estVal,
-		/* Outputs */
-		_force_I,
-		/* Parameters */
-		dt,
-		_param.stabilized.nav
-		),
 _procImuCalib(
 		::board::Board::board.meas.imu,
 		_estVal,
@@ -56,20 +37,14 @@ _procCompDec(
 		 _torque_B,
 		 _force_B,
 		 board::Board::board.pwmVal,
-		 param.mod
+		 _param.mod
 		 ),
  _modeStabilitized(
 		_estVal,
-		_force_I,
-		_demAttData,
-		_demNavData,
+		_torque_B,
 		_force_B,
 		dt,
-		param.modeStabilized,
-		param.stabilized.att,
-		param.stabilized.nav,
-		_attCtrl,
-		_navCtrl
+		_param.modeStabilized
 		 )
 {
 }
@@ -85,8 +60,6 @@ infra::status Ancs::initialize()
 	_procImuCalib.initialize();
 	_procCompDec.initialize();
 	_mod.initialize();
-	_attCtrl.initialize();
-	_navCtrl.initialize();
 	_est.initialize();
 	return 0;
 }
@@ -146,15 +119,8 @@ infra::status Ancs::assertTransitions()
 			board::Board::board.getPwm().enable_out(1);
 			board::Board::board.getPwm().enable_out(2);
 			board::Board::board.getPwm().enable_out(3);
-			board::Board::board.getPwm().enable_out(4);
-			board::Board::board.getPwm().enable_out(5);
-			board::Board::board.getPwm().enable_out(6);
-			board::Board::board.getPwm().enable_out(7);
-			board::Board::board.getPwm().enable_out(8);
-			board::Board::board.getPwm().enable_out(9);
-			board::Board::board.getPwm().enable_out(10);
+
 			_modeStabilitized.initialize();
-//			Serial.printf("Move to stabilized\n");
 			_state = E_STATE_FLYING;
 		}
 		break;
@@ -248,14 +214,14 @@ infra::status Ancs::stepReady()
 	_force_B(0., 0., 0.);
 	_torque_B(0., 0., 0.);
 
-	/* Process PWM */
-	_mod.execute();
-
 	/* Process board */
 	board::Board::board.execute();
 
 	/* Compute estimation */
 	_est.execute();
+
+	/* Process PWM */
+	_mod.execute();
 
 	return 0;
 }
@@ -263,9 +229,6 @@ infra::status Ancs::stepReady()
 /** @brief Step flying */
 infra::status Ancs::stepFlying()
 {
-	/* Process PWM */
-	_mod.execute();
-
 	/* Process board */
 	board::Board::board.execute();
 
@@ -275,12 +238,16 @@ infra::status Ancs::stepFlying()
 	/* Process stabilized mode */
 	_modeStabilitized.execute();
 
-//	Serial.printf("qDem_IB = [%.5f %.5f %.5f %.5f]\n", _demAttData.qDem_IB.scalar, _demAttData.qDem_IB.vector.x, _demAttData.qDem_IB.vector.y, _demAttData.qDem_IB.vector.z);
+	/* Process PWM */
+	_mod.execute();
+
+//	Serial.printf("qDem_IB = [%.5f %.5f %.5f %.5f]\n", this->.qDem_IB.scalar, _demAttData.qDem_IB.vector.x, _demAttData.qDem_IB.vector.y, _demAttData.qDem_IB.vector.z);
 //	Serial.printf("rateDem_B = [%.5f %.5f %.5f]\n", _demAttData.angRateDem_B.x, _demAttData.angRateDem_B.y, _demAttData.angRateDem_B.z);
 //	Serial.printf("torque_B = [%.5f %.5f %.5f]\n", _torque_B.x, _torque_B.y, _torque_B.z);
 //	Serial.printf("force_B = [%.5f %.5f %.5f]\n", _force_B.x, _force_B.y, _force_B.z);
-//	Serial.printf("%d %d %d %d\n", board::Board::board.pwmVal.channels[0], board::Board::board.pwmVal.channels[1], board::Board::board.pwmVal.channels[2], board::Board::board.pwmVal.channels[3]);
-//	Serial.printf("%.5f;%.5f;%.5f;%.5f;%.5f;%.5f\n", _torque_B.x, _torque_B.y, _torque_B.z, _force_B.x, _force_B.y, _force_B.z);
+	Serial.printf("%d %d %d %d %d\n", board::Board::board.radio.isAvailable, board::Board::board.radio.channels[0], board::Board::board.radio.channels[1], board::Board::board.radio.channels[2], board::Board::board.radio.channels[3]);
+	Serial.printf("%.5f;%.5f;%.5f;%.5f;%.5f;%.5f\n", _torque_B.x, _torque_B.y, _torque_B.z, _force_B.x, _force_B.y, _force_B.z);
+	Serial.printf("%d %d %d %d\n", board::Board::board.pwmVal.channels[0], board::Board::board.pwmVal.channels[1], board::Board::board.pwmVal.channels[2], board::Board::board.pwmVal.channels[3]);
 
 	return 0;
 }

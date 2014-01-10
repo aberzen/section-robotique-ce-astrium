@@ -10,15 +10,10 @@
 
 #include <hw/serial/include/FastSerial.hpp>
 #include <arch/app/include/Process.hpp>
-#include <autom/ctrl/include/AttitudeController.hpp>
-#include <autom/ctrl/include/NavigationController.hpp>
-#include <autom/est/include/Estimator.hpp>
 #include <autom/est/include/SimpleAttitudeKalmanFilter.hpp>
-#include <autom/guid/include/AttGuid.hpp>
-#include <autom/guid/include/NavGuid.hpp>
 #include <autom/proc/include/ProcCalibGyroBias.hpp>
 #include <autom/proc/include/ProcCompassDeclination.hpp>
-#include <autom/mod/include/Modulator.hpp>
+#include <autom/mod/include/ModulatorPinv.hpp>
 #include <autom/mgt/include/ModeStabilized.hpp>
 
 namespace autom {
@@ -45,11 +40,10 @@ public:
 
 	typedef struct
 	{
-		ModeParam stabilized;
 		SimpleAttitudeKalmanFilter::Param est;
 		ProcCalibGyroBias::Param procCalibImu;
 		ProcCompassDeclination::Param procCompDec;
-		Modulator<CONFIG_NB_MOTOR>::Param mod;
+		ModulatorPinv<CONFIG_NB_MOTOR>::Param mod;
 		autom::ModeStabilized::Param modeStabilized;
 	} Param ;
 public:
@@ -66,27 +60,6 @@ public:
 
 	/** @brief Getter for estimation values */
 	inline const Estimator::Estimations& getEstimationValues();
-
-	/** @brief Getter for attitude guidance values */
-	inline AttGuid::Output& getAttitudeGuidanceValues();
-
-	/** @brief Getter for navigation guidance values */
-	inline NavGuid::Output& getNavigationGuidanceValues();
-
-	/** @brief Getter for the demanded torque in body frame */
-	inline ::math::Vector3f& getDemandedTorqueB();
-
-	/** @brief Getter for the demanded force in inertial frame */
-	inline const ::math::Vector3f& getDemandedForceI();
-
-	/** @brief Getter for the demanded force in body frame */
-	inline ::math::Vector3f& getDemandedForceB();
-
-	/** @brief Getter for the attitude controller */
-	inline AttitudeController& getAttitudeController();
-
-	/** @brief Getter for the navigation controller */
-	inline NavigationController& getNavigationController();
 
 protected:
 	/** @brief Step initialization IMU calibration */
@@ -117,23 +90,8 @@ protected:
 	/** @brief Demanded force */
 	math::Vector3f _force_B;
 
-	/** @brief Demanded force */
-	math::Vector3f _force_I;
-
-	/** @brief Demanded attitude data */
-	AttGuid::Output _demAttData;
-
-	/** @brief Demanded navigation data */
-	NavGuid::Output _demNavData;
-
 	/** @brief */
 	Estimator::Estimations _estVal;
-
-	/** @brief Attitude controller */
-	AttitudeController _attCtrl;
-
-	/** @brief Navigation controller */
-	NavigationController _navCtrl;
 
 	/** @brief Calibration of IMU bias procedure */
 	ProcCalibGyroBias _procImuCalib;
@@ -145,7 +103,7 @@ protected:
 	SimpleAttitudeKalmanFilter _est;
 
 	/** @brief Modulator */
-	Modulator<CONFIG_NB_MOTOR> _mod;
+	ModulatorPinv<CONFIG_NB_MOTOR> _mod;
 
 	/** @brief Mode stabilized */
 	ModeStabilized _modeStabilitized;
@@ -159,49 +117,6 @@ const Estimator::Estimations& Ancs::getEstimationValues()
 {
 	return _estVal;
 }
-
-/** @brief Getter for attitude guidance values */
-AttGuid::Output& Ancs::getAttitudeGuidanceValues()
-{
-	return _demAttData;
-}
-
-/** @brief Getter for navigation guidance values */
-NavGuid::Output& Ancs::getNavigationGuidanceValues()
-{
-	return _demNavData;
-}
-
-/** @brief Getter for the demanded torque in body frame */
-::math::Vector3f& Ancs::getDemandedTorqueB()
-{
-	return _torque_B;
-}
-
-/** @brief Getter for the demanded force in inertial frame */
-const ::math::Vector3f& Ancs::getDemandedForceI()
-{
-	return _force_I;
-}
-
-/** @brief Getter for the demanded force in body frame */
-::math::Vector3f& Ancs::getDemandedForceB()
-{
-	return _force_B;
-}
-
-/** @brief Getter for the attitude controller */
-AttitudeController& Ancs::getAttitudeController()
-{
-	return _attCtrl;
-}
-
-/** @brief Getter for the navigation controller */
-NavigationController& Ancs::getNavigationController()
-{
-	return _navCtrl;
-}
-
 
 } /* namespace autom */
 

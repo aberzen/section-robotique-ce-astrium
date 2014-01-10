@@ -5,6 +5,7 @@
  *      Author: Robotique
  */
 
+#include <hw/serial/include/FastSerial.hpp>
 #include <autom/ctrl/include/ControllerPid.hpp>
 namespace autom {
 
@@ -22,8 +23,8 @@ ControllerPid::ControllerPid(
 		_out(out),
 		_dt(dt),
 		_param(param),
-		_ctrlErrPrev(0),
-		_intCtrlErr(0)
+		_ctrlErrPrev(0.),
+		_intCtrlErr(0.)
 		 {
 }
 

@@ -14,32 +14,35 @@ namespace autom {
 
 class ModeStabilized: public autom::Mode {
 public:
+	/*
+	 * PWM scale is computed as PWM*num*2^exp
+	 */
 	typedef struct
 	{
-		int8_t rollPwmScale; /* in log2(rad/ms), i.e. scale is 2^rollScale (typically -10 for +/-35deg or -9 for +/-70deg) */
-		int8_t pitchPwmScale; /* in log2(rad/ms), i.e. scale is 2^pitchScale (typically -10 for +/-35deg or -9 for +/-70deg) */
-		int8_t yawRatePwmScale; /* in log2(rad/s/ms), i.e. scale is 2^yawRateScale (typically -10 for +/-35deg/s or -9 for +/-70deg/s) */
-		int8_t thrustPwmScale; /* in log2(N/ms), i.e. scale is 2^thrustScale (typically -6 for [0 2g]) */
-		::math::Vector3f thrustDir_B;
+		ControllerPid3Axes::Param attCtrl;
+		int8_t rollPwmScale;
+		int8_t rollPwmScaleExp; /* Scale and exp (typically 11 and -13 to obtain +/-45deg of inclination) */
+		int8_t pitchPwmScale;
+		int8_t pitchPwmScaleExp; /* Scale and exp (typically 11 and -13 to obtain +/-45deg of inclination) */
+		int8_t yawRatePwmScale;
+		int8_t yawRatePwmScaleExp; /* Scale and exp (typically 11 and -13 to obtain +/-45deg/s of rate) */
+		int8_t thrustPwmScale; /* */
+		int8_t thrustPwmScaleExp; /* Scale and exp (typically 1 and -6 for [0 2g]) */
+		float thrustDir_B_x;
+		float thrustDir_B_y;
+		float thrustDir_B_z;
 		float mass;
 	} Param ;
 public:
 	ModeStabilized(
 			/* Input */
 			const Estimator::Estimations& est,
-			const ::math::Vector3f& force_I,
 			/* Outputs */
-			AttGuid::Output& attCtrlIn,
-			NavGuid::Output& navCtrlIn,
+			::math::Vector3f& torque_B,
 			::math::Vector3f& force_B,
 			/* Parameters */
 			const float& dt,
-			const autom::ModeStabilized::Param& param,
-			const ControllerPid3Axes::Param& paramAttCtrl,
-			const ControllerPid3Axes::Param& paramNavCtrl,
-			/* Dependencies */
-			AttitudeController& attCtrl,
-			NavigationController& navCtrl
+			const autom::ModeStabilized::Param& param
 			);
 	virtual ~ModeStabilized();
 
@@ -51,11 +54,17 @@ public:
 
 protected:
 
+	/** @brief Time step duration */
+	const float& _dt;
+
 	/** @brief Parameters */
 	const autom::ModeStabilized::Param& _param;
 
-	/** @brief Time step duration */
-	const float& _dt;
+	/** @brief Input of attitude controller */
+	AttGuid::Output _guidAtt;
+
+	/** @brief Attitude controller */
+	AttitudeController _attCtrl;
 
 	/** @brief Rotation around z */
 	math::Quaternion _rotZ;

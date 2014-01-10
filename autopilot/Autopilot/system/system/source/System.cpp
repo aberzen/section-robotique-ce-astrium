@@ -15,75 +15,9 @@ namespace system {
 
 float config_dt = 0.01; /* sec */
 autom::Ancs::Param config_ancs = {
-		{ /* stabilized */
-			{ /* att */
-				{ /* x */
-					3947.8418, /* _Kp */
-					0.8796459, /*_Kd */
-					0., /*_Ki */
-					false, /*_useOfRb */
-					0., /*_Krb */
-					0., /*_rbThd */
-					0., /*_rb */
-					0., /*_maxI */
-				}, /* x */
-				{ /* y */
-					3947.8418, /* _Kp */
-					0.8796459, /*_Kd */
-					0., /*_Ki */
-					false, /*_useOfRb */
-					0., /*_Krb */
-					0., /*_rbThd */
-					0., /*_rb */
-					0., /*_maxI */
-				}, /* y */
-				{ /* z */
-				    39.478418, /* _Kp */
-					0.08796459, /*_Kd */
-					0., /*_Ki */
-					false, /*_useOfRb */
-					0., /*_Krb */
-					0., /*_rbThd */
-					0., /*_rb */
-					0., /*_maxI */
-				}, /* z */
-			}, /* att */
-			{ /* nav */
-					{ /* x */
-						0., /* _Kp */
-						0., /*_Kd */
-						0., /*_Ki */
-						false, /*_useOfRb */
-						0., /*_Krb */
-						0., /*_rbThd */
-						0., /*_rb */
-						0., /*_maxI */
-					}, /* x */
-					{ /* y */
-						0., /* _Kp */
-						0., /*_Kd */
-						0., /*_Ki */
-						false, /*_useOfRb */
-						0., /*_Krb */
-						0., /*_rbThd */
-						0., /*_rb */
-						0., /*_maxI */
-					}, /* y */
-					{ /* z */
-						0., /* _Kp */
-						0., /*_Kd */
-						0., /*_Ki */
-						false, /*_useOfRb */
-						0., /*_Krb */
-						0., /*_rbThd */
-						0., /*_rb */
-						0., /*_maxI */
-					}, /* z */
-			}, /* nav */
-		}, /* stabilized */
 		{ /* est */
 			0.05, /* gainAcco */
-			0.005, /* gainCompass */
+			0.005 /* gainCompass */
 		}, /* est */
 		{ /* procCalibImu */
 				{0.002493765586, 0.002493765586}, /* filtCoeffNum */
@@ -91,41 +25,83 @@ autom::Ancs::Param config_ancs = {
 				2000, /* biasNbMeas */
 				50, /* varNbMeas */
 				0.001, /* gyroVarianceThd */
-				0.002, /* accoVarianceThd */
+				0.002 /* accoVarianceThd */
 		}, /* procCalibImu */
 		{ /* procCompassDeclin */
 				{0.002493765586, 0.002493765586}, /* filtCoeffNum */
 				{1.0000000000000e0,-0.995012468828}, /* filtCoeffDen */
-				2000, /* biasNbMeas */
+				2000 /* biasNbMeas */
 		}, /* procCompassDeclin */
 		{ /* mod */
-				{ /* infMat */
-					    {2.8926112,    2.8926112,  - 2.8926112,  - 2.8926112  },
-					    {2.8926112,  - 2.8926112,  - 2.8926112,    2.8926112  },
-					    {0.681795 ,  - 0.681795 ,    0.681795 ,  - 0.681795   },
-					    {0.       ,    0.       ,    0.       ,    0.         },
-					    {0.       ,    0.       ,    0.       ,    0.         },
-					    {6.81795  ,    6.81795  ,    6.81795  ,    6.81795    }
-				}, /* infMat */
+//				{ /* infMat */
+//					    {2.8926112,    2.8926112,  - 2.8926112,  - 2.8926112  },
+//					    {2.8926112,  - 2.8926112,  - 2.8926112,    2.8926112  },
+//					    {0.681795 ,  - 0.681795 ,    0.681795 ,  - 0.681795   },
+//					    {0.       ,    0.       ,    0.       ,    0.         },
+//					    {0.       ,    0.       ,    0.       ,    0.         },
+//					    {6.81795  ,    6.81795  ,    6.81795  ,    6.81795    }
+//				}, /* infMat */
 				{ /* pInvInfMat */
-						{  0.0864271,    0.0864271,    0.3666791,    0.,    0.,    0.0366679  },
-						{  0.0864271,  - 0.0864271,  - 0.3666791,    0.,    0.,    0.0366679  },
-					    {- 0.0864271,  - 0.0864271,    0.3666791,    0.,    0.,    0.0366679  },
-					    {- 0.0864271,    0.0864271,  - 0.3666791,    0.,    0.,    0.0366679  }
+						{  - 0.1757839,  - 0.1757839,    0.3853238,    0.,    0.,    0.0385324  },
+						{    0.1757839,    0.1757839,    0.3480344,    0.,    0.,    0.0348034  },
+						{    0.1757839,  - 0.1757839,  - 0.3853238,    0.,    0.,    0.0385324  },
+						{  - 0.1757839,    0.1757839,  - 0.3480344,    0.,    0.,    0.0348034  }
 				}, /* pInvInfMat */
 				{ /* descVect */
-						1., 1., 1., 1.
+					    1.1071428  ,
+					    1.         ,
+					    1.1071428  ,
+					    1.
 				} /* descVect */
 		}, /* mod */
 		{ /* modeStabilized */
-				-10, /* rollPwmScale */
-				-10, /* pitchPwmScale */
-				-10, /* yawRatePwmScale */
-				- 6, /* thrustPwmScale */
-				math::Vector3f(0.,0.,1.), /* thrustDir_B */
+				{ /* attCtrl */
+					{ /* x */
+						3.7899281, /* _Kp */
+						0.4222301, /*_Kd */
+						0., /*_Ki */
+						false, /*_useOfRb */
+						0., /*_Krb */
+						0., /*_rbThd */
+						0., /*_rb */
+						0. /*_maxI */
+					}, /* x */
+					{ /* y */
+						3.7899281, /* _Kp */
+						0.4222301, /*_Kd */
+						0., /*_Ki */
+						false, /*_useOfRb */
+						0., /*_Krb */
+						0., /*_rbThd */
+						0., /*_rb */
+						0. /*_maxI */
+					}, /* y */
+					{ /* z */
+						0.9474820, /* _Kp */
+						0.4222301, /*_Kd */
+						0., /*_Ki */
+						false, /*_useOfRb */
+						0., /*_Krb */
+						0., /*_rbThd */
+						0., /*_rb */
+						0. /*_maxI */
+					} /* z */
+				}, /* attCtrl */
+				11, /* rollPwmScale */
+				-13, /* rollPwmScaleExp */
+				11, /* pitchPwmScale */
+				-13, /* pitchPwmScaleExp */
+				11, /* yawRatePwmScale */
+				-13, /* yawRatePwmScaleExp */
+				1, /* thrustPwmScale */
+				-6, /* thrustPwmScaleExp */
+				0., /* thrustDir_B_x */
+				0., /* thrustDir_B_y */
+				1., /* thrustDir_B_z */
 				1.600 /* mass */
 		} /* modeStabilized */
 };
+
 
 System::System(board::Board& board) :
 	Process(),
@@ -156,7 +132,6 @@ System::System(board::Board& board) :
 //	,
 //	_est(board.getImu(), board.getBarometer(), _board.getMagnetometer())
 {
-
 }
 
 System::~System()

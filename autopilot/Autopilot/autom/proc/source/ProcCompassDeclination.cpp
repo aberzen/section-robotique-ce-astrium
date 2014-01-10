@@ -60,7 +60,7 @@ infra::status ProcCompassDeclination::step()
 		{
 			/* Use yaw to initialize the attitude */
 			::math::Vector3f z(0.,0.,1.);
-			z /= sin(yaw*0.5);
+			z *= sin(yaw*0.5);
 			_est.attitude_IB(cos(yaw*0.5),z);
 
 			/* Procedure is over */

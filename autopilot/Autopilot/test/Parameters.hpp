@@ -13,7 +13,8 @@
 
 namespace test {
 
-#define CONFIG_PARAMETERS_COUNT	185
+//#define CONFIG_PARAMETERS_COUNT	185
+#define CONFIG_PARAMETERS_COUNT	4
 extern PROGMEM const mavlink::ParameterMgt::ParamInfo config[CONFIG_PARAMETERS_COUNT];
 
 } /* namespace test */

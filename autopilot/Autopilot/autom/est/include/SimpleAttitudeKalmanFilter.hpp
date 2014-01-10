@@ -55,6 +55,12 @@ protected:
 	/** @brief Predicted rate */
 	math::Vector3f _ratePred_B;
 
+	/** @brief Predicted velocity */
+	math::Vector3f _velPred_I;
+
+	/** @brief Predicted position */
+	math::Vector3f _posPred_I;
+
 	/** @brief Predicted attitude */
 	math::Quaternion _attitudePred_IB;
 
