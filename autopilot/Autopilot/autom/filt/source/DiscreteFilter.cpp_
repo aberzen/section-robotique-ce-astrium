@@ -12,23 +12,6 @@ namespace autom {
 template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
 DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::DiscreteFilter(
 		const T coeffX[FILTER_SIZE_X],
-		const T coeffY[FILTER_SIZE_Y],
-		const T initCondX[FILTER_SIZE_X],
-		const T initCondY[FILTER_SIZE_Y]):
-	Filter<T>(),
-	_sampleIdxX(0),
-	_sampleIdxY(0),
-	_coeffX(coeffX), // (implicit call to memcpy)
-	_coeffY(coeffY), // (implicit call to memcpy)
-	_initCondX(initCondX), // (implicit call to memcpy)
-	_initCondY(initCondY), // (implicit call to memcpy)
-	_valuesX(initCondX), // (implicit call to memcpy)
-	_valuesY(initCondY) // (implicit call to memcpy)
-{
-}
-template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
-DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::DiscreteFilter(
-		const T coeffX[FILTER_SIZE_X],
 		const T coeffY[FILTER_SIZE_Y]):
 	Filter<T>(),
 	_sampleIdxX(0),
@@ -41,13 +24,11 @@ DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::DiscreteFilter(
 	/* Initialize to zero */
 	for (idx=0 ; idx<FILTER_SIZE_X ; idx++)
 	{
-		_initCondX[idx] = (T) 0;
 		_valuesX[idx] = (T) 0;
 	}
 
 	for (idx=0 ; idx<FILTER_SIZE_Y ; idx++)
 	{
-		_initCondY[idx] = (T) 0;
 		_valuesY[idx] = (T) 0;
 	}
 }
@@ -60,13 +41,6 @@ template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
 void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::setCoeff(const T coeffX[FILTER_SIZE_X],const T coeffY[FILTER_SIZE_Y]){
 	this->_coeffX = coeffX; // (implicit call to memcpy)
 	this->_coeffY = coeffY; // (implicit call to memcpy)
-}
-
-// setCoeff - setter method for coefficient
-template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
-void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::setInitCond(const T initCondX[FILTER_SIZE_X],const T initCondY[FILTER_SIZE_Y]){
-	this->_initCondX = initCondX; // (implicit call to memcpy)
-	this->_initCondY = initCondY; // (implicit call to memcpy)
 }
 
 /** apply - Add a new raw value to the filter, retrieve the filtered result
@@ -133,9 +107,37 @@ T DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::apply(T sample){
 // reset - clear the filter
 template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
 void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::reset(){
-	// Copy the initial condition to the state
-	memcpy(_valuesX,_initCondX, sizeof(T[FILTER_SIZE_X]));
-	memcpy(_valuesY,_initCondY, sizeof(T[FILTER_SIZE_Y]));
+	uint8_t idx;
+	// Resetinitial condition to the state
+	for (idx=0 ; idx<FILTER_SIZE_X ; idx++)
+	{
+		_valuesX[idx] = (T) 0;
+	}
+
+	for (idx=0 ; idx<FILTER_SIZE_Y ; idx++)
+	{
+		_valuesY[idx] = (T) 0;
+	}
+	// Reset sampling idx to zero
+	_sampleIdxX = 0;
+	_sampleIdxY = 0;
+}
+
+// reset to the initial conditions
+template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
+void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::reset(const T initCondX[FILTER_SIZE_X], const T initCondY[FILTER_SIZE_Y])
+{
+	uint8_t idx;
+	// Resetinitial condition to the state
+	for (idx=0 ; idx<FILTER_SIZE_X ; idx++)
+	{
+		_valuesX[idx] = (T) initCondX[idx];
+	}
+
+	for (idx=0 ; idx<FILTER_SIZE_Y ; idx++)
+	{
+		_valuesY[idx] = (T) initCondY[idx];
+	}
 	// Reset sampling idx to zero
 	_sampleIdxX = 0;
 	_sampleIdxY = 0;

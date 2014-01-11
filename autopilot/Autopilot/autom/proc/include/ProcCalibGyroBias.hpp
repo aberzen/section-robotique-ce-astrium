@@ -19,6 +19,7 @@ class ProcCalibGyroBias : public infra::Procedure {
 protected:
 	typedef enum
 	{
+		E_PROCCALIBIMU_COMP_INIT_FILTERS, // Init filters
 		E_PROCCALIBIMU_COMP_BIAS, // compute bias
 		E_PROCCALIBIMU_COMP_VAR // verify variance
 	} State ;
@@ -48,6 +49,9 @@ public:
 protected:
 	/** @brief Execute current procedure step */
 	virtual infra::status step();
+
+	/** @brief Initialize the filters from first measurements */
+	infra::status stepInitFilters();
 
 	/** @brief Compute bias */
 	infra::status stepCompBias();

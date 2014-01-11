@@ -43,7 +43,8 @@ public:
 		SimpleAttitudeKalmanFilter::Param est;
 		ProcCalibGyroBias::Param procCalibImu;
 		ProcCompassDeclination::Param procCompDec;
-		ModulatorPinv<CONFIG_NB_MOTOR>::Param mod;
+		Modulator<CONFIG_NB_MOTOR>::ParamGen modGen;
+		ModulatorPinv<CONFIG_NB_MOTOR>::ParamPinv modPinv;
 		autom::ModeStabilized::Param modeStabilized;
 	} Param ;
 public:
@@ -89,6 +90,12 @@ protected:
 
 	/** @brief Demanded force */
 	math::Vector3f _force_B;
+
+	/** @brief Realized torque */
+	math::Vector3f _torqueReal_B;
+
+	/** @brief Realized force */
+	math::Vector3f _forceReal_B;
 
 	/** @brief */
 	Estimator::Estimations _estVal;

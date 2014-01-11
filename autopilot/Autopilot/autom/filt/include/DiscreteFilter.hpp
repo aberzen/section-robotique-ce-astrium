@@ -30,12 +30,6 @@ template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
 class DiscreteFilter : public Filter<T> {
 public:
 	DiscreteFilter(
-			const T coeffX[FILTER_SIZE_X],
-			const T coeffY[FILTER_SIZE_Y],
-			const T initCondX[FILTER_SIZE_X],
-			const T initCondY[FILTER_SIZE_Y]
-			);
-	DiscreteFilter(
 			const T coeffX[FILTER_SIZE_Y],
 			const T coeffY[FILTER_SIZE_X]
 			);
@@ -44,14 +38,14 @@ public:
 	// setCoeff - setter method for coefficient
 	void setCoeff(const T coeffX[FILTER_SIZE_X], const T coeffY[FILTER_SIZE_Y]);
 
-	// setCoeff - setter method for coefficient
-	void setInitCond(const T initCondX[FILTER_SIZE_X], const T initCondY[FILTER_SIZE_Y]);
-
 	// apply - Add a new raw value to the filter, retrieve the filtered result
     virtual T apply(T sample);
 
     // reset - clear the filter
     virtual void reset();
+
+    // reset to the initial conditions
+    virtual void reset(const T initCondX[FILTER_SIZE_X], const T initCondY[FILTER_SIZE_Y]);
 
 protected:
     /** @brief Pointer to the next empty slot in the buffer */
@@ -63,11 +57,6 @@ protected:
     T _coeffY[FILTER_SIZE_Y];
     /** @brief ak coefficients of the filter */
     T _coeffX[FILTER_SIZE_X];
-
-    /** @brief Initial Y(0-kT) conditions of the filter */
-    T _initCondY[FILTER_SIZE_Y];
-    /** @brief Initial X(0-kT) condition of the filter */
-    T _initCondX[FILTER_SIZE_X];
 
     /** @brief Saved Y(t-kT) values */
     T _valuesY[FILTER_SIZE_Y];

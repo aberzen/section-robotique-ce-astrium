@@ -51,6 +51,9 @@ infra::status ProcCalibGyroBias::step()
 {
 	switch (_state)
 	{
+	case E_PROCCALIBIMU_COMP_INIT_FILTERS:
+		stepInitFilters();
+		break;
 	case E_PROCCALIBIMU_COMP_BIAS:
 		return stepCompBias();
 		break;
@@ -63,6 +66,42 @@ infra::status ProcCalibGyroBias::step()
 		break;
 	}
 	return -1;
+}
+
+/** @brief Initialize the filters from first measurements */
+infra::status ProcCalibGyroBias::stepInitFilters()
+{
+	if (_imu.isAvailable)
+	{
+		float init[2];
+
+		init[0] = _imu.gyroMeas_B.x;
+		init[1] = _imu.gyroMeas_B.x;
+		_filtGyroX.reset(init, init);
+
+		init[0] = _imu.gyroMeas_B.y;
+		init[1] = _imu.gyroMeas_B.y;
+		_filtGyroY.reset(init, init);
+
+		init[0] = _imu.gyroMeas_B.z;
+		init[1] = _imu.gyroMeas_B.z;
+		_filtGyroZ.reset(init, init);
+
+		init[0] = _imu.accoMeas_B.x;
+		init[1] = _imu.accoMeas_B.x;
+		_filtAccoX.reset(init, init);
+
+		init[0] = _imu.accoMeas_B.y;
+		init[1] = _imu.accoMeas_B.y;
+		_filtAccoY.reset(init, init);
+
+		init[0] = _imu.accoMeas_B.z;
+		init[1] = _imu.accoMeas_B.z;
+		_filtAccoZ.reset(init, init);
+
+		_state = E_PROCCALIBIMU_COMP_BIAS;
+	}
+	return 0;
 }
 
 /** @brief Compute bias */

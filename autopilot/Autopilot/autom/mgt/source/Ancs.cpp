@@ -37,7 +37,10 @@ _procCompDec(
 		 _torque_B,
 		 _force_B,
 		 board::Board::board.pwmVal,
-		 _param.mod
+		 _torqueReal_B,
+		 _forceReal_B,
+		 _param.modGen,
+		 _param.modPinv
 		 ),
  _modeStabilitized(
 		_estVal,
@@ -245,9 +248,9 @@ infra::status Ancs::stepFlying()
 //	Serial.printf("rateDem_B = [%.5f %.5f %.5f]\n", _demAttData.angRateDem_B.x, _demAttData.angRateDem_B.y, _demAttData.angRateDem_B.z);
 //	Serial.printf("torque_B = [%.5f %.5f %.5f]\n", _torque_B.x, _torque_B.y, _torque_B.z);
 //	Serial.printf("force_B = [%.5f %.5f %.5f]\n", _force_B.x, _force_B.y, _force_B.z);
-	Serial.printf("%d %d %d %d %d\n", board::Board::board.radio.isAvailable, board::Board::board.radio.channels[0], board::Board::board.radio.channels[1], board::Board::board.radio.channels[2], board::Board::board.radio.channels[3]);
-	Serial.printf("%.5f;%.5f;%.5f;%.5f;%.5f;%.5f\n", _torque_B.x, _torque_B.y, _torque_B.z, _force_B.x, _force_B.y, _force_B.z);
-	Serial.printf("%d %d %d %d\n", board::Board::board.pwmVal.channels[0], board::Board::board.pwmVal.channels[1], board::Board::board.pwmVal.channels[2], board::Board::board.pwmVal.channels[3]);
+//	Serial.printf("%d %d %d %d %d\n", board::Board::board.radio.isAvailable, board::Board::board.radio.channels[0], board::Board::board.radio.channels[1], board::Board::board.radio.channels[2], board::Board::board.radio.channels[3]);
+//	Serial.printf("%.5f;%.5f;%.5f;%.5f;%.5f;%.5f\n", _torque_B.x, _torque_B.y, _torque_B.z, _force_B.x, _force_B.y, _force_B.z);
+//	Serial.printf("%d %d %d %d\n", board::Board::board.pwmVal.channels[0], board::Board::board.pwmVal.channels[1], board::Board::board.pwmVal.channels[2], board::Board::board.pwmVal.channels[3]);
 
 	return 0;
 }
