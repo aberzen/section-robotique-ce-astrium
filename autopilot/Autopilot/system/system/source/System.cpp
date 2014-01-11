@@ -15,6 +15,12 @@ namespace system {
 
 float config_dt = 0.01; /* sec */
 autom::Ancs::Param config_ancs = {
+		{ /* gen */
+				1.600, /* mass */
+				0.024, /* inertiaXX */
+				0.024, /* inertiaYY */
+				0.096 /* inertiaZZ */
+		}, /* gen */
 		{ /* est */
 			0.05, /* gainAcco */
 			0.005 /* gainCompass */
@@ -108,7 +114,6 @@ autom::Ancs::Param config_ancs = {
 				0., /* thrustDir_B_x */
 				0., /* thrustDir_B_y */
 				1., /* thrustDir_B_z */
-				1.600 /* mass */
 		} /* modeStabilized */
 };
 

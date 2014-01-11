@@ -47,7 +47,8 @@ _procCompDec(
 		_torque_B,
 		_force_B,
 		dt,
-		_param.modeStabilized
+		_param.modeStabilized,
+		_param.gen
 		 )
 {
 }

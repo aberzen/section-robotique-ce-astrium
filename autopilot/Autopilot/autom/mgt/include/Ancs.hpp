@@ -40,6 +40,7 @@ public:
 
 	typedef struct
 	{
+		GenericParam gen;
 		SimpleAttitudeKalmanFilter::Param est;
 		ProcCalibGyroBias::Param procCalibImu;
 		ProcCompassDeclination::Param procCompDec;

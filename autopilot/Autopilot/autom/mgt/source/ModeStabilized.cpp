@@ -24,11 +24,13 @@ ModeStabilized::ModeStabilized(
 		::math::Vector3f& force_B,
 		/* Parameters */
 		const float& dt,
-		const ::autom::ModeStabilized::Param& param
+		const ::autom::ModeStabilized::Param& param,
+		const GenericParam& paramGen
 		)
 : Mode(est, torque_B, force_B),
   _dt(dt),
   _param(param),
+  _paramGen(paramGen),
   _attCtrl(_guidAtt, _est, _torque_B, _dt, _param.attCtrl),
   _rotZ(1.,0.,0.,0.),
   _prevInvNormRotZ(1.),
@@ -162,7 +164,7 @@ ModeStabilized::~ModeStabilized() {
 		return 0;
 	}
 
-	tmp = _param.mass*thrust;
+	tmp = _paramGen.mass*thrust;
 	this->_force_B(_param.thrustDir_B_x * tmp, _param.thrustDir_B_y * tmp, _param.thrustDir_B_z * tmp);
 	_thrustPrev = thrust;
 //	Serial.printf("_force_B = %.5f %.5f %.5f\n", this->_force_B.x, this->_force_B.y, this->_force_B.z);

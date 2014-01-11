@@ -9,7 +9,7 @@
 #define MODESTABILIZED_HPP_
 
 #include <autom/mgt/include/Mode.hpp>
-
+#include <autom/gen/include/GenericParameters.hpp>
 namespace autom {
 
 class ModeStabilized: public autom::Mode {
@@ -31,7 +31,6 @@ public:
 		float thrustDir_B_x;
 		float thrustDir_B_y;
 		float thrustDir_B_z;
-		float mass;
 	} Param ;
 public:
 	ModeStabilized(
@@ -42,7 +41,8 @@ public:
 			::math::Vector3f& force_B,
 			/* Parameters */
 			const float& dt,
-			const autom::ModeStabilized::Param& param
+			const autom::ModeStabilized::Param& param,
+			const GenericParam& paramGen
 			);
 	virtual ~ModeStabilized();
 
@@ -59,6 +59,9 @@ protected:
 
 	/** @brief Parameters */
 	const autom::ModeStabilized::Param& _param;
+
+	/** @brief Generic parameters */
+	const autom::GenericParam& _paramGen;
 
 	/** @brief Input of attitude controller */
 	AttGuid::Output _guidAtt;
