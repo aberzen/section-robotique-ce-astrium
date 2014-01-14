@@ -7,115 +7,13 @@
 
 #include <hw/serial/include/FastSerial.hpp>
 #include "../include/System.hpp"
-#include <config/include/nrd.h>
-#include <test/Parameters.hpp>
+#include <system/params/include/Nrd.hpp>
+#include <system/params/include/Parameters.hpp>
 
 namespace system {
 
 
 float config_dt = 0.01; /* sec */
-autom::Ancs::Param config_ancs = {
-		{ /* gen */
-				1.600, /* mass */
-				0.024, /* inertiaXX */
-				0.024, /* inertiaYY */
-				0.096 /* inertiaZZ */
-		}, /* gen */
-		{ /* est */
-			0.05, /* gainAcco */
-			0.005 /* gainCompass */
-		}, /* est */
-		{ /* procCalibImu */
-				{0.002493765586, 0.002493765586}, /* filtCoeffNum */
-				{1.0000000000000e0,-0.995012468828}, /* filtCoeffDen */
-				2000, /* biasNbMeas */
-				50, /* varNbMeas */
-				0.001, /* gyroVarianceThd */
-				0.002 /* accoVarianceThd */
-		}, /* procCalibImu */
-		{ /* procCompassDeclin */
-				{0.002493765586, 0.002493765586}, /* filtCoeffNum */
-				{1.0000000000000e0,-0.995012468828}, /* filtCoeffDen */
-				2000 /* biasNbMeas */
-		}, /* procCompassDeclin */
-		{ /* modGen */
-				{
-					{  - 1.3498852,    1.4945158,    1.3498852,  - 1.4945158  },
-					{  - 1.3498852,    1.4945158,  - 1.3498852,    1.4945158  },
-					{    0.681795 ,    0.681795 ,  - 0.681795 ,  - 0.681795   },
-					{    0.       ,    0.       ,    0.       ,    0.         },
-					{    0.       ,    0.       ,    0.       ,    0.         },
-					{    6.81795  ,    6.81795  ,    6.81795  ,    6.81795    }
-				}
-		}, /* modGen */
-		{ /* modPinv */
-//				{ /* infMat */
-//					    {2.8926112,    2.8926112,  - 2.8926112,  - 2.8926112  },
-//					    {2.8926112,  - 2.8926112,  - 2.8926112,    2.8926112  },
-//					    {0.681795 ,  - 0.681795 ,    0.681795 ,  - 0.681795   },
-//					    {0.       ,    0.       ,    0.       ,    0.         },
-//					    {0.       ,    0.       ,    0.       ,    0.         },
-//					    {6.81795  ,    6.81795  ,    6.81795  ,    6.81795    }
-//				}, /* infMat */
-				{ /* pInvInfMat */
-						{  - 0.1757839,  - 0.1757839,    0.3853238,    0.,    0.,    0.0385324  },
-						{    0.1757839,    0.1757839,    0.3480344,    0.,    0.,    0.0348034  },
-						{    0.1757839,  - 0.1757839,  - 0.3853238,    0.,    0.,    0.0385324  },
-						{  - 0.1757839,    0.1757839,  - 0.3480344,    0.,    0.,    0.0348034  }
-				}, /* pInvInfMat */
-				{ /* descVect */
-					    1.1071428  ,
-					    1.         ,
-					    1.1071428  ,
-					    1.
-				} /* descVect */
-		}, /* modPinv */
-		{ /* modeStabilized */
-				{ /* attCtrl */
-					{ /* x */
-						3.7899281, /* _Kp */
-						0.4222301, /*_Kd */
-						0., /*_Ki */
-						false, /*_useOfRb */
-						0., /*_Krb */
-						0., /*_rbThd */
-						0., /*_rb */
-						0. /*_maxI */
-					}, /* x */
-					{ /* y */
-						3.7899281, /* _Kp */
-						0.4222301, /*_Kd */
-						0., /*_Ki */
-						false, /*_useOfRb */
-						0., /*_Krb */
-						0., /*_rbThd */
-						0., /*_rb */
-						0. /*_maxI */
-					}, /* y */
-					{ /* z */
-						0.9474820, /* _Kp */
-						0.4222301, /*_Kd */
-						0., /*_Ki */
-						false, /*_useOfRb */
-						0., /*_Krb */
-						0., /*_rbThd */
-						0., /*_rb */
-						0. /*_maxI */
-					} /* z */
-				}, /* attCtrl */
-				11, /* rollPwmScale */
-				-13, /* rollPwmScaleExp */
-				11, /* pitchPwmScale */
-				-13, /* pitchPwmScaleExp */
-				11, /* yawRatePwmScale */
-				-13, /* yawRatePwmScaleExp */
-				1, /* thrustPwmScale */
-				-6, /* thrustPwmScaleExp */
-				0., /* thrustDir_B_x */
-				0., /* thrustDir_B_y */
-				1., /* thrustDir_B_z */
-		} /* modeStabilized */
-};
 
 
 System::System(board::Board& board) :
@@ -126,7 +24,7 @@ System::System(board::Board& board) :
 	_wpMgt(),
 	_mgt(
 			config_dt,
-			config_ancs),
+			test::config_ancs),
 	_hkMgt(MAVLINK_COMM_0, _mgt.getEstimationValues(), board.meas, board.rawMeas),
 	_cmdMgt(),
 	_mountMgt(),

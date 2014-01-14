@@ -34,7 +34,7 @@ system::System& system::System::system = sys;
 
 //board::Board& board::Board::board = boardApm25;
 
-#include <test/ControlCyclicTask.hpp>
+#include <system/tasks/include/ControlCyclicTask.hpp>
 
 //static struct test::Variables varList = {
 //	154,
@@ -56,7 +56,7 @@ system::System& system::System::system = sys;
 //		{MAV_PARAM_TYPE_REAL32, "VAR7", &varList.var7, {REAL32 : 1458.54365487}}
 //};
 
-#include <test/MavTask.hpp>
+#include <system/tasks/include/MavTask.hpp>
 #include <gcs/include/SerialChannel.hpp>
 
 mavlink_system_t mavlink_system = {7, 1, 0, 0};

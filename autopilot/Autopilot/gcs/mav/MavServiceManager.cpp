@@ -595,27 +595,28 @@ void MavServiceManager::paramRequestRead(
 		switch (type)
 		{
 		case MAV_PARAM_TYPE_UINT8:
-			type = MAV_PARAM_TYPE_UINT32;
-			*((uint32_t*)&fVal) = (uint32_t) value.UINT8;
+			type = MAV_PARAM_TYPE_UINT8;
+			fVal = (float) value.UINT8;
 			break;
 		case MAV_PARAM_TYPE_UINT16:
-			type = MAV_PARAM_TYPE_UINT32;
-			*((uint32_t*)&fVal) = (uint32_t) value.UINT16;
+			type = MAV_PARAM_TYPE_UINT16;
+			fVal = (float) value.UINT16;
 			break;
 		case MAV_PARAM_TYPE_UINT32:
-			*((uint32_t*)&fVal) = (uint32_t) value.UINT32;
+			type = MAV_PARAM_TYPE_UINT32;
+			fVal = (float) value.UINT32;
 			break;
 		case MAV_PARAM_TYPE_INT8:
-			type = MAV_PARAM_TYPE_INT32;
-			*((int32_t*)&fVal) = (int32_t) value.INT8;
+			type = MAV_PARAM_TYPE_INT8;
+			fVal = (float) value.INT8;
 			break;
 		case MAV_PARAM_TYPE_INT16:
-			type = MAV_PARAM_TYPE_INT32;
-			*((int32_t*)&fVal) = (int32_t) value.INT16;
+			type = MAV_PARAM_TYPE_INT16;
+			fVal = (float) value.INT16;
 			break;
 		case MAV_PARAM_TYPE_INT32:
 			type = MAV_PARAM_TYPE_INT32;
-			*((int32_t*)&fVal) = (int32_t) value.INT32;
+			fVal = (float) value.INT32;
 			break;
 		case MAV_PARAM_TYPE_REAL32:
 			fVal = (float) value.REAL32;
@@ -737,22 +738,22 @@ void MavServiceManager::paramSet(
 		switch (type)
 		{
 		case MAV_PARAM_TYPE_UINT8:
-			value.UINT8 = *((uint8_t *) &param_value);
+			value.UINT8 = (uint8_t) param_value;
 			break;
 		case MAV_PARAM_TYPE_UINT16:
-			value.UINT16 = *((uint16_t *) &param_value);
+			value.UINT16 = (uint16_t) param_value;
 			break;
 		case MAV_PARAM_TYPE_UINT32:
-			value.UINT32 = *((uint32_t *) &param_value);
+			value.UINT32 = (uint32_t) param_value;
 			break;
 		case MAV_PARAM_TYPE_INT8:
-			value.INT8 = *((int8_t *) &param_value);
+			value.INT8 = (int8_t) param_value;
 			break;
 		case MAV_PARAM_TYPE_INT16:
-			value.INT16 = *((int16_t *) &param_value);
+			value.INT16 = (int16_t) param_value;
 			break;
 		case MAV_PARAM_TYPE_INT32:
-			value.INT32 = *((int32_t *) &param_value);
+			value.INT32 = (int32_t) param_value;
 			break;
 		case MAV_PARAM_TYPE_REAL32:
 			value.REAL32 = param_value;

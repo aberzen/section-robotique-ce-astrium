@@ -42,23 +42,23 @@ infra::status ControllerPid::initialize()
 /** @brief Compute the controller value */
 infra::status ControllerPid::execute(){
 	/* 1) Compute integral term */
-	_intCtrlErr +=  this->_param._Ki * (_ctrlErr+_ctrlErrPrev)/2 * this->_dt;
+	_intCtrlErr +=  this->_param.Ki * (_ctrlErr+_ctrlErrPrev)/2 * this->_dt;
 	_ctrlErrPrev = _ctrlErr;
 
 	/* 2) Saturation of integral term */
-	if (math_abs(_intCtrlErr)>this->_param._maxI){
-		_intCtrlErr  = math_sign(_intCtrlErr) * this->_param._maxI;
+	if (math_abs(_intCtrlErr)>this->_param.maxI){
+		_intCtrlErr  = math_sign(_intCtrlErr) * this->_param.maxI;
 	}
 
 	/* 3) Make use of  RB when necessary */
-	if (this->_param._useOfRb && (math_abs(_ctrlErr) > this->_param._rbThd)) {
+	if (this->_param.useOfRb && (math_abs(_ctrlErr) > this->_param.rbThd)) {
 		/* 3b) Rate bias */
-		_out = this->_param._Krb * (_derivCtrlErr + math_sign(_ctrlErr)*this->_param._rb);
+		_out = this->_param.Krb * (_derivCtrlErr + math_sign(_ctrlErr)*this->_param.rb);
 		_intCtrlErr = 0; // reset the integral term
 	}
 	else {
 		/* 3a) No rate bias */
-		_out = this->_param._Kp * _ctrlErr + this->_param._Kd * _derivCtrlErr + this->_intCtrlErr;
+		_out = this->_param.Kp * _ctrlErr + this->_param.Kd * _derivCtrlErr + this->_intCtrlErr;
 	}
 	return 0;
 }

@@ -8,7 +8,7 @@
 #include <infra/include/Task.hpp>
 #include <Arduino.h>
 #include "../include/DataStream.hpp"
-#include <config/include/nrd.h>
+#include <system/params/include/Nrd.hpp>
 
 
 namespace mavlink {

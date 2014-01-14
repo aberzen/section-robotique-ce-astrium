@@ -46,21 +46,21 @@ public:
 	typedef struct
 	{
 		/** @brief Controller static gain */
-		float _Kp;
+		float Kp;
 		/** @brief Controller derivative gain */
-		float _Kd;
+		float Kd;
 		/** @brief Controller integral gain */
-		float _Ki;
+		float Ki;
 		/** @brief Make use of Rate Bias */
-		bool _useOfRb;
+		bool useOfRb;
 		/** @brief Controller rate bias gain */
-		float _Krb;
+		float Krb;
 		/** @brief Controller rate bias threshold */
-		float _rbThd;
+		float rbThd;
 		/** @brief Controller rate bias value */
-		float _rb;
+		float rb;
 		/** @brief Controller integral saturation */
-		float _maxI;
+		float maxI;
 	} Param ;
 
 public:

@@ -8,7 +8,7 @@
 #include <hw/serial/include/FastSerial.hpp>
 #include <infra/include/Task.hpp>
 #include "../include/HalImuMpu6000.hpp"
-#include <config/include/nrd.h>
+#include <system/params/include/Nrd.hpp>
 
 #include <Arduino.h>
 

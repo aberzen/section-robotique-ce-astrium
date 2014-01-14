@@ -69,11 +69,11 @@ infra::status SimpleAttitudeKalmanFilter::predict()
 		_attitudePred_IB = _est.attitude_IB * dQ;
 		_attEstInvNrmPrev = _attitudePred_IB.normalize(1,_attEstInvNrmPrev);
 
-//		math::Vector3f acc_B = _meas.imu.accoMeas_B - _est.imuAccoBias_B;
-//		math::Vector3f acc_I = _est.attitude_IB.rotateQVQconj(acc_B);
-//		acc_I.z -= 9.81;
-//		_velPred_I = _est.velocity_I + (acc_I * _dt);
-//		_posPred_I = _est.position_I + (_velPred_I * _dt);
+		math::Vector3f acc_B = _meas.imu.accoMeas_B - _est.imuAccoBias_B;
+		math::Vector3f acc_I = _est.attitude_IB.rotateQVQconj(acc_B);
+		acc_I.z -= 9.81;
+		_velPred_I = _est.velocity_I + (acc_I * _dt);
+		_posPred_I = _est.position_I + (_velPred_I * _dt);
 	}
 	return 0;
 }

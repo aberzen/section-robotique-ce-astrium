@@ -10,7 +10,7 @@
 
 #include <infra/include/Task.hpp>
 #include "../include/Apm25.hpp"
-#include <config/include/nrd.h>
+#include <system/params/include/Nrd.hpp>
 
 
 FastSerialPort0(Serial);        // FTDI/console

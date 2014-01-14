@@ -18,7 +18,7 @@ namespace mavlink {
 
 class ParameterMgt {
 protected:
-	static const uint16_t eepromRefRevision = 0x0001;
+	static const uint16_t eepromRefRevision = 0x0002;
 
 public:
 

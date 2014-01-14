@@ -5,8 +5,8 @@
  *      Author: Aberzen
  */
 
-#include "MavTask.hpp"
-#include "Parameters.hpp"
+#include "../include/MavTask.hpp"
+#include <system/params/include/Parameters.hpp>
 #include <system/system/include/System.hpp>
 #include <hw/serial/include/FastSerial.hpp>
 

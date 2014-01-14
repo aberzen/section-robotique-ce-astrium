@@ -5,7 +5,7 @@
  *      Author: Aberzen
  */
 
-#include "ControlCyclicTask.hpp"
+#include "../include/ControlCyclicTask.hpp"
 #include <board/gen/include/Board.hpp>
 #include <system/system/include/System.hpp>
 
@@ -13,7 +13,7 @@
 
 #include <Arduino.h>
 
-#include "MavTask.hpp"
+#include "../include/MavTask.hpp"
 
 namespace test {
 

@@ -5,7 +5,7 @@
  *      Author: Aberzen
  */
 
-#include "Parameters.hpp"
+#include "../include/Parameters.hpp"
 
 namespace test {
 
@@ -387,6 +387,99 @@ float VAL_SYSID_MYGCS = CONFIG_SYSID_MYGCS;
 //float VAL_HLD_LON_I = CONFIG_HLD_LON_I;
 //float VAL_HLD_LON_IMAX = CONFIG_HLD_LON_IMAX;
 
+
+autom::Ancs::Param config_ancs = {
+		{ /* gen */
+				PHYSICS_MASS, /* mass */
+				PHYSICS_INERTIA_XX, /* inertiaXX */
+				PHYSICS_INERTIA_YY, /* inertiaYY */
+				PHYSICS_INERTIA_ZZ /* inertiaZZ */
+		}, /* gen */
+		{ /* est */
+			EST_KALMAN_GAIN_ACCO, /* gainAcco */
+			EST_KALMAN_GAIN_COMPASS /* gainCompass */
+		}, /* est */
+		{ /* procCalibImu */
+				PROC_CALIBIMU_FILT_NUM, /* filtCoeffNum */
+				PROC_CALIBIMU_FILT_DEN, /* filtCoeffDen */
+				PROC_CALIBIMU_NBMEAS_BIAS, /* biasNbMeas */
+				PROC_CALIBIMU_NBMEAS_VAR, /* varNbMeas */
+				PROC_CALIBIMU_GYRO_VARTHD, /* gyroVarianceThd */
+				PROC_CALIBIMU_ACCO_VARTHD /* accoVarianceThd */
+		}, /* procCalibImu */
+		{ /* procCompDec */
+				PROC_COMPDEC_FILT_NUM, /* filtCoeffNum */
+				PROC_COMPDEC_FILT_DEN, /* filtCoeffDen */
+				PROC_COMPDEC_NBMEAS /* biasNbMeas */
+		}, /* procCompDec */
+		{ /* modGen */
+				{
+						MODULATOR_INFMAT_0,
+						MODULATOR_INFMAT_1,
+						MODULATOR_INFMAT_2,
+						MODULATOR_INFMAT_3,
+						MODULATOR_INFMAT_4,
+						MODULATOR_INFMAT_5
+				}
+		}, /* modGen */
+		{ /* modPinv */
+				{ /* pInvInfMat */
+						MODULATOR_PINVINFMAT_0,
+						MODULATOR_PINVINFMAT_1,
+						MODULATOR_PINVINFMAT_2,
+						MODULATOR_PINVINFMAT_3,
+				}, /* pInvInfMat */
+				MODULATOR_DESCVECT
+		}, /* modPinv */
+		{ /* modeStabilized */
+				{ /* attCtrl */
+					{ /* x */
+						CTRL_ATT_X_Kp, /* _Kp */
+						CTRL_ATT_X_Kd, /*_Kd */
+						CTRL_ATT_X_Ki, /*_Ki */
+						CTRL_ATT_X_useOfRb, /*_useOfRb */
+						CTRL_ATT_X_Krb, /*_Krb */
+						CTRL_ATT_X_rbThd, /*_rbThd */
+						CTRL_ATT_X_rb, /*_rb */
+						CTRL_ATT_X_maxI /*_maxI */
+					}, /* x */
+					{ /* y */
+						CTRL_ATT_Y_Kp, /* _Kp */
+						CTRL_ATT_Y_Kd, /*_Kd */
+						CTRL_ATT_Y_Ki, /*_Ki */
+						CTRL_ATT_Y_useOfRb, /*_useOfRb */
+						CTRL_ATT_Y_Krb, /*_Krb */
+						CTRL_ATT_Y_rbThd, /*_rbThd */
+						CTRL_ATT_Y_rb, /*_rb */
+						CTRL_ATT_Y_maxI /*_maxI */
+					}, /* y */
+					{ /* z */
+						CTRL_ATT_Z_Kp, /* _Kp */
+						CTRL_ATT_Z_Kd, /*_Kd */
+						CTRL_ATT_Z_Ki, /*_Ki */
+						CTRL_ATT_Z_useOfRb, /*_useOfRb */
+						CTRL_ATT_Z_Krb, /*_Krb */
+						CTRL_ATT_Z_rbThd, /*_rbThd */
+						CTRL_ATT_Z_rb, /*_rb */
+						CTRL_ATT_Z_maxI /*_maxI */
+					} /* z */
+				}, /* attCtrl */
+				MODE_AUTOSTAB_SCALE_ROLLPWM, /* rollPwmScale */
+				MODE_AUTOSTAB_SCALE_ROLLPWMEXP, /* rollPwmScaleExp */
+				MODE_AUTOSTAB_SCALE_PITCHPWM, /* pitchPwmScale */
+				MODE_AUTOSTAB_SCALE_PITCHPWMEXP, /* pitchPwmScaleExp */
+				MODE_AUTOSTAB_SCALE_YAWRATEPWM, /* yawRatePwmScale */
+				MODE_AUTOSTAB_SCALE_YAWRATEPWMEXP, /* yawRatePwmScaleExp */
+				MODE_AUTOSTAB_SCALE_THRUSTPWM, /* thrustPwmScale */
+				MODE_AUTOSTAB_SCALE_THRUSTPWMEXP, /* thrustPwmScaleExp */
+				MODE_AUTOSTAB_SCALE_THRUSTDIR_B_X, /* thrustDir_B_x */
+				MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Y, /* thrustDir_B_y */
+				MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Z /* thrustDir_B_z */
+		} /* modeStabilized */
+};
+
+
+
 const mavlink::ParameterMgt::ParamInfo config[CONFIG_PARAMETERS_COUNT] = {
 		// @Param: SYSID_SW_MREV
 		// @DisplayName: Eeprom format version number
@@ -406,6 +499,121 @@ const mavlink::ParameterMgt::ParamInfo config[CONFIG_PARAMETERS_COUNT] = {
 		// @User: Advanced
 		PARAM(REAL32, "SYSID_THISMAV", &VAL_SYSID_THISMAV, CONFIG_SYSID_THISMAV),
 		PARAM(REAL32, "SYSID_MYGCS", &VAL_SYSID_MYGCS, CONFIG_SYSID_MYGCS),
+
+
+
+		PARAM(REAL32, "GEN_MASS", &config_ancs.gen.mass, PHYSICS_MASS),
+		PARAM(REAL32, "GEN_INER_XX", &config_ancs.gen.inertiaXX, PHYSICS_INERTIA_XX),
+		PARAM(REAL32, "GEN_INER_YY", &config_ancs.gen.inertiaYY, PHYSICS_INERTIA_YY),
+		PARAM(REAL32, "GEN_INER_ZZ", &config_ancs.gen.inertiaZZ, PHYSICS_INERTIA_ZZ),
+
+		PARAM(REAL32, "EST_K_ACCO", &config_ancs.est.gainAcco, EST_KALMAN_GAIN_ACCO),
+		PARAM(REAL32, "EST_K_COMP", &config_ancs.est.gainAcco, EST_KALMAN_GAIN_COMPASS),
+
+		PARAM(REAL32, "CALIMU_NUM0", &config_ancs.procCalibImu.filtCoeffNum[0], PROC_CALIBIMU_FILT_NUM0),
+		PARAM(REAL32, "CALIMU_NUM1", &config_ancs.procCalibImu.filtCoeffNum[1], PROC_CALIBIMU_FILT_NUM1),
+		PARAM(REAL32, "CALIMU_DEN0", &config_ancs.procCalibImu.filtCoeffDen[0], PROC_CALIBIMU_FILT_DEN0),
+		PARAM(REAL32, "CALIMU_DEN1", &config_ancs.procCalibImu.filtCoeffDen[1], PROC_CALIBIMU_FILT_DEN1),
+		PARAM(UINT16, "CALIMU_NBBIAS", &config_ancs.procCalibImu.biasNbMeas, PROC_CALIBIMU_NBMEAS_BIAS),
+		PARAM(UINT16, "CALIMU_NBVAR", &config_ancs.procCalibImu.varNbMeas, PROC_CALIBIMU_NBMEAS_VAR),
+		PARAM(REAL32, "CALIMU_THDGYRO", &config_ancs.procCalibImu.gyroVarianceThd, PROC_CALIBIMU_GYRO_VARTHD),
+		PARAM(REAL32, "CALIMU_THDACCO", &config_ancs.procCalibImu.accoVarianceThd, PROC_CALIBIMU_ACCO_VARTHD),
+
+		PARAM(REAL32, "DECLIN_NUM0", &config_ancs.procCompDec.filtCoeffNum[0], PROC_COMPDEC_FILT_NUM0),
+		PARAM(REAL32, "DECLIN_NUM1", &config_ancs.procCompDec.filtCoeffNum[1], PROC_COMPDEC_FILT_NUM1),
+		PARAM(REAL32, "DECLIN_DEN0", &config_ancs.procCompDec.filtCoeffDen[0], PROC_COMPDEC_FILT_DEN0),
+		PARAM(REAL32, "DECLIN_DEN1", &config_ancs.procCompDec.filtCoeffDen[1], PROC_COMPDEC_FILT_DEN1),
+		PARAM(UINT16, "DECLIN_NB", &config_ancs.procCompDec.nbMeas, PROC_COMPDEC_NBMEAS),
+
+		PARAM(REAL32, "MOD_INFMAT_0_0", &config_ancs.modGen.infMat[0][0], MODULATOR_INFMAT_0_0),
+		PARAM(REAL32, "MOD_INFMAT_0_1", &config_ancs.modGen.infMat[0][1], MODULATOR_INFMAT_0_1),
+		PARAM(REAL32, "MOD_INFMAT_0_2", &config_ancs.modGen.infMat[0][2], MODULATOR_INFMAT_0_2),
+		PARAM(REAL32, "MOD_INFMAT_0_3", &config_ancs.modGen.infMat[0][3], MODULATOR_INFMAT_0_3),
+		PARAM(REAL32, "MOD_INFMAT_1_0", &config_ancs.modGen.infMat[1][0], MODULATOR_INFMAT_1_0),
+		PARAM(REAL32, "MOD_INFMAT_1_1", &config_ancs.modGen.infMat[1][1], MODULATOR_INFMAT_1_1),
+		PARAM(REAL32, "MOD_INFMAT_1_2", &config_ancs.modGen.infMat[1][2], MODULATOR_INFMAT_1_2),
+		PARAM(REAL32, "MOD_INFMAT_1_3", &config_ancs.modGen.infMat[1][3], MODULATOR_INFMAT_1_3),
+		PARAM(REAL32, "MOD_INFMAT_2_0", &config_ancs.modGen.infMat[2][0], MODULATOR_INFMAT_2_0),
+		PARAM(REAL32, "MOD_INFMAT_2_1", &config_ancs.modGen.infMat[2][1], MODULATOR_INFMAT_2_1),
+		PARAM(REAL32, "MOD_INFMAT_2_2", &config_ancs.modGen.infMat[2][2], MODULATOR_INFMAT_2_2),
+		PARAM(REAL32, "MOD_INFMAT_2_3", &config_ancs.modGen.infMat[2][3], MODULATOR_INFMAT_2_3),
+		PARAM(REAL32, "MOD_INFMAT_3_0", &config_ancs.modGen.infMat[3][0], MODULATOR_INFMAT_3_0),
+		PARAM(REAL32, "MOD_INFMAT_3_1", &config_ancs.modGen.infMat[3][1], MODULATOR_INFMAT_3_1),
+		PARAM(REAL32, "MOD_INFMAT_3_2", &config_ancs.modGen.infMat[3][2], MODULATOR_INFMAT_3_2),
+		PARAM(REAL32, "MOD_INFMAT_3_3", &config_ancs.modGen.infMat[3][3], MODULATOR_INFMAT_3_3),
+		PARAM(REAL32, "MOD_INFMAT_4_0", &config_ancs.modGen.infMat[4][0], MODULATOR_INFMAT_4_0),
+		PARAM(REAL32, "MOD_INFMAT_4_1", &config_ancs.modGen.infMat[4][1], MODULATOR_INFMAT_4_1),
+		PARAM(REAL32, "MOD_INFMAT_4_2", &config_ancs.modGen.infMat[4][2], MODULATOR_INFMAT_4_2),
+		PARAM(REAL32, "MOD_INFMAT_4_3", &config_ancs.modGen.infMat[4][3], MODULATOR_INFMAT_4_3),
+		PARAM(REAL32, "MOD_INFMAT_5_0", &config_ancs.modGen.infMat[5][0], MODULATOR_INFMAT_5_0),
+		PARAM(REAL32, "MOD_INFMAT_5_1", &config_ancs.modGen.infMat[5][1], MODULATOR_INFMAT_5_1),
+		PARAM(REAL32, "MOD_INFMAT_5_2", &config_ancs.modGen.infMat[5][2], MODULATOR_INFMAT_5_2),
+		PARAM(REAL32, "MOD_INFMAT_5_3", &config_ancs.modGen.infMat[5][3], MODULATOR_INFMAT_5_3),
+
+		PARAM(REAL32, "MOD_PINV_0_0", &config_ancs.modPinv.pInvInfMat[0][0], MODULATOR_PINVINFMAT_0_0),
+		PARAM(REAL32, "MOD_PINV_0_1", &config_ancs.modPinv.pInvInfMat[0][1], MODULATOR_PINVINFMAT_0_1),
+		PARAM(REAL32, "MOD_PINV_0_2", &config_ancs.modPinv.pInvInfMat[0][2], MODULATOR_PINVINFMAT_0_2),
+		PARAM(REAL32, "MOD_PINV_0_3", &config_ancs.modPinv.pInvInfMat[0][3], MODULATOR_PINVINFMAT_0_3),
+		PARAM(REAL32, "MOD_PINV_0_4", &config_ancs.modPinv.pInvInfMat[0][4], MODULATOR_PINVINFMAT_0_4),
+		PARAM(REAL32, "MOD_PINV_0_5", &config_ancs.modPinv.pInvInfMat[0][5], MODULATOR_PINVINFMAT_0_5),
+		PARAM(REAL32, "MOD_PINV_1_0", &config_ancs.modPinv.pInvInfMat[1][0], MODULATOR_PINVINFMAT_1_0),
+		PARAM(REAL32, "MOD_PINV_1_1", &config_ancs.modPinv.pInvInfMat[1][1], MODULATOR_PINVINFMAT_1_1),
+		PARAM(REAL32, "MOD_PINV_1_2", &config_ancs.modPinv.pInvInfMat[1][2], MODULATOR_PINVINFMAT_1_2),
+		PARAM(REAL32, "MOD_PINV_1_3", &config_ancs.modPinv.pInvInfMat[1][3], MODULATOR_PINVINFMAT_1_3),
+		PARAM(REAL32, "MOD_PINV_1_4", &config_ancs.modPinv.pInvInfMat[1][4], MODULATOR_PINVINFMAT_1_4),
+		PARAM(REAL32, "MOD_PINV_1_5", &config_ancs.modPinv.pInvInfMat[1][5], MODULATOR_PINVINFMAT_1_5),
+		PARAM(REAL32, "MOD_PINV_2_0", &config_ancs.modPinv.pInvInfMat[2][0], MODULATOR_PINVINFMAT_2_0),
+		PARAM(REAL32, "MOD_PINV_2_1", &config_ancs.modPinv.pInvInfMat[2][1], MODULATOR_PINVINFMAT_2_1),
+		PARAM(REAL32, "MOD_PINV_2_2", &config_ancs.modPinv.pInvInfMat[2][2], MODULATOR_PINVINFMAT_2_2),
+		PARAM(REAL32, "MOD_PINV_2_3", &config_ancs.modPinv.pInvInfMat[2][3], MODULATOR_PINVINFMAT_2_3),
+		PARAM(REAL32, "MOD_PINV_2_4", &config_ancs.modPinv.pInvInfMat[2][4], MODULATOR_PINVINFMAT_2_4),
+		PARAM(REAL32, "MOD_PINV_2_5", &config_ancs.modPinv.pInvInfMat[2][5], MODULATOR_PINVINFMAT_2_5),
+		PARAM(REAL32, "MOD_PINV_3_0", &config_ancs.modPinv.pInvInfMat[3][0], MODULATOR_PINVINFMAT_3_0),
+		PARAM(REAL32, "MOD_PINV_3_1", &config_ancs.modPinv.pInvInfMat[3][1], MODULATOR_PINVINFMAT_3_1),
+		PARAM(REAL32, "MOD_PINV_3_2", &config_ancs.modPinv.pInvInfMat[3][2], MODULATOR_PINVINFMAT_3_2),
+		PARAM(REAL32, "MOD_PINV_3_3", &config_ancs.modPinv.pInvInfMat[3][3], MODULATOR_PINVINFMAT_3_3),
+		PARAM(REAL32, "MOD_PINV_3_4", &config_ancs.modPinv.pInvInfMat[3][4], MODULATOR_PINVINFMAT_3_4),
+		PARAM(REAL32, "MOD_PINV_3_5", &config_ancs.modPinv.pInvInfMat[3][5], MODULATOR_PINVINFMAT_3_5),
+
+		PARAM(REAL32, "MOD_DSC_0", &config_ancs.modPinv.descVect[0], MODULATOR_DESCVECT_0),
+		PARAM(REAL32, "MOD_DSC_1", &config_ancs.modPinv.descVect[1], MODULATOR_DESCVECT_1),
+		PARAM(REAL32, "MOD_DSC_2", &config_ancs.modPinv.descVect[2], MODULATOR_DESCVECT_2),
+		PARAM(REAL32, "MOD_DSC_3", &config_ancs.modPinv.descVect[3], MODULATOR_DESCVECT_3),
+
+		PARAM(REAL32, "CTLATT_AS_X_KP", &config_ancs.modeStabilized.attCtrl.x.Kp, CTRL_ATT_X_Kp),
+		PARAM(REAL32, "CTLATT_AS_X_KD", &config_ancs.modeStabilized.attCtrl.x.Kd, CTRL_ATT_X_Kd),
+		PARAM(REAL32, "CTLATT_AS_X_KI", &config_ancs.modeStabilized.attCtrl.x.Ki, CTRL_ATT_X_Ki),
+		PARAM(REAL32, "CTLATT_AS_X_ISRB", &config_ancs.modeStabilized.attCtrl.x.useOfRb, CTRL_ATT_X_useOfRb),
+		PARAM(REAL32, "CTLATT_AS_X_KRB", &config_ancs.modeStabilized.attCtrl.x.Krb, CTRL_ATT_X_Krb),
+		PARAM(REAL32, "CTLATT_AS_X_RB", &config_ancs.modeStabilized.attCtrl.x.rbThd, CTRL_ATT_X_rbThd),
+		PARAM(REAL32, "CTLATT_AS_X_MAXI", &config_ancs.modeStabilized.attCtrl.x.maxI, CTRL_ATT_X_maxI),
+		PARAM(REAL32, "CTLATT_AS_Y_KP", &config_ancs.modeStabilized.attCtrl.y.Kp, CTRL_ATT_Y_Kp),
+		PARAM(REAL32, "CTLATT_AS_Y_KD", &config_ancs.modeStabilized.attCtrl.y.Kd, CTRL_ATT_Y_Kd),
+		PARAM(REAL32, "CTLATT_AS_Y_KI", &config_ancs.modeStabilized.attCtrl.y.Ki, CTRL_ATT_Y_Ki),
+		PARAM(REAL32, "CTLATT_AS_Y_ISRB", &config_ancs.modeStabilized.attCtrl.y.useOfRb, CTRL_ATT_Y_useOfRb),
+		PARAM(REAL32, "CTLATT_AS_Y_KRB", &config_ancs.modeStabilized.attCtrl.y.Krb, CTRL_ATT_Y_Krb),
+		PARAM(REAL32, "CTLATT_AS_Y_RB", &config_ancs.modeStabilized.attCtrl.y.rbThd, CTRL_ATT_Y_rbThd),
+		PARAM(REAL32, "CTLATT_AS_Y_MAXI", &config_ancs.modeStabilized.attCtrl.y.maxI, CTRL_ATT_Y_maxI),
+		PARAM(REAL32, "CTLATT_AS_Z_KP", &config_ancs.modeStabilized.attCtrl.z.Kp, CTRL_ATT_Z_Kp),
+		PARAM(REAL32, "CTLATT_AS_Z_KD", &config_ancs.modeStabilized.attCtrl.z.Kd, CTRL_ATT_Z_Kd),
+		PARAM(REAL32, "CTLATT_AS_Z_KI", &config_ancs.modeStabilized.attCtrl.z.Ki, CTRL_ATT_Z_Ki),
+		PARAM(REAL32, "CTLATT_AS_Z_ISRB", &config_ancs.modeStabilized.attCtrl.z.useOfRb, CTRL_ATT_Z_useOfRb),
+		PARAM(REAL32, "CTLATT_AS_Z_KRB", &config_ancs.modeStabilized.attCtrl.z.Krb, CTRL_ATT_Z_Krb),
+		PARAM(REAL32, "CTLATT_AS_Z_RB", &config_ancs.modeStabilized.attCtrl.z.rbThd, CTRL_ATT_Z_rbThd),
+		PARAM(REAL32, "CTLATT_AS_Z_MAXI", &config_ancs.modeStabilized.attCtrl.z.maxI, CTRL_ATT_Z_maxI),
+
+		PARAM(REAL32, "AS_SCL_R", &config_ancs.modeStabilized.rollPwmScale, MODE_AUTOSTAB_SCALE_ROLLPWM),
+		PARAM(REAL32, "AS_SCL_REXP", &config_ancs.modeStabilized.rollPwmScaleExp, MODE_AUTOSTAB_SCALE_ROLLPWMEXP),
+		PARAM(REAL32, "AS_SCL_P", &config_ancs.modeStabilized.pitchPwmScale, MODE_AUTOSTAB_SCALE_PITCHPWM),
+		PARAM(REAL32, "AS_SCL_PEXP", &config_ancs.modeStabilized.pitchPwmScaleExp, MODE_AUTOSTAB_SCALE_PITCHPWMEXP),
+		PARAM(REAL32, "AS_SCL_Y", &config_ancs.modeStabilized.yawRatePwmScale, MODE_AUTOSTAB_SCALE_YAWRATEPWM),
+		PARAM(REAL32, "AS_SCL_YEXP", &config_ancs.modeStabilized.yawRatePwmScaleExp, MODE_AUTOSTAB_SCALE_YAWRATEPWMEXP),
+		PARAM(REAL32, "AS_SCL_T", &config_ancs.modeStabilized.thrustPwmScale, MODE_AUTOSTAB_SCALE_THRUSTPWM),
+		PARAM(REAL32, "AS_SCL_TEXP", &config_ancs.modeStabilized.thrustPwmScaleExp, MODE_AUTOSTAB_SCALE_THRUSTPWMEXP),
+		PARAM(REAL32, "AS_SCL_T_X", &config_ancs.modeStabilized.thrustDir_B_x, MODE_AUTOSTAB_SCALE_THRUSTDIR_B_X),
+		PARAM(REAL32, "AS_SCL_T_Y", &config_ancs.modeStabilized.thrustDir_B_y, MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Y),
+		PARAM(REAL32, "AS_SCL_T_Z", &config_ancs.modeStabilized.thrustDir_B_z, MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Z),
+
 
 //		// @Param: SERIAL3_BAUD
 //		// @DisplayName: Telemetry Baud Rate
