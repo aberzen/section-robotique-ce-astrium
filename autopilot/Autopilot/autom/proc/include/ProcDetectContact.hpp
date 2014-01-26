@@ -8,7 +8,7 @@
 #ifndef PROCDETECTCONTACT_HPP_
 #define PROCDETECTCONTACT_HPP_
 
-#include <arch/app/include/Procedure.hpp>
+#include <infra/app/include/Procedure.hpp>
 #include <autom/est/include/Estimator.hpp>
 #include <autom/gen/include/GenericParameters.hpp>
 
@@ -43,8 +43,10 @@ public:
 	/** @brief Init the process */
 	virtual ::infra::status initialize() ;
 
-	/** @brief Execute the process */
-	virtual ::infra::status execute() ;
+protected:
+
+	/** @brief Execute current procedure step */
+	virtual infra::status step();
 
 protected:
 	/** @brief Cycle count for which the threshold was crossed */

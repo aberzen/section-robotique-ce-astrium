@@ -8,7 +8,7 @@
 #ifndef PROCCOMPASSDECLINATION_HPP_
 #define PROCCOMPASSDECLINATION_HPP_
 
-#include <arch/app/include/Procedure.hpp>
+#include <infra/app/include/Procedure.hpp>
 #include <board/gen/include/Board.hpp>
 #include <autom/est/include/Estimator.hpp>
 #include <autom/filt/include/DiscreteFilter.hpp>

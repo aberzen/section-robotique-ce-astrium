@@ -11,7 +11,7 @@
 #include <infra/include/Types.hpp>
 #include <math/include/Vector3.hpp>
 #include <autom/ctrl/include/ControllerPid.hpp>
-#include <arch/app/include/Process.hpp>
+#include <infra/app/include/Process.hpp>
 
 namespace autom {
 

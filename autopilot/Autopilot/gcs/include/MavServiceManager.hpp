@@ -10,7 +10,7 @@
 
 #include <avr/pgmspace.h>
 
-#include <arch/app/include/Process.hpp>
+#include <infra/app/include/Process.hpp>
 #include "Channel.hpp"
 
 #include "ModeMgt.hpp"

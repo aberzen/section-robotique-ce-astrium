@@ -48,7 +48,7 @@ ProcDetectContact::~ProcDetectContact() {
 }
 
 /** @brief Execute the process */
-::infra::status ProcDetectContact::execute()
+::infra::status ProcDetectContact::step()
 {
 	math::Vector3f frcGrav_I(0.,0.,-9.81*_paramGen.mass);
 	_out.forceErr_I = _estVal.attitude_IB.rotateQVQconj(_imuMeas.accoMeas_B*_paramGen.mass - _forceReal_B) + frcGrav_I;

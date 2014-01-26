@@ -8,7 +8,7 @@
 #ifndef SYSTEM_HPP_
 #define SYSTEM_HPP_
 
-#include <arch/app/include/Process.hpp>
+#include <infra/app/include/Process.hpp>
 #include <board/gen/include/Board.hpp>
 #include <gcs/include/MavServiceManager.hpp>
 //#include <autom/est/include/AhrsEstimator.hpp>

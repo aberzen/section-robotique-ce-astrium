@@ -8,7 +8,7 @@
 #ifndef MODEMANAGEMENT_HPP_
 #define MODEMANAGEMENT_HPP_
 
-#include <arch/app/include/Process.hpp>
+#include <infra/app/include/Process.hpp>
 
 namespace autom {
 

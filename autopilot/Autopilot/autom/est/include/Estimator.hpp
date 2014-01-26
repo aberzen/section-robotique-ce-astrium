@@ -10,7 +10,7 @@
 
 #include <board/gen/include/Board.hpp>
 #include <math/include/Quaternion.hpp>
-#include <arch/app/include/Process.hpp>
+#include <infra/app/include/Process.hpp>
 
 namespace autom {
 

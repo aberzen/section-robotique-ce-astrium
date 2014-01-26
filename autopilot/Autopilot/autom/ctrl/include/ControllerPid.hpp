@@ -9,7 +9,7 @@
 #define CONTROLLERPID_H_
 
 #include <math/include/MathUtils.hpp>
-#include <arch/app/include/Process.hpp>
+#include <infra/app/include/Process.hpp>
 
 namespace autom {
 

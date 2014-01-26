@@ -45,7 +45,7 @@ void ControlCyclicTask::init(void)
 
 //	system::System::system.getMavHouseKeeping().setDataStream(100,MAV_DATA_STREAM_ALL,true);
 
-	Serial.printf("ControlCyclicTask::init\n");
+//	Serial.printf("ControlCyclicTask::init\n");
 	Task::init();
 }
 
@@ -61,9 +61,17 @@ void ControlCyclicTask::runCycle(void)
 		_missed = 0;
 	}
 
-	/* Process the attitude and navigation control system */
-	system::System::system._mgt.execute();
-	system::System::system.execute();
+//	/* Process HF sensors */
+//	board::Board::board.getPwm().execute();
+//	board::Board::board.getImu().execute();
+//	board::Board::board.getBaro().execute();
+//	board::Board::board.getCompass().execute();
+//
+//	/* Execute HF functions */
+//	system::System::system._mgt._est.execute();
+//	system::System::system._mgt._attCtrl.execute();
+//	system::System::system._mgt._mod.execute();
+
 
 	uint32_t dur = micros() - now;
 	if (dur > saved_dur_wcet)

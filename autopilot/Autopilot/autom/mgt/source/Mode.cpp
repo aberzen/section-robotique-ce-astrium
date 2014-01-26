@@ -13,13 +13,13 @@ Mode::Mode(
 		/* Input */
 		const Estimator::Estimations& est,
 		/* Outputs */
-		::math::Vector3f& torque_B,
+		AttGuid::Output& attGuid,
 		::math::Vector3f& force_B
 		/* Parameters */
 		)
 : _est(est),
   _force_B(force_B),
-  _torque_B(torque_B)
+  _attGuid(attGuid)
 {
 }
 

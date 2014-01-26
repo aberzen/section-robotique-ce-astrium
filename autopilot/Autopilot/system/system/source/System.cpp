@@ -13,7 +13,8 @@
 namespace system {
 
 
-float config_dt = 0.01; /* sec */
+const float config_dt_HF = 0.01; /* sec */
+const float config_dt_LF = 0.1; /* sec */
 
 
 System::System(board::Board& board) :
@@ -23,7 +24,8 @@ System::System(board::Board& board) :
 	_paramMgt(test::config, CONFIG_PARAMETERS_COUNT),
 	_wpMgt(),
 	_mgt(
-			config_dt,
+			config_dt_HF,
+			config_dt_LF,
 			test::config_ancs),
 	_hkMgt(MAVLINK_COMM_0, _mgt.getEstimationValues(), board.meas, board.rawMeas),
 	_cmdMgt(),
@@ -55,8 +57,8 @@ System::~System()
 /** @brief Init the process */
 infra::status System::initialize()
 {
-	/* Execute board */
-	getBoard().initialize();
+//	/* Execute board */
+//	getBoard().initialize();
 
 //	/* Execute estimator */
 //	getEstimator().initialize();

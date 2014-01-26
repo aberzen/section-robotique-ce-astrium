@@ -8,7 +8,7 @@
 #ifndef PROCCALIBGYROBIAS_HPP_
 #define PROCCALIBGYROBIAS_HPP_
 
-#include <arch/app/include/Procedure.hpp>
+#include <infra/app/include/Procedure.hpp>
 #include <hw/imu/include/HalImu.hpp>
 #include <autom/est/include/Estimator.hpp>
 #include <autom/filt/include/DiscreteFilter.hpp>

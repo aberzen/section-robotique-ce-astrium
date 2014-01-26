@@ -9,7 +9,7 @@
 #define DATASTREAM_HPP_
 
 #include <common/mavlink.h>
-#include <arch/app/include/Process.hpp>
+#include <infra/app/include/Process.hpp>
 
 namespace mavlink {
 

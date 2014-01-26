@@ -8,7 +8,7 @@
 #ifndef APPLICATION_H_
 #define APPLICATION_H_
 
-#include <arch/msgBus/include/MessageListener.hpp>
+#include <infra/msgBus/include/MessageListener.hpp>
 
 namespace arducopter {
 

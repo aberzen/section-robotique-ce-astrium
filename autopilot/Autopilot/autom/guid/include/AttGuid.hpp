@@ -8,7 +8,7 @@
 #ifndef ATTGUID_HPP_
 #define ATTGUID_HPP_
 
-#include <arch/app/include/Process.hpp>
+#include <infra/app/include/Process.hpp>
 #include <math/include/Quaternion.hpp>
 #include <hw/pwm/include/Pwm.hpp>
 #include <autom/guid/include/NavGuid.hpp>

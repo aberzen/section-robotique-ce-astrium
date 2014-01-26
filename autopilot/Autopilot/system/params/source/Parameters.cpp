@@ -412,6 +412,10 @@ autom::Ancs::Param config_ancs = {
 				PROC_COMPDEC_FILT_DEN, /* filtCoeffDen */
 				PROC_COMPDEC_NBMEAS /* biasNbMeas */
 		}, /* procCompDec */
+		{ /* procGrdDetect */
+				0.981, /* detectThd */
+				20 /* filtDur */
+		}, /* procGrdDetect */
 		{ /* modGen */
 				{
 						MODULATOR_INFMAT_0,
@@ -583,33 +587,33 @@ const mavlink::ParameterMgt::ParamInfo config[CONFIG_PARAMETERS_COUNT] = {
 		PARAM(REAL32, "CTLATT_AS_X_KP", &config_ancs.modeStabilized.attCtrl.x.Kp, CTRL_ATT_X_Kp),
 		PARAM(REAL32, "CTLATT_AS_X_KD", &config_ancs.modeStabilized.attCtrl.x.Kd, CTRL_ATT_X_Kd),
 		PARAM(REAL32, "CTLATT_AS_X_KI", &config_ancs.modeStabilized.attCtrl.x.Ki, CTRL_ATT_X_Ki),
-		PARAM(REAL32, "CTLATT_AS_X_ISRB", &config_ancs.modeStabilized.attCtrl.x.useOfRb, CTRL_ATT_X_useOfRb),
+		PARAM(UINT8, "CTLATT_AS_X_ISRB", &config_ancs.modeStabilized.attCtrl.x.useOfRb, CTRL_ATT_X_useOfRb),
 		PARAM(REAL32, "CTLATT_AS_X_KRB", &config_ancs.modeStabilized.attCtrl.x.Krb, CTRL_ATT_X_Krb),
 		PARAM(REAL32, "CTLATT_AS_X_RB", &config_ancs.modeStabilized.attCtrl.x.rbThd, CTRL_ATT_X_rbThd),
 		PARAM(REAL32, "CTLATT_AS_X_MAXI", &config_ancs.modeStabilized.attCtrl.x.maxI, CTRL_ATT_X_maxI),
 		PARAM(REAL32, "CTLATT_AS_Y_KP", &config_ancs.modeStabilized.attCtrl.y.Kp, CTRL_ATT_Y_Kp),
 		PARAM(REAL32, "CTLATT_AS_Y_KD", &config_ancs.modeStabilized.attCtrl.y.Kd, CTRL_ATT_Y_Kd),
 		PARAM(REAL32, "CTLATT_AS_Y_KI", &config_ancs.modeStabilized.attCtrl.y.Ki, CTRL_ATT_Y_Ki),
-		PARAM(REAL32, "CTLATT_AS_Y_ISRB", &config_ancs.modeStabilized.attCtrl.y.useOfRb, CTRL_ATT_Y_useOfRb),
+		PARAM(UINT8, "CTLATT_AS_Y_ISRB", &config_ancs.modeStabilized.attCtrl.y.useOfRb, CTRL_ATT_Y_useOfRb),
 		PARAM(REAL32, "CTLATT_AS_Y_KRB", &config_ancs.modeStabilized.attCtrl.y.Krb, CTRL_ATT_Y_Krb),
 		PARAM(REAL32, "CTLATT_AS_Y_RB", &config_ancs.modeStabilized.attCtrl.y.rbThd, CTRL_ATT_Y_rbThd),
 		PARAM(REAL32, "CTLATT_AS_Y_MAXI", &config_ancs.modeStabilized.attCtrl.y.maxI, CTRL_ATT_Y_maxI),
 		PARAM(REAL32, "CTLATT_AS_Z_KP", &config_ancs.modeStabilized.attCtrl.z.Kp, CTRL_ATT_Z_Kp),
 		PARAM(REAL32, "CTLATT_AS_Z_KD", &config_ancs.modeStabilized.attCtrl.z.Kd, CTRL_ATT_Z_Kd),
 		PARAM(REAL32, "CTLATT_AS_Z_KI", &config_ancs.modeStabilized.attCtrl.z.Ki, CTRL_ATT_Z_Ki),
-		PARAM(REAL32, "CTLATT_AS_Z_ISRB", &config_ancs.modeStabilized.attCtrl.z.useOfRb, CTRL_ATT_Z_useOfRb),
+		PARAM(UINT8, "CTLATT_AS_Z_ISRB", &config_ancs.modeStabilized.attCtrl.z.useOfRb, CTRL_ATT_Z_useOfRb),
 		PARAM(REAL32, "CTLATT_AS_Z_KRB", &config_ancs.modeStabilized.attCtrl.z.Krb, CTRL_ATT_Z_Krb),
 		PARAM(REAL32, "CTLATT_AS_Z_RB", &config_ancs.modeStabilized.attCtrl.z.rbThd, CTRL_ATT_Z_rbThd),
 		PARAM(REAL32, "CTLATT_AS_Z_MAXI", &config_ancs.modeStabilized.attCtrl.z.maxI, CTRL_ATT_Z_maxI),
 
-		PARAM(REAL32, "AS_SCL_R", &config_ancs.modeStabilized.rollPwmScale, MODE_AUTOSTAB_SCALE_ROLLPWM),
-		PARAM(REAL32, "AS_SCL_REXP", &config_ancs.modeStabilized.rollPwmScaleExp, MODE_AUTOSTAB_SCALE_ROLLPWMEXP),
-		PARAM(REAL32, "AS_SCL_P", &config_ancs.modeStabilized.pitchPwmScale, MODE_AUTOSTAB_SCALE_PITCHPWM),
-		PARAM(REAL32, "AS_SCL_PEXP", &config_ancs.modeStabilized.pitchPwmScaleExp, MODE_AUTOSTAB_SCALE_PITCHPWMEXP),
-		PARAM(REAL32, "AS_SCL_Y", &config_ancs.modeStabilized.yawRatePwmScale, MODE_AUTOSTAB_SCALE_YAWRATEPWM),
-		PARAM(REAL32, "AS_SCL_YEXP", &config_ancs.modeStabilized.yawRatePwmScaleExp, MODE_AUTOSTAB_SCALE_YAWRATEPWMEXP),
-		PARAM(REAL32, "AS_SCL_T", &config_ancs.modeStabilized.thrustPwmScale, MODE_AUTOSTAB_SCALE_THRUSTPWM),
-		PARAM(REAL32, "AS_SCL_TEXP", &config_ancs.modeStabilized.thrustPwmScaleExp, MODE_AUTOSTAB_SCALE_THRUSTPWMEXP),
+		PARAM(INT8, "AS_SCL_R", &config_ancs.modeStabilized.rollPwmScale, MODE_AUTOSTAB_SCALE_ROLLPWM),
+		PARAM(INT8, "AS_SCL_REXP", &config_ancs.modeStabilized.rollPwmScaleExp, MODE_AUTOSTAB_SCALE_ROLLPWMEXP),
+		PARAM(INT8, "AS_SCL_P", &config_ancs.modeStabilized.pitchPwmScale, MODE_AUTOSTAB_SCALE_PITCHPWM),
+		PARAM(INT8, "AS_SCL_PEXP", &config_ancs.modeStabilized.pitchPwmScaleExp, MODE_AUTOSTAB_SCALE_PITCHPWMEXP),
+		PARAM(INT8, "AS_SCL_Y", &config_ancs.modeStabilized.yawRatePwmScale, MODE_AUTOSTAB_SCALE_YAWRATEPWM),
+		PARAM(INT8, "AS_SCL_YEXP", &config_ancs.modeStabilized.yawRatePwmScaleExp, MODE_AUTOSTAB_SCALE_YAWRATEPWMEXP),
+		PARAM(INT8, "AS_SCL_T", &config_ancs.modeStabilized.thrustPwmScale, MODE_AUTOSTAB_SCALE_THRUSTPWM),
+		PARAM(INT8, "AS_SCL_TEXP", &config_ancs.modeStabilized.thrustPwmScaleExp, MODE_AUTOSTAB_SCALE_THRUSTPWMEXP),
 		PARAM(REAL32, "AS_SCL_T_X", &config_ancs.modeStabilized.thrustDir_B_x, MODE_AUTOSTAB_SCALE_THRUSTDIR_B_X),
 		PARAM(REAL32, "AS_SCL_T_Y", &config_ancs.modeStabilized.thrustDir_B_y, MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Y),
 		PARAM(REAL32, "AS_SCL_T_Z", &config_ancs.modeStabilized.thrustDir_B_z, MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Z),

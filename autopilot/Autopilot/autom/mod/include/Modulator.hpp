@@ -8,7 +8,8 @@
 #ifndef MODULATOR_HPP_
 #define MODULATOR_HPP_
 
-#include <arch/app/include/Process.hpp>
+#include <infra/app/include/Process.hpp>
+#include <board/gen/include/Board.hpp>
 #include <hw/pwm/include/Pwm.hpp>
 #include <math/include/Vector3.hpp>
 
@@ -21,6 +22,12 @@ public:
 	{
 		float infMat[6][NB_MOTORS];
 	} ParamGen;
+
+	typedef enum {
+		E_STATE_DISARMED = 0,
+		E_STATE_ARMED
+	} State;
+
 public:
 
 	Modulator(
@@ -42,12 +49,18 @@ public:
 	/** @brief Execute the process */
 	virtual ::infra::status execute() ;
 
+	/** @brief Arm the motors */
+	virtual void arm() ;
+
+	/** @brief Disarm the motors */
+	virtual void disarm() ;
+
 protected:
 
-	/** @brief Demanded torque */
+	/** @brief Realized torque in body frame */
 	const ::math::Vector3f& _torque_B;
 
-	/** @brief Demanded force */
+	/** @brief Realized force in body frame */
 	const ::math::Vector3f& _force_B;
 
 	/** @brief Pwm */
@@ -64,6 +77,9 @@ protected:
 
 	/** @brief Parameter */
 	float _sqRatios[NB_MOTORS];
+
+	/** @brief State of internal state machine */
+	State _state;
 };
 
 
@@ -106,7 +122,6 @@ template <int8_t NB_MOTORS>
 	for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 	{
 		_out.channels[iMotor] = MIN_PULSEWIDTH;
-		board::Board::board.getPwm().enable_out(iMotor);
 		_sqRatios[iMotor] = 0;
 	}
 
@@ -140,6 +155,35 @@ template <int8_t NB_MOTORS>
 
 	return 0;
 }
+
+/** @brief Arm the motors */
+template <int8_t NB_MOTORS>
+void Modulator<NB_MOTORS>::arm()
+{
+	uint8_t idxMotor;
+	for (idxMotor=0 ; idxMotor<NB_MOTORS ; idxMotor++)
+	{
+		_out.channels[idxMotor] = MIN_PULSEWIDTH;
+		board::Board::board.getPwm().force_out(idxMotor);
+		board::Board::board.getPwm().enable_out(idxMotor);
+	}
+	_state = E_STATE_ARMED;
+}
+
+/** @brief Disarm the motors */
+template <int8_t NB_MOTORS>
+void Modulator<NB_MOTORS>::disarm()
+{
+	uint8_t idxMotor;
+	for (idxMotor=0 ; idxMotor<NB_MOTORS ; idxMotor++)
+	{
+		_out.channels[idxMotor] = MIN_PULSEWIDTH;
+		board::Board::board.getPwm().force_out(idxMotor);
+		board::Board::board.getPwm().disable_out(idxMotor);
+	}
+	_state = E_STATE_DISARMED;
+}
+
 
 } /* namespace autom */
 

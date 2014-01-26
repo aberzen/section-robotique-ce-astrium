@@ -8,7 +8,7 @@
 #ifndef MYDRIVER_H_
 #define MYDRIVER_H_
 
-#include <arch/app/include/Process.hpp>
+#include <infra/app/include/Process.hpp>
 namespace hw {
 
 

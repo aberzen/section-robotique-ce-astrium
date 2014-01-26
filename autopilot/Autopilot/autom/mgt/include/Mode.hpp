@@ -11,7 +11,7 @@
 #include <autom/est/include/Estimator.hpp>
 #include <autom/ctrl/include/AttitudeController.hpp>
 #include <autom/ctrl/include/NavigationController.hpp>
-#include <arch/app/include/Process.hpp>
+#include <infra/app/include/Process.hpp>
 
 namespace autom {
 
@@ -21,7 +21,7 @@ public:
 			/* Input */
 			const Estimator::Estimations& est,
 			/* Outputs */
-			::math::Vector3f& torque_B,
+			AttGuid::Output& attGuid,
 			::math::Vector3f& force_B
 			/* Parameters */
 			);
@@ -38,11 +38,11 @@ protected:
 	/** @brief Estimation */
 	const Estimator::Estimations& _est;
 
+	/** @brief Attitude guidance */
+	AttGuid::Output& _attGuid;
+
 	/** @brief Force in body frame (input of modulator) */
 	::math::Vector3f& _force_B;
-
-	/** @brief Torque in body frame (input of modulator) */
-	::math::Vector3f& _torque_B;
 };
 
 } /* namespace autom */

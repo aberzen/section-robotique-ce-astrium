@@ -8,7 +8,7 @@
 #ifndef NAVGUID_HPP_
 #define NAVGUID_HPP_
 
-#include <arch/app/include/Process.hpp>
+#include <infra/app/include/Process.hpp>
 #include <math/include/Vector3.hpp>
 #include <hw/pwm/include/Pwm.hpp>
 

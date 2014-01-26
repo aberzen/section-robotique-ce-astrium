@@ -12,13 +12,13 @@
 //#include "AP_Param.hpp"
 #include <mavlink_types.h>
 #include <common/mavlink.h>
-#include <arch/app/include/Process.hpp>
+#include <infra/app/include/Process.hpp>
 
 namespace mavlink {
 
 class ParameterMgt {
 protected:
-	static const uint16_t eepromRefRevision = 0x0002;
+	static const uint16_t eepromRefRevision = 0x0001;
 
 public:
 

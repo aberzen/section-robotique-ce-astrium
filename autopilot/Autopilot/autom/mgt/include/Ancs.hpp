@@ -9,12 +9,13 @@
 #define ANCS_HPP_
 
 #include <hw/serial/include/FastSerial.hpp>
-#include <arch/app/include/Process.hpp>
+#include <infra/app/include/Process.hpp>
 #include <autom/est/include/SimpleAttitudeKalmanFilter.hpp>
 #include <autom/proc/include/ProcCalibGyroBias.hpp>
 #include <autom/proc/include/ProcCompassDeclination.hpp>
 #include <autom/mod/include/ModulatorPinv.hpp>
 #include <autom/mgt/include/ModeStabilized.hpp>
+#include <autom/proc/include/ProcDetectContact.hpp>
 
 namespace autom {
 
@@ -44,13 +45,15 @@ public:
 		SimpleAttitudeKalmanFilter::Param est;
 		ProcCalibGyroBias::Param procCalibImu;
 		ProcCompassDeclination::Param procCompDec;
+		ProcDetectContact::Param procGrdDetect;
 		Modulator<CONFIG_NB_MOTOR>::ParamGen modGen;
 		ModulatorPinv<CONFIG_NB_MOTOR>::ParamPinv modPinv;
-		autom::ModeStabilized::Param modeStabilized;
+		ModeStabilized::Param modeStabilized;
 	} Param ;
 public:
 	Ancs(
-			const float& dt,
+			const float& dt_HF,
+			const float& dt_LF,
 			const Param& param);
 	virtual ~Ancs();
 
@@ -64,27 +67,57 @@ public:
 	inline const Estimator::Estimations& getEstimationValues();
 
 protected:
-	/** @brief Step initialization IMU calibration */
-	infra::status stepInitializationCalibImu();
+	/** @brief Execute the transition to E_STATE_INITIALIZATION_CALIB_IMU */
+	void execTransToInitCalibImu();
 
-	/** @brief Step initialization IMU calibration */
-	infra::status stepInitializationCalibCompass();
+	/** @brief Step initialization to E_STATE_INITIALIZATION_CALIB_IMU */
+	void stepInitCalibImu();
 
-	/** @brief Step ready */
-	infra::status stepReady();
+	/** @brief Assert transitions from E_STATE_INITIALIZATION_CALIB_IMU */
+	void evalTransFromInitCalibImu();
 
-	/** @brief Step flying */
-	infra::status stepFlying();
+	/** @brief Execute the transition to E_STATE_INITIALIZATION_CALIB_COMPASS */
+	void execTransToInitCalibCompass();
 
-	/** @brief Step fail safe */
-	infra::status stepFailsafe();
+	/** @brief Step initialization to E_STATE_INITIALIZATION_CALIB_COMPASS */
+	void stepInitCalibCompass();
 
-	/** @brief Assert transitions */
-	infra::status assertTransitions();
+	/** @brief Assert transitions from E_STATE_INITIALIZATION_CALIB_COMPASS */
+	void evalTransFromInitCalibCompass();
+
+	/** @brief Execute the transition to E_STATE_READY */
+	void execTransToReady();
+
+	/** @brief Step to E_STATE_READY */
+	void stepReady();
+
+	/** @brief Assert transitions from E_STATE_READY */
+	void evalTransFromReady();
+
+	/** @brief Execute the transition to E_STATE_FLYING */
+	void execTransToFlying();
+
+	/** @brief Step to E_STATE_FLYING */
+	void stepFlying();
+
+	/** @brief Assert transitions from E_STATE_FLYING */
+	void evalTransFromFlying();
+
+	/** @brief Execute the transition to E_STATE_FAILSAFE */
+	void execTransToFailsafe();
+
+	/** @brief Step to E_STATE_FAILSAFE */
+	void stepFailsafe();
+
+	/** @brief Assert transitions from E_STATE_FAILSAFE */
+	void evalTransFromFailSafe();
 
 protected:
 	/** @brief Setting */
 	Param _param;
+
+	/** @brief Demanded attitude guidance */
+	autom::AttGuid::Output _attGuid;
 
 	/** @brief Demanded torque */
 	math::Vector3f _torque_B;
@@ -98,7 +131,10 @@ protected:
 	/** @brief Realized force */
 	math::Vector3f _forceReal_B;
 
-	/** @brief */
+	/** @brief Ground detection output */
+	ProcDetectContact::Output _groundDetectOutput;
+
+	/** @brief Estimation values */
 	Estimator::Estimations _estVal;
 
 	/** @brief Calibration of IMU bias procedure */
@@ -107,8 +143,15 @@ protected:
 	/** @brief Calibration of IMU bias procedure */
 	ProcCompassDeclination _procCompDec;
 
+	/** @brief Calibration of IMU bias procedure */
+	ProcDetectContact _procDetectGround;
+
+
 	/** @brief Simple estimator (for test purpose) */
 	SimpleAttitudeKalmanFilter _est;
+
+	/** @brief Attitude controller */
+	AttitudeController _attCtrl;
 
 	/** @brief Modulator */
 	ModulatorPinv<CONFIG_NB_MOTOR> _mod;

@@ -37,12 +37,14 @@ public:
 			/* Input */
 			const Estimator::Estimations& est,
 			/* Outputs */
-			::math::Vector3f& torque_B,
+			AttGuid::Output& attGuid,
 			::math::Vector3f& force_B,
 			/* Parameters */
 			const float& dt,
 			const autom::ModeStabilized::Param& param,
-			const GenericParam& paramGen
+			const GenericParam& paramGen,
+			/* Dependencies */
+			AttitudeController& attCtrl
 			);
 	virtual ~ModeStabilized();
 
@@ -61,13 +63,10 @@ protected:
 	const autom::ModeStabilized::Param& _param;
 
 	/** @brief Generic parameters */
+	AttitudeController& _attCtrl;
+
+	/** @brief Generic parameters */
 	const autom::GenericParam& _paramGen;
-
-	/** @brief Input of attitude controller */
-	AttGuid::Output _guidAtt;
-
-	/** @brief Attitude controller */
-	AttitudeController _attCtrl;
 
 	/** @brief Rotation around z */
 	math::Quaternion _rotZ;
