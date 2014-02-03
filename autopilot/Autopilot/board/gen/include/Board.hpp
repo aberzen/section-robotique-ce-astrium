@@ -30,8 +30,17 @@ public:
 		::hw::HalBarometer::RawOutput baro;
 		::hw::Gps::RawOutput gps;
 	} RawMeasurements;
+
+protected:
+	Board(
+			hw::HalImu& imu,
+			hw::HalBarometer& baro,
+			hw::HalMagnetometer& compass,
+			hw::Gps& gps,
+			hw::Pwm& pwm
+			);
+
 public:
-	Board();
 	virtual ~Board();
 
 	/** @brief Init the process */
@@ -40,26 +49,23 @@ public:
 	/** @brief Execute the process */
 	virtual infra::status execute();
 
+public:
+
 	/** @brief Get IMU */
-	virtual inline hw::HalImu& getImu() = 0;
+	hw::HalImu& imu;
 
 	/** @brief Get Baro */
-	virtual inline hw::HalBarometer& getBaro() = 0;
+	hw::HalBarometer& baro;
 
 	/** @brief Get Magnetometer */
-	virtual inline hw::HalMagnetometer& getCompass() = 0;
+	hw::HalMagnetometer& compass;
 
 	/** @brief Get Gps */
-	virtual inline hw::Gps& getGps() = 0;
+	hw::Gps& gps;
 
 	/** @brief Get Pwm */
-	virtual inline hw::Pwm& getPwm() = 0;
+	hw::Pwm& pwm;
 
-public:
-	/* Unique static board */
-	static Board& board;
-
-public:
 	/** @brief Measurements */
 	Measurements meas;
 

@@ -19,15 +19,15 @@ const float config_dt_LF = 0.1; /* sec */
 
 System::System(board::Board& board) :
 	Process(),
-	_board(board),
+	board(board),
 	_modeMgt(),
 	_paramMgt(test::config, CONFIG_PARAMETERS_COUNT),
 	_wpMgt(),
-	_mgt(
+	ancs(
 			config_dt_HF,
 			config_dt_LF,
 			test::config_ancs),
-	_hkMgt(MAVLINK_COMM_0, _mgt.getEstimationValues(), board.meas, board.rawMeas),
+	_hkMgt(MAVLINK_COMM_0, ancs.getEstimationValues(), board.meas, board.rawMeas),
 	_cmdMgt(),
 	_mountMgt(),
 	_fenceMgt(),
@@ -44,8 +44,6 @@ System::System(board::Board& board) :
 			System::_fenceMgt,
 			System::_digivcamMgt
 	)
-//	,
-//	_est(board.getImu(), board.getBarometer(), _board.getMagnetometer())
 {
 }
 
@@ -57,15 +55,15 @@ System::~System()
 /** @brief Init the process */
 infra::status System::initialize()
 {
-//	/* Execute board */
-//	getBoard().initialize();
-
-//	/* Execute estimator */
-//	getEstimator().initialize();
-
 	/* Parameter management */
 	if (!getParameterMgt().checkEeprom())
 		getParameterMgt().resetEeprom();
+
+	/* Load all values */
+	getParameterMgt().loadAllValues();
+
+	/* Initialize the board */
+	board.initialize();
 
 	/* Update house keeping */
 	getMavHouseKeeping().initialize();
@@ -73,12 +71,15 @@ infra::status System::initialize()
 	/* Initialize Mavlink */
 	getMavSvcMgr().initialize();
 
-	/* Set mav period to 100ms */
-	getMavHouseKeeping().setDataStream(
-			1000,
-			MAV_DATA_STREAM_ALL,
-			1
-	);
+//	/* Set mav period to 100ms */
+//	getMavHouseKeeping().setDataStream(
+//			10,
+//			MAV_DATA_STREAM_ALL,
+//			1
+//	);
+
+	/* Initialize the attitude and navigation control system */
+	system::System::system.ancs.initialize();
 
 	return 0;
 }
@@ -86,12 +87,6 @@ infra::status System::initialize()
 /** @brief Execute the process */
 infra::status System::execute()
 {
-	/* Execute board */
-//	getBoard().execute();
-
-//	/* Execute estimator */
-//	getEstimator().execute();
-
 	/* Update house keeping */
 	getMavHouseKeeping().update();
 

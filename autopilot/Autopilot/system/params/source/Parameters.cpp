@@ -479,7 +479,25 @@ autom::Ancs::Param config_ancs = {
 				MODE_AUTOSTAB_SCALE_THRUSTDIR_B_X, /* thrustDir_B_x */
 				MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Y, /* thrustDir_B_y */
 				MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Z /* thrustDir_B_z */
-		} /* modeStabilized */
+		}, /* modeStabilized */
+		{ /* gimbal */
+			{ /* pitch */
+				GIMBAL_PITCH_MAX, /* angleMax */
+				GIMBAL_PITCH_MIN, /* angleMin */
+				GIMBAL_PITCH_SCALE, /* scale */
+				GIMBAL_PITCH_OFFSET, /* offset */
+				GIMBAL_PITCH_IDX /* idxChannel */
+
+			}, /* pitch */
+			{ /* roll */
+				GIMBAL_ROLL_MAX, /* angleMax */
+				GIMBAL_ROLL_MIN, /* angleMin */
+				GIMBAL_ROLL_SCALE, /* scale */
+				GIMBAL_ROLL_OFFSET, /* offset */
+				GIMBAL_ROLL_IDX /* idxChannel */
+			} /* roll */
+		} /* gimbal */
+
 };
 
 
@@ -617,6 +635,19 @@ const mavlink::ParameterMgt::ParamInfo config[CONFIG_PARAMETERS_COUNT] = {
 		PARAM(REAL32, "AS_SCL_T_X", &config_ancs.modeStabilized.thrustDir_B_x, MODE_AUTOSTAB_SCALE_THRUSTDIR_B_X),
 		PARAM(REAL32, "AS_SCL_T_Y", &config_ancs.modeStabilized.thrustDir_B_y, MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Y),
 		PARAM(REAL32, "AS_SCL_T_Z", &config_ancs.modeStabilized.thrustDir_B_z, MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Z),
+
+
+		PARAM(REAL32, "GBL_PITCH_MAX", &config_ancs.gimbal.pitch.angleMax, GIMBAL_PITCH_MAX),
+		PARAM(REAL32, "GBL_PITCH_MIN", &config_ancs.gimbal.pitch.angleMin, GIMBAL_PITCH_MIN),
+		PARAM(REAL32, "GBL_PITCH_SCALE", &config_ancs.gimbal.pitch.scale, GIMBAL_PITCH_SCALE),
+		PARAM(INT16, "GBL_PITCH_OFFSET", &config_ancs.gimbal.pitch.offset, GIMBAL_PITCH_OFFSET),
+		PARAM(UINT8, "GBL_PITCH_IDX", &config_ancs.gimbal.pitch.idxChannel, GIMBAL_PITCH_IDX),
+
+		PARAM(REAL32, "GBL_ROLL_MAX", &config_ancs.gimbal.roll.angleMax, GIMBAL_ROLL_MAX),
+		PARAM(REAL32, "GBL_ROLL_MIN", &config_ancs.gimbal.roll.angleMin, GIMBAL_ROLL_MIN),
+		PARAM(REAL32, "GBL_ROLL_SCALE", &config_ancs.gimbal.roll.scale, GIMBAL_ROLL_SCALE),
+		PARAM(INT16, "GBL_ROLL_OFFSET", &config_ancs.gimbal.roll.offset, GIMBAL_ROLL_OFFSET),
+		PARAM(UINT8, "GBL_ROLL_IDX", &config_ancs.gimbal.roll.idxChannel, GIMBAL_ROLL_IDX),
 
 
 //		// @Param: SERIAL3_BAUD

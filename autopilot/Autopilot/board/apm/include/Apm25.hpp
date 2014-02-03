@@ -38,24 +38,6 @@ public:
 	/** @brief Init the process */
 	virtual infra::status initialize();
 
-	/** @brief Execute the process */
-	virtual infra::status execute();
-
-	/** @brief Get IMU HAL */
-	virtual inline hw::HalImu& getImu();
-
-	/** @brief Get baro */
-	virtual inline hw::HalBarometer& getBaro() ;
-
-	/** @brief Get Magnetometer */
-	virtual inline hw::HalMagnetometer& getCompass() ;
-
-	/** @brief Get Gps sensor */
-	virtual inline hw::Gps& getGps() ;
-
-	/** @brief Get Pwm */
-	virtual inline hw::Pwm& getPwm() ;
-
 protected:
 	/** @brief I2C Bus */
 	hw::I2C _i2cBus;
@@ -84,36 +66,6 @@ protected:
 	/** @brief Pwm */
 	hw::PwmApm25 _pwm;
 };
-
-/** @brief Get IMU HAL */
-inline hw::HalImu& Apm25::getImu()
-{
-	return _imu;
-}
-
-/** @brief Get Mag HAL */
-inline hw::HalMagnetometer& Apm25::getCompass()
-{
-	return _compass;
-}
-
-/** @brief Get Gps sensor */
-inline hw::Gps& Apm25::getGps()
-{
-	return _gps;
-}
-
-/** @brief Get baro */
-inline hw::HalBarometer& Apm25::getBaro()
-{
-	return _baro;
-}
-
-/** @brief Get Pwm */
-inline hw::Pwm& Apm25::getPwm()
-{
-	return _pwm;
-}
 
 } /* namespace board */
 #endif /* APM25_HPP_ */

@@ -18,7 +18,7 @@ namespace mavlink {
 
 class ParameterMgt {
 protected:
-	static const uint16_t eepromRefRevision = 0x0001;
+	static const uint16_t eepromRefRevision = 0x0002;
 
 public:
 
@@ -82,6 +82,17 @@ public:
     /* return the number of failed updated parameters */
     int16_t resetEeprom();
 
+    // Reset all parameters value stored into eeprom with the default value of the flash
+    // return the number of failed updated parameters
+    int16_t resetToDefaultValues();
+
+    // Load all values from eeprom
+    /* return the number of failed updated parameters */
+    int16_t loadAllValues();
+
+    // Save all values to eeprom
+    /* return the number of failed updated parameters */
+    int16_t saveAllValues();
 
 protected:
 	const ParamInfo* infos;
@@ -112,21 +123,9 @@ protected: /* REGULAR METHODS */
     // Check eeprom CRC
     bool checkCrc();
 
-    // Reset all parameters value stored into eeprom with the default value of the flash
-    // return the number of failed updated parameters
-    int16_t resetToDefaultValues();
 
     // Reset header (i.e. recopy the resvision information, parameter count, and CRC)
     void resetHeader();
-
-    // Load all values from eeprom
-    /* return the number of failed updated parameters */
-    int16_t loadAllValues();
-
-    // Save all values to eeprom
-    /* return the number of failed updated parameters */
-    int16_t saveAllValues();
-
 
     // Reset all parameters value stored into eeprom with the default value of the flash
     uint8_t computeCrc();

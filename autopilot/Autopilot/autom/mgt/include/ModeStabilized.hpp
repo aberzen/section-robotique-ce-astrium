@@ -10,6 +10,8 @@
 
 #include <autom/mgt/include/Mode.hpp>
 #include <autom/gen/include/GenericParameters.hpp>
+#include <autom/proc/include/ProcDetectContact.hpp>
+
 namespace autom {
 
 class ModeStabilized: public autom::Mode {
@@ -36,6 +38,7 @@ public:
 	ModeStabilized(
 			/* Input */
 			const Estimator::Estimations& est,
+			const ProcDetectContact::Output& groundDetect,
 			/* Outputs */
 			AttGuid::Output& attGuid,
 			::math::Vector3f& force_B,
@@ -55,6 +58,9 @@ public:
 	virtual ::infra::status execute();
 
 protected:
+
+	/* @brief Ground detection */
+	const ProcDetectContact::Output& _groundDetect;
 
 	/** @brief Time step duration */
 	const float& _dt;

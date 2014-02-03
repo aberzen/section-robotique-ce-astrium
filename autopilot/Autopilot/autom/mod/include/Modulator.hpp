@@ -8,9 +8,8 @@
 #ifndef MODULATOR_HPP_
 #define MODULATOR_HPP_
 
-#include <infra/app/include/Process.hpp>
-#include <board/gen/include/Board.hpp>
 #include <hw/pwm/include/Pwm.hpp>
+#include <infra/app/include/Process.hpp>
 #include <math/include/Vector3.hpp>
 
 namespace autom {
@@ -39,7 +38,9 @@ public:
 			::math::Vector3f& torqueReal_B,
 			::math::Vector3f& forceReal_B,
 			/* Param */
-			const ParamGen& param
+			const ParamGen& param,
+			/* Dependencies */
+			hw::Pwm& pwm
 			);
 	virtual ~Modulator();
 
@@ -54,6 +55,14 @@ public:
 
 	/** @brief Disarm the motors */
 	virtual void disarm() ;
+
+protected:
+
+	/** @brief Update the produced torsor */
+	virtual void updateRealTosor() ;
+
+	/** @brief Update the PWM value */
+	virtual void updatePwm() = 0 ;
 
 protected:
 
@@ -75,6 +84,9 @@ protected:
 	/** @brief Parameter */
 	const ParamGen& _paramGen;
 
+	/** @brief Pwm */
+	hw::Pwm& _pwm;
+
 	/** @brief Parameter */
 	float _sqRatios[NB_MOTORS];
 
@@ -93,7 +105,9 @@ Modulator<NB_MOTORS>::Modulator(
 		::math::Vector3f& torqueReal_B,
 		::math::Vector3f& forceReal_B,
 		/* Param */
-		const ParamGen& param
+		const ParamGen& param,
+		/* Dependencies */
+		hw::Pwm& pwm
 		)
 : Process(),
   _torque_B(torque_B),
@@ -101,7 +115,8 @@ Modulator<NB_MOTORS>::Modulator(
   _out(out),
   _torqueReal_B(torqueReal_B),
   _forceReal_B(forceReal_B),
-  _paramGen(param)
+  _paramGen(param),
+  _pwm(pwm)
 {
 	// TODO Auto-generated constructor stub
 
@@ -123,6 +138,8 @@ template <int8_t NB_MOTORS>
 	{
 		_out.channels[iMotor] = MIN_PULSEWIDTH;
 		_sqRatios[iMotor] = 0;
+		_pwm.force_out(iMotor);
+		_pwm.enable_out(iMotor);
 	}
 
 	_torqueReal_B(0.,0.,0.);
@@ -134,6 +151,55 @@ template <int8_t NB_MOTORS>
 /** @brief Init the process */
 template <int8_t NB_MOTORS>
 ::infra::status Modulator<NB_MOTORS>::execute()
+{
+	if (_state == E_STATE_ARMED)
+	{
+		/* Compute PWM */
+		updatePwm();
+
+		/* Compute produced torsor */
+		updateRealTosor();
+	}
+	else
+	{
+		uint8_t iMotor;
+		for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
+		{
+			_out.channels[iMotor] = MIN_PULSEWIDTH;
+			_sqRatios[iMotor] = 0;
+		}
+
+		/* Produced torsor is zero */
+		_torqueReal_B(0.,0.,0.);
+		_forceReal_B(0.,0.,0.);
+	}
+	return 0;
+}
+
+/** @brief Arm the motors */
+template <int8_t NB_MOTORS>
+void Modulator<NB_MOTORS>::arm()
+{
+	_state = E_STATE_ARMED;
+}
+
+/** @brief Disarm the motors */
+template <int8_t NB_MOTORS>
+void Modulator<NB_MOTORS>::disarm()
+{
+	uint8_t idxMotor;
+	for (idxMotor=0 ; idxMotor<NB_MOTORS ; idxMotor++)
+	{
+		_out.channels[idxMotor] = MIN_PULSEWIDTH;
+		_sqRatios[idxMotor] = 0;
+		_pwm.force_out(idxMotor);
+	}
+	_state = E_STATE_DISARMED;
+}
+
+/** @brief Update the produced torsor */
+template <int8_t NB_MOTORS>
+void Modulator<NB_MOTORS>::updateRealTosor()
 {
 	uint8_t iMotor;
 
@@ -152,38 +218,7 @@ template <int8_t NB_MOTORS>
 		_forceReal_B.z += _paramGen.infMat[5][iMotor] * _sqRatios[iMotor];
 	}
 
-
-	return 0;
 }
-
-/** @brief Arm the motors */
-template <int8_t NB_MOTORS>
-void Modulator<NB_MOTORS>::arm()
-{
-	uint8_t idxMotor;
-	for (idxMotor=0 ; idxMotor<NB_MOTORS ; idxMotor++)
-	{
-		_out.channels[idxMotor] = MIN_PULSEWIDTH;
-		board::Board::board.getPwm().force_out(idxMotor);
-		board::Board::board.getPwm().enable_out(idxMotor);
-	}
-	_state = E_STATE_ARMED;
-}
-
-/** @brief Disarm the motors */
-template <int8_t NB_MOTORS>
-void Modulator<NB_MOTORS>::disarm()
-{
-	uint8_t idxMotor;
-	for (idxMotor=0 ; idxMotor<NB_MOTORS ; idxMotor++)
-	{
-		_out.channels[idxMotor] = MIN_PULSEWIDTH;
-		board::Board::board.getPwm().force_out(idxMotor);
-		board::Board::board.getPwm().disable_out(idxMotor);
-	}
-	_state = E_STATE_DISARMED;
-}
-
 
 } /* namespace autom */
 

@@ -31,13 +31,15 @@ public:
 			::math::Vector3f& forceReal_B,
 			/* Param */
 			typename ::autom::Modulator<NB_MOTORS>::ParamGen paramGen,
-			const ParamPinv& paramPinv);
+			const ParamPinv& paramPinv,
+			/* Dependencies */
+			hw::Pwm& pwm);
 	virtual ~ModulatorPinv();
 
-	/** @brief Execute the process */
-	virtual ::infra::status execute();
-
 protected:
+	/** @brief Update the PWM value */
+	virtual void updatePwm();
+
 	bool scaleLambda0();
 	bool scaleLambda1();
 protected:
@@ -57,8 +59,10 @@ ModulatorPinv<NB_MOTORS>::ModulatorPinv(
 		::math::Vector3f& forceReal_B,
 		/* Param */
 		typename ::autom::Modulator<NB_MOTORS>::ParamGen paramGen,
-		const ParamPinv& paramPinv)
-: ::autom::Modulator<NB_MOTORS>::Modulator(torque_B, force_B, out, torqueReal_B, forceReal_B, paramGen),
+		const ParamPinv& paramPinv,
+		/* Dependencies */
+		hw::Pwm& pwm)
+: ::autom::Modulator<NB_MOTORS>::Modulator(torque_B, force_B, out, torqueReal_B, forceReal_B, paramGen, pwm),
   _paramPinv(paramPinv)
 {
 	// TODO Auto-generated constructor stub
@@ -69,9 +73,9 @@ ModulatorPinv<NB_MOTORS>::~ModulatorPinv() {
 	// TODO Auto-generated destructor stub
 }
 
-/** @brief Execute the process */
+/** @brief Update the PWM value */
 template <int8_t NB_MOTORS>
-::infra::status ModulatorPinv<NB_MOTORS>::execute()
+void ModulatorPinv<NB_MOTORS>::updatePwm()
 {
 	int8_t iMotor;
 
@@ -104,8 +108,6 @@ template <int8_t NB_MOTORS>
 		this->_out.channels[iMotor] = ratio*(MAX_PULSEWIDTH-MIN_PULSEWIDTH)+MIN_PULSEWIDTH;
 	}
 
-	/* Update the realized torsor from upper class */
-	return Modulator<NB_MOTORS>::execute();
 }
 
 

@@ -58,7 +58,7 @@ void MavTask::init(void)
 //	/* Initialize */
 //	_hkMgt.initialize();
 
-	/* @TEST */
+//	/* @TEST */
 //	system::System::system.getMavHouseKeeping().setDataStream(100,MAV_DATA_STREAM_ALL,true);
 
 	/* Initialize the Mavlink service management */

@@ -3,6 +3,7 @@
 
 
 #include <hw/common/include/Driver.hpp>
+#include <hw/pwm/include/RadioChannel.hpp>
 
 namespace hw {
 

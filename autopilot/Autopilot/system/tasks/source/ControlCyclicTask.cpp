@@ -8,6 +8,7 @@
 #include "../include/ControlCyclicTask.hpp"
 #include <board/gen/include/Board.hpp>
 #include <system/system/include/System.hpp>
+#include <autom/mgt/include/Ancs.hpp>
 
 #include <hw/serial/include/FastSerial.hpp>
 
@@ -34,18 +35,10 @@ ControlCyclicTask::~ControlCyclicTask() {
 /** @brief Non returning function executed as the task body function. */
 void ControlCyclicTask::init(void)
 {
+
 	/* Execute Sensors */
 	system::System::system.initialize();
 
-	/* Initialize the board */
-	board::Board::board.initialize();
-
-	/* Initialize the attitude and navigation control system */
-	system::System::system._mgt.initialize();
-
-//	system::System::system.getMavHouseKeeping().setDataStream(100,MAV_DATA_STREAM_ALL,true);
-
-//	Serial.printf("ControlCyclicTask::init\n");
 	Task::init();
 }
 
@@ -72,6 +65,8 @@ void ControlCyclicTask::runCycle(void)
 //	system::System::system._mgt._attCtrl.execute();
 //	system::System::system._mgt._mod.execute();
 
+	system::System::system.ancs.execute();
+	system::System::system.getMavHouseKeeping().update();
 
 	uint32_t dur = micros() - now;
 	if (dur > saved_dur_wcet)

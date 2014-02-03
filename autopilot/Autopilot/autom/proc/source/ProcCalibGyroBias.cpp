@@ -18,8 +18,7 @@ ProcCalibGyroBias::ProcCalibGyroBias(
 		/* Param */
 		const ProcCalibGyroBias::Param& param
 	)
-: infra::Procedure(),
-  _param(param),
+: _param(param),
   _imu(imu),
   _filtGyroX(_param.filtCoeffNum, _param.filtCoeffDen),
   _filtGyroY(_param.filtCoeffNum, _param.filtCoeffDen),
@@ -36,40 +35,57 @@ ProcCalibGyroBias::~ProcCalibGyroBias() {
 	// TODO Auto-generated destructor stub
 }
 
-/** @brief Init the process */
-infra::status ProcCalibGyroBias::initialize()
+/** @brief Start procedure */
+void ProcCalibGyroBias::start()
 {
-	_state = E_PROCCALIBIMU_COMP_BIAS;
-	_sumGyroMeas(0., 0., 0.);
-	_sumAccoMeas(0., 0., 0.);
-	_count = _param.biasNbMeas;
-	return 0;
-}
-
-/** @brief Execute current procedure step */
-infra::status ProcCalibGyroBias::step()
-{
-	switch (_state)
+	switch(_state)
 	{
-	case E_PROCCALIBIMU_COMP_INIT_FILTERS:
-		stepInitFilters();
+	case E_PROCCALIBIMU_OFF:
+		_sumGyroMeas(0., 0., 0.);
+		_sumAccoMeas(0., 0., 0.);
+		_count = _param.biasNbMeas;
+		_state = E_PROCCALIBIMU_INIT;
 		break;
+	case E_PROCCALIBIMU_INIT:
+	case E_PROCCALIBIMU_ENDED:
+	case E_PROCCALIBIMU_FAILED:
 	case E_PROCCALIBIMU_COMP_BIAS:
-		return stepCompBias();
-		break;
 	case E_PROCCALIBIMU_COMP_VAR:
-		return stepCompVar();
-		break;
 	default:
-		/* Error: this state value is unexpected */
-		signalFailure();
 		break;
 	}
-	return -1;
+}
+
+/** @brief On tick procedure */
+void ProcCalibGyroBias::onTick()
+{
+	switch(_state)
+	{
+	case E_PROCCALIBIMU_INIT:
+		onTickInitFilters();
+		break;
+	case E_PROCCALIBIMU_COMP_BIAS:
+		onTickCompBias();
+		break;
+	case E_PROCCALIBIMU_COMP_VAR:
+		onTickCompVar();
+		break;
+	case E_PROCCALIBIMU_OFF:
+	case E_PROCCALIBIMU_ENDED:
+	case E_PROCCALIBIMU_FAILED:
+	default:
+		break;
+	}
+}
+
+/** @brief Stop procedure */
+void ProcCalibGyroBias::stop()
+{
+	_state = E_PROCCALIBIMU_OFF;
 }
 
 /** @brief Initialize the filters from first measurements */
-infra::status ProcCalibGyroBias::stepInitFilters()
+void ProcCalibGyroBias::onTickInitFilters()
 {
 	if (_imu.isAvailable)
 	{
@@ -101,11 +117,10 @@ infra::status ProcCalibGyroBias::stepInitFilters()
 
 		_state = E_PROCCALIBIMU_COMP_BIAS;
 	}
-	return 0;
 }
 
 /** @brief Compute bias */
-infra::status ProcCalibGyroBias::stepCompBias()
+void ProcCalibGyroBias::onTickCompBias()
 {
 	if (_imu.isAvailable)
 	{
@@ -137,11 +152,10 @@ infra::status ProcCalibGyroBias::stepCompBias()
 			_count--;
 		}
 	}
-	return 0;
 }
 
 /** @brief Compute variance */
-infra::status ProcCalibGyroBias::stepCompVar()
+void ProcCalibGyroBias::onTickCompVar()
 {
 	if (_imu.isAvailable)
 	{
@@ -170,7 +184,7 @@ infra::status ProcCalibGyroBias::stepCompVar()
 				 (_sumAccoMeas.y > _param.accoVarianceThd) ||
 				 (_sumAccoMeas.z > _param.accoVarianceThd) )
 			{
-				signalFailure();
+				_state = E_PROCCALIBIMU_FAILED;
 			}
 			else
 			{
@@ -178,7 +192,7 @@ infra::status ProcCalibGyroBias::stepCompVar()
 				_est.imuAccoBias_B -= _est.imuAccoBias_B*(9.81/_est.imuAccoBias_B.norm());
 
 				/* Procedure is over */
-				_status = E_PROC_STATUS_TERMINATED;
+				_state = E_PROCCALIBIMU_ENDED;
 			}
 		}
 		else
@@ -187,7 +201,6 @@ infra::status ProcCalibGyroBias::stepCompVar()
 			_count--;
 		}
 	}
-	return 0;
 }
 
 } /* namespace autom */

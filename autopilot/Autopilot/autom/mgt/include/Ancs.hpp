@@ -16,6 +16,7 @@
 #include <autom/mod/include/ModulatorPinv.hpp>
 #include <autom/mgt/include/ModeStabilized.hpp>
 #include <autom/proc/include/ProcDetectContact.hpp>
+#include <autom/gimbal/include/GimbalMgt.hpp>
 
 namespace autom {
 
@@ -49,6 +50,7 @@ public:
 		Modulator<CONFIG_NB_MOTOR>::ParamGen modGen;
 		ModulatorPinv<CONFIG_NB_MOTOR>::ParamPinv modPinv;
 		ModeStabilized::Param modeStabilized;
+		GimbalMgt::Param gimbal;
 	} Param ;
 public:
 	Ancs(
@@ -158,6 +160,9 @@ protected:
 
 	/** @brief Mode stabilized */
 	ModeStabilized _modeStabilitized;
+
+	/** @brief Gimbal management */
+	GimbalMgt _gimbal;
 
 	/** @brief Current state */
 	State _state;

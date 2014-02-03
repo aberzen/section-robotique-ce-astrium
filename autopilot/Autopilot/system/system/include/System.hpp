@@ -11,7 +11,6 @@
 #include <infra/app/include/Process.hpp>
 #include <board/gen/include/Board.hpp>
 #include <gcs/include/MavServiceManager.hpp>
-//#include <autom/est/include/AhrsEstimator.hpp>
 #include <autom/mgt/include/Ancs.hpp>
 
 namespace system {
@@ -39,18 +38,13 @@ public:
 	/** @brief Get GCS */
 	inline mavlink::MavServiceManager& getMavSvcMgr();
 
-	/** @brief Estimator */
-//	virtual inline autom::Estimator& getEstimator();
+	/** @brief Board */
+	board::Board& board;
 
-	/** @brief Get board */
-	inline board::Board& getBoard();
-
-	autom::Ancs _mgt;
+	/** @brief ANCS */
+	autom::Ancs ancs;
 
 protected:
-	/** @brief Board */
-	board::Board& _board;
-
 
 	/** @brief Mode management */
 	mavlink::ModeMgt _modeMgt;
@@ -84,12 +78,6 @@ protected:
 
 
 };
-
-/** @brief Get board */
-inline board::Board& System::getBoard()
-{
-	return _board;
-}
 
 /** @brief Get house keeping */
 inline mavlink::HouseKeepingMgt& System::getMavHouseKeeping()

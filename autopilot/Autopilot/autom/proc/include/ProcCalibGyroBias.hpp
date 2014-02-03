@@ -15,11 +15,14 @@
 
 namespace autom {
 
-class ProcCalibGyroBias : public infra::Procedure {
-protected:
+class ProcCalibGyroBias {
+public:
 	typedef enum
 	{
-		E_PROCCALIBIMU_COMP_INIT_FILTERS, // Init filters
+		E_PROCCALIBIMU_OFF = 0, // Off
+		E_PROCCALIBIMU_INIT, // Init filters
+		E_PROCCALIBIMU_ENDED, // Ended
+		E_PROCCALIBIMU_FAILED, // Failed
 		E_PROCCALIBIMU_COMP_BIAS, // compute bias
 		E_PROCCALIBIMU_COMP_VAR // verify variance
 	} State ;
@@ -43,21 +46,28 @@ public:
 	);
 	virtual ~ProcCalibGyroBias();
 
-	/** @brief Init the process */
-	virtual infra::status initialize() ;
+	/** @brief Start procedure */
+	void start();
+
+	/** @brief On tick procedure */
+	void onTick();
+
+	/** @brief Stop procedure */
+	void stop();
+
+	/** @brief Get state */
+	inline State getState();
 
 protected:
-	/** @brief Execute current procedure step */
-	virtual infra::status step();
 
 	/** @brief Initialize the filters from first measurements */
-	infra::status stepInitFilters();
+	void onTickInitFilters();
 
 	/** @brief Compute bias */
-	infra::status stepCompBias();
+	void onTickCompBias();
 
 	/** @brief Compute variance */
-	infra::status stepCompVar();
+	void onTickCompVar();
 
 protected:
 	/** @brief Parameters */
@@ -91,6 +101,12 @@ protected:
 	/** @brief State of the procedure */
 	State _state;
 };
+
+/** @brief Get state */
+inline ProcCalibGyroBias::State ProcCalibGyroBias::getState()
+{
+	return _state;
+}
 
 } /* namespace autom */
 

@@ -373,6 +373,7 @@ infra::status HalImuMpu6000::execute()
 				data[6] * _gyrLsb);
 	}
 
+
 	return 0;
 }
 

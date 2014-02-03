@@ -7,6 +7,7 @@
 
 #include <hw/serial/include/FastSerial.hpp>
 #include <autom/mgt/include/ModeStabilized.hpp>
+#include <system/system/include/System.hpp>
 
 #define MODE_STABILIZED_RC_ROLL		0
 #define MODE_STABILIZED_RC_PITCH	1
@@ -19,6 +20,7 @@ namespace autom {
 ModeStabilized::ModeStabilized(
 		/* Input */
 		const Estimator::Estimations& est,
+		const ProcDetectContact::Output& groundDetect,
 		/* Outputs */
 		AttGuid::Output& attGuid,
 		::math::Vector3f& force_B,
@@ -30,6 +32,7 @@ ModeStabilized::ModeStabilized(
 		AttitudeController& attCtrl
 		)
 : Mode(est, attGuid, force_B),
+  _groundDetect(groundDetect),
   _dt(dt),
   _param(param),
   _attCtrl(attCtrl),
@@ -80,7 +83,7 @@ ModeStabilized::~ModeStabilized() {
 	float rateYaw = this->_attGuid.angRateDem_B.z;
 	float thrust = _thrustPrev;
 
-	hw::Pwm::Output& rc = board::Board::board.radio;
+	hw::Pwm::Output& rc = system::System::system.board.radio;
 	if (rc.isAvailable)
 	{
 		/* Compute roll and pitch from user inputs */

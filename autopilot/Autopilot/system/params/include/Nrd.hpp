@@ -186,4 +186,19 @@
 #define MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Y	(0.)
 #define MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Z	(1.)
 
+/* **************************************************** */
+/* Gimbal management */
+
+#define GIMBAL_PITCH_MAX					0.7853982
+#define GIMBAL_PITCH_MIN				   -0.7853982
+#define GIMBAL_PITCH_SCALE					763.94373
+#define GIMBAL_PITCH_OFFSET					1500
+#define GIMBAL_PITCH_IDX					6
+
+#define GIMBAL_ROLL_MAX						0.7853982
+#define GIMBAL_ROLL_MIN					   -0.7853982
+#define GIMBAL_ROLL_SCALE					763.94373
+#define GIMBAL_ROLL_OFFSET					1500
+#define GIMBAL_ROLL_IDX						7
+
 #endif /* NRD_H_ */

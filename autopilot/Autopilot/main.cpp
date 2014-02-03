@@ -27,7 +27,6 @@ board::Apm25::Param param = {
 	} /* imu */
 };
 static board::Apm25 boardApm25(param);
-board::Board& board::Board::board = boardApm25;
 
 static system::System sys(boardApm25);
 system::System& system::System::system = sys;
