@@ -25,7 +25,7 @@ public:
 	virtual ~KalmanFilter();
 
 	/** @brief Execute the process */
-	virtual infra::status execute();
+	virtual void execute();
 
 protected:
 

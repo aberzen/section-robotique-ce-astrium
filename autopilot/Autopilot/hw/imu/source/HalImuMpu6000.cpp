@@ -253,7 +253,7 @@ HalImuMpu6000::~HalImuMpu6000() {
 }
 
 /** @brief Init the process */
-infra::status HalImuMpu6000::initialize()
+void HalImuMpu6000::initialize()
 {
 	reset();
 
@@ -305,11 +305,9 @@ infra::status HalImuMpu6000::initialize()
     _out.isAvailable = false;
     // configure interrupt to fire when new data arrives
     register_write(MPUREG_INT_ENABLE, BIT_RAW_RDY_EN);
-
-	return 0;
 }
 /** @brief Reset the process */
-infra::status HalImuMpu6000::reset()
+void HalImuMpu6000::reset()
 {
     // Chip reset
     register_write(MPUREG_PWR_MGMT_1, BIT_PWR_MGMT_1_DEVICE_RESET);
@@ -318,10 +316,9 @@ infra::status HalImuMpu6000::reset()
     infra::Task::delay(configTICK_RATE_HZ / 10);
 
     _out.isAvailable = false;
-	return 0;
 }
 /** @brief Execute the process */
-infra::status HalImuMpu6000::execute()
+void HalImuMpu6000::execute()
 {
 	int16_t data[7];
 
@@ -334,7 +331,7 @@ infra::status HalImuMpu6000::execute()
 	{
 		if (!_spiSlave.select(1))
 		{
-			return -1;
+			return;
 		}
 
 		/* Read data */
@@ -372,9 +369,6 @@ infra::status HalImuMpu6000::execute()
 				-data[4] * _gyrLsb,
 				data[6] * _gyrLsb);
 	}
-
-
-	return 0;
 }
 
 

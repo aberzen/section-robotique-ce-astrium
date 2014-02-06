@@ -28,8 +28,7 @@ public:
 	} State ;
 public:
 	typedef struct {
-		float filtCoeffNum[2];
-		float filtCoeffDen[2];
+		DiscreteFilter<float, float, 2, 2>::Param filt;
 		uint16_t biasNbMeas;
 		uint16_t varNbMeas;
 		float gyroVarianceThd;
@@ -54,6 +53,9 @@ public:
 
 	/** @brief Stop procedure */
 	void stop();
+
+	/** @brief Reset procedure */
+	void reset();
 
 	/** @brief Get state */
 	inline State getState();

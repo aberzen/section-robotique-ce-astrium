@@ -19,7 +19,7 @@ public:
 	virtual ~Driver();
 
 	/** @brief Reset the HW */
-	virtual infra::status reset() = 0;
+	virtual void reset() = 0;
 };
 
 

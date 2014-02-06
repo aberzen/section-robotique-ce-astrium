@@ -91,7 +91,7 @@ PwmApm25::~PwmApm25()
 }
 
 // Public Methods //////////////////////////////////////////////////////////////
-infra::status PwmApm25::reset()
+void PwmApm25::reset()
 {
 	_out.isAvailable = false;
 
@@ -110,11 +110,9 @@ infra::status PwmApm25::reset()
     disable_out(CH_9);
     disable_out(CH_10);
     disable_out(CH_11);
-
-    return 0;
 }
 
-infra::status PwmApm25::initialize()
+void PwmApm25::initialize()
 {
 	_out.isAvailable = false;
 
@@ -198,11 +196,9 @@ infra::status PwmApm25::initialize()
 //    isr_reg->register_signal( ISR_REGISTRY_TIMER5_CAPT, _timer5_capt_cb );
     // Enable Input Capture interrupt
     TIMSK5 |= (1<<ICIE5);
-
-    return 0;
 }
 
-infra::status PwmApm25::execute()
+void PwmApm25::execute()
 {
 
 //	Serial.printf("_in.channels = {%d %d %d %d %d %d %d %d %d %d %d}\n",
@@ -259,8 +255,6 @@ infra::status PwmApm25::execute()
 
 	/* Signal as been read */
     _radio_status = 0;     // Radio channel read
-
-	return 0;
 }
 
 void PwmApm25::enable_out(uint8_t ch)

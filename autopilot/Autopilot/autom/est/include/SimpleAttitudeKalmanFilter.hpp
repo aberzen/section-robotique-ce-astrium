@@ -34,7 +34,7 @@ public:
 	virtual ~SimpleAttitudeKalmanFilter();
 
 	/** @brief Init the process */
-	virtual infra::status initialize() ;
+	virtual void initialize() ;
 
 protected:
 

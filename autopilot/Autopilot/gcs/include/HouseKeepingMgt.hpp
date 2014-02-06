@@ -33,10 +33,10 @@ public:
 	void update();
 
 	/** @brief Init the process */
-	virtual infra::status initialize();
+	virtual void initialize();
 
 	/** @brief Execute the process */
-	virtual infra::status execute();
+	virtual void execute();
 
 
 //protected:

@@ -24,17 +24,15 @@ HalBarometer::~HalBarometer() {
 }
 
 /** @brief Initialize the HW */
-infra::status HalBarometer::initialize()
+void HalBarometer::initialize()
 {
 	_out.isAvailable = false;
-	return 0;
 }
 
 /** @brief Reset the HW */
-infra::status HalBarometer::reset()
+void HalBarometer::reset()
 {
 	_out.isAvailable = false;
-	return 0;
 }
 
 } /* namespace hw */

@@ -46,13 +46,12 @@ MavServiceManager::~MavServiceManager()
 }
 
 /** @brief Execute the process */
-infra::status MavServiceManager::initialize()
+void MavServiceManager::initialize()
 {
-	return 0;
 }
 
 /** @brief Execute the process */
-infra::status MavServiceManager::execute() {
+void MavServiceManager::execute() {
 	/* First look at message reception */
 	{
 		Channel* channel;
@@ -123,7 +122,6 @@ infra::status MavServiceManager::execute() {
 		}
 		}
 	}
-	return 0;
 }
 
 void MavServiceManager::handleMessage(mavlink_message_t* msg)

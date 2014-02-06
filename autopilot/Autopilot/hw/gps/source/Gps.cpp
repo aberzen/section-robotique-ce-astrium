@@ -26,22 +26,19 @@ Gps::~Gps() {
 
 
 /** @brief Init the process */
-infra::status Gps::initialize()
+void Gps::initialize()
 {
 	_out.isAvailable = false;
-	return 0;
 }
 
 /** @brief Execute the process */
-infra::status Gps::execute()
+void Gps::execute()
 {
-	return 0;
 }
 
 /** @brief Reset the HW */
-infra::status Gps::reset()
+void Gps::reset()
 {
-	return 0;
 }
 
 } /* namespace hw */

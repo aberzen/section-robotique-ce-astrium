@@ -36,7 +36,7 @@ public:
 	virtual ~Apm25();
 
 	/** @brief Init the process */
-	virtual infra::status initialize();
+	virtual void initialize();
 
 protected:
 	/** @brief I2C Bus */

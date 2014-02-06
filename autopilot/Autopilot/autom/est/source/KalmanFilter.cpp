@@ -25,7 +25,7 @@ KalmanFilter::~KalmanFilter() {
 }
 
 /** @brief Execute the process */
-infra::status KalmanFilter::execute() {
+void KalmanFilter::execute() {
 	/* Predict the state */
 	this->predict();
 
@@ -34,8 +34,6 @@ infra::status KalmanFilter::execute() {
 
 	/* Correct and update the state */
 	this->update();
-
-	return 0;
 }
 
 ///** @brief Predict the state knowing the past */

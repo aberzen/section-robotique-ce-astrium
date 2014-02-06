@@ -43,7 +43,7 @@ Apm25::~Apm25() {
 }
 
 /** @brief Init the process */
-infra::status Apm25::initialize()
+void Apm25::initialize()
 {
 	/* Initialize Serial */
 	Serial.begin(115200);
@@ -75,8 +75,6 @@ infra::status Apm25::initialize()
 
 	/* Pwm */
 	_pwm.initialize();
-
-	return 0;
 }
 
 

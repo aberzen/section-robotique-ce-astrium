@@ -18,13 +18,13 @@ public:
 	virtual ~PwmApm25();
 
 	/** @brief Init the process */
-	virtual ::infra::status initialize() ;
+	virtual void initialize() ;
 
 	/** @brief Execute the process */
-	virtual ::infra::status execute() ;
+	virtual void execute() ;
 
 	/** @brief Reset the HW */
-	virtual infra::status reset() ;
+	virtual void reset() ;
 
     virtual uint8_t getState();
     virtual void setFastOutputChannels(uint32_t chmask, uint16_t speed_hz = 400);

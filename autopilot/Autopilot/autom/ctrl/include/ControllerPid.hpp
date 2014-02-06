@@ -88,10 +88,10 @@ public:
 	inline void setParam(const Param& param);
 
 	/** @brief Init the process */
-	virtual infra::status initialize();
+	virtual void initialize();
 
 	/** @brief Execute the process */
-	virtual infra::status execute();
+	virtual void execute();
 
 protected:
 	/* @brief Control error */

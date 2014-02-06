@@ -27,7 +27,7 @@ System::System(board::Board& board) :
 			config_dt_HF,
 			config_dt_LF,
 			test::config_ancs),
-	_hkMgt(MAVLINK_COMM_0, ancs.getEstimationValues(), board.meas, board.rawMeas),
+	_hkMgt(MAVLINK_COMM_0, ancs.estimations, board.meas, board.rawMeas),
 	_cmdMgt(),
 	_mountMgt(),
 	_fenceMgt(),
@@ -53,7 +53,7 @@ System::~System()
 }
 
 /** @brief Init the process */
-infra::status System::initialize()
+void System::initialize()
 {
 	/* Parameter management */
 	if (!getParameterMgt().checkEeprom())
@@ -71,27 +71,22 @@ infra::status System::initialize()
 	/* Initialize Mavlink */
 	getMavSvcMgr().initialize();
 
-//	/* Set mav period to 100ms */
-//	getMavHouseKeeping().setDataStream(
-//			10,
-//			MAV_DATA_STREAM_ALL,
-//			1
-//	);
+	/* Set mav period to 100ms */
+	getMavHouseKeeping().setDataStream(
+			10,
+			MAV_DATA_STREAM_ALL,
+			1
+	);
 
 	/* Initialize the attitude and navigation control system */
 	system::System::system.ancs.initialize();
-
-	return 0;
 }
 
 /** @brief Execute the process */
-infra::status System::execute()
+void System::execute()
 {
 	/* Update house keeping */
 	getMavHouseKeeping().update();
-
-	/* No error */
-	return 0;
 }
 
 } /* namespace system */

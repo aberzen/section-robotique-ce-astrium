@@ -31,7 +31,7 @@ PwmDevice::~PwmDevice() {
 }
 
 /** @brief Init the process */
-::infra::status PwmDevice::initialize()
+void PwmDevice::initialize()
 {
 	/* Switch the device off */
 	switchOff();

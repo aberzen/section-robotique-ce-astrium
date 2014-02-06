@@ -9,10 +9,11 @@
 #include <autom/mgt/include/ModeStabilized.hpp>
 #include <system/system/include/System.hpp>
 
-#define MODE_STABILIZED_RC_ROLL		0
-#define MODE_STABILIZED_RC_PITCH	1
-#define MODE_STABILIZED_RC_THRUST	2
-#define MODE_STABILIZED_RC_YAWRATE	3
+
+#define MODE_STABILIZED_RC_ROLL 	0
+#define MODE_STABILIZED_RC_PITCH 	1
+#define MODE_STABILIZED_RC_THRUST 	2
+#define MODE_STABILIZED_RC_YAWRATE 	3
 
 namespace autom {
 
@@ -20,22 +21,17 @@ namespace autom {
 ModeStabilized::ModeStabilized(
 		/* Input */
 		const Estimator::Estimations& est,
-		const ProcDetectContact::Output& groundDetect,
 		/* Outputs */
 		AttGuid::Output& attGuid,
 		::math::Vector3f& force_B,
 		/* Parameters */
 		const float& dt,
 		const ::autom::ModeStabilized::Param& param,
-		const GenericParam& paramGen,
-		/* Dependencies */
-		AttitudeController& attCtrl
+		const GenericParam& paramGen
 		)
 : Mode(est, attGuid, force_B),
-  _groundDetect(groundDetect),
   _dt(dt),
   _param(param),
-  _attCtrl(attCtrl),
   _paramGen(paramGen),
   _rotZ(1.,0.,0.,0.),
   _prevInvNormRotZ(1.),
@@ -51,7 +47,7 @@ ModeStabilized::~ModeStabilized() {
 }
 
 /** @brief Init the process */
-::infra::status ModeStabilized::initialize()
+void ModeStabilized::initialize()
 {
 	/* Compute the current seat and yaw rotations */
 	math::Vector3f z_I(0.,0.,1.);
@@ -70,12 +66,10 @@ ModeStabilized::~ModeStabilized() {
 	_rotZ.vector.y = 0.;
 	_prevInvNormRotZ = _rotZ.normalize(2, 1.);
 	_prevInvNormGuid = _prevInvNormRotZ;
-
-	return 0;
 }
 
 /** @brief Execute the process */
-::infra::status ModeStabilized::execute()
+void ModeStabilized::execute()
 {
 	float tmp;
 	float angleRoll = this->_angleRollPrev;
@@ -167,7 +161,6 @@ ModeStabilized::~ModeStabilized() {
 //	Serial.printf("_param.mass = %.5f\n", _param.mass);
 
 	/* Execute attitude control */
-	return 0;
 }
 
 } /* namespace autom */

@@ -27,7 +27,7 @@ GimbalMgt::~GimbalMgt() {
 }
 
 /** @brief Init the process */
-::infra::status GimbalMgt::initialize()
+void GimbalMgt::initialize()
 {
 	/* Initialize servos */
 	_pitch.initialize();
@@ -36,12 +36,10 @@ GimbalMgt::~GimbalMgt() {
 	/* Switch on */
 	_pitch.switchOn();
 	_roll.switchOn();
-
-	return 0;
 }
 
 /** @brief Execute the process */
-::infra::status GimbalMgt::execute()
+void GimbalMgt::execute()
 {
 	/* Pitch */
 	math::Vector3f tmp_B(1.,0.,0.);
@@ -54,8 +52,6 @@ GimbalMgt::~GimbalMgt() {
 	tmp_I = _estVal.attitude_IB.rotateQVQconj(tmp_B);
 	angle = M_PI_2 - acos(tmp_I.z);
 	_roll.moveTo(angle);
-
-	return 0;
 }
 
 } /* namespace autom */

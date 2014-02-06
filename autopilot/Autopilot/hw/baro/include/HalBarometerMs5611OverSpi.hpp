@@ -46,13 +46,13 @@ public:
 	virtual ~HalBarometerMs5611OverSpi();
 
 	/** @brief Initialize the sensor. */
-	virtual infra::status initialize();
+	virtual void initialize();
 
 	/** @brief Reset the sensor. */
-	virtual infra::status reset();
+	virtual void reset();
 
 	/** @brief Execute the process */
-	virtual infra::status execute();
+	virtual void execute();
 
 	/** @brief Get a coefficient */
 	inline uint16_t getCoeff(T_COEFF coeffId);
@@ -62,7 +62,7 @@ protected:
 	void convertRaw();
 
 	/** @brief Initialize the sensor. */
-	infra::status readRom();
+	void readRom();
 
 protected:
 	/** Current convertion state */

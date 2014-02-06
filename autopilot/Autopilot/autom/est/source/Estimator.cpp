@@ -27,10 +27,9 @@ Estimator::~Estimator() {
 }
 
 /** @brief Init the process */
-infra::status Estimator::initialize()
+void Estimator::initialize()
 {
 	this->_est.isConverged = false;
-	return 0;
 }
 
 

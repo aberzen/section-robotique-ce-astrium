@@ -400,16 +400,20 @@ autom::Ancs::Param config_ancs = {
 			EST_KALMAN_GAIN_COMPASS /* gainCompass */
 		}, /* est */
 		{ /* procCalibImu */
-				PROC_CALIBIMU_FILT_NUM, /* filtCoeffNum */
-				PROC_CALIBIMU_FILT_DEN, /* filtCoeffDen */
+				{ /* filt */
+						PROC_CALIBIMU_FILT_NUM, /* filt.coeffNum */
+						PROC_CALIBIMU_FILT_DEN /* filt.coeffDen */
+				}, /* filt */
 				PROC_CALIBIMU_NBMEAS_BIAS, /* biasNbMeas */
 				PROC_CALIBIMU_NBMEAS_VAR, /* varNbMeas */
 				PROC_CALIBIMU_GYRO_VARTHD, /* gyroVarianceThd */
 				PROC_CALIBIMU_ACCO_VARTHD /* accoVarianceThd */
 		}, /* procCalibImu */
 		{ /* procCompDec */
-				PROC_COMPDEC_FILT_NUM, /* filtCoeffNum */
-				PROC_COMPDEC_FILT_DEN, /* filtCoeffDen */
+				{ /* filt */
+					PROC_COMPDEC_FILT_NUM, /* filt.coeffNum */
+					PROC_COMPDEC_FILT_DEN /* filt.coeffDen */
+				}, /* filt */
 				PROC_COMPDEC_NBMEAS /* biasNbMeas */
 		}, /* procCompDec */
 		{ /* procGrdDetect */
@@ -435,39 +439,39 @@ autom::Ancs::Param config_ancs = {
 				}, /* pInvInfMat */
 				MODULATOR_DESCVECT
 		}, /* modPinv */
+		{ /* attCtrl */
+			{ /* x */
+				CTRL_ATT_X_Kp, /* _Kp */
+				CTRL_ATT_X_Kd, /*_Kd */
+				CTRL_ATT_X_Ki, /*_Ki */
+				CTRL_ATT_X_useOfRb, /*_useOfRb */
+				CTRL_ATT_X_Krb, /*_Krb */
+				CTRL_ATT_X_rbThd, /*_rbThd */
+				CTRL_ATT_X_rb, /*_rb */
+				CTRL_ATT_X_maxI /*_maxI */
+			}, /* x */
+			{ /* y */
+				CTRL_ATT_Y_Kp, /* _Kp */
+				CTRL_ATT_Y_Kd, /*_Kd */
+				CTRL_ATT_Y_Ki, /*_Ki */
+				CTRL_ATT_Y_useOfRb, /*_useOfRb */
+				CTRL_ATT_Y_Krb, /*_Krb */
+				CTRL_ATT_Y_rbThd, /*_rbThd */
+				CTRL_ATT_Y_rb, /*_rb */
+				CTRL_ATT_Y_maxI /*_maxI */
+			}, /* y */
+			{ /* z */
+				CTRL_ATT_Z_Kp, /* _Kp */
+				CTRL_ATT_Z_Kd, /*_Kd */
+				CTRL_ATT_Z_Ki, /*_Ki */
+				CTRL_ATT_Z_useOfRb, /*_useOfRb */
+				CTRL_ATT_Z_Krb, /*_Krb */
+				CTRL_ATT_Z_rbThd, /*_rbThd */
+				CTRL_ATT_Z_rb, /*_rb */
+				CTRL_ATT_Z_maxI /*_maxI */
+			} /* z */
+		}, /* attCtrl */
 		{ /* modeStabilized */
-				{ /* attCtrl */
-					{ /* x */
-						CTRL_ATT_X_Kp, /* _Kp */
-						CTRL_ATT_X_Kd, /*_Kd */
-						CTRL_ATT_X_Ki, /*_Ki */
-						CTRL_ATT_X_useOfRb, /*_useOfRb */
-						CTRL_ATT_X_Krb, /*_Krb */
-						CTRL_ATT_X_rbThd, /*_rbThd */
-						CTRL_ATT_X_rb, /*_rb */
-						CTRL_ATT_X_maxI /*_maxI */
-					}, /* x */
-					{ /* y */
-						CTRL_ATT_Y_Kp, /* _Kp */
-						CTRL_ATT_Y_Kd, /*_Kd */
-						CTRL_ATT_Y_Ki, /*_Ki */
-						CTRL_ATT_Y_useOfRb, /*_useOfRb */
-						CTRL_ATT_Y_Krb, /*_Krb */
-						CTRL_ATT_Y_rbThd, /*_rbThd */
-						CTRL_ATT_Y_rb, /*_rb */
-						CTRL_ATT_Y_maxI /*_maxI */
-					}, /* y */
-					{ /* z */
-						CTRL_ATT_Z_Kp, /* _Kp */
-						CTRL_ATT_Z_Kd, /*_Kd */
-						CTRL_ATT_Z_Ki, /*_Ki */
-						CTRL_ATT_Z_useOfRb, /*_useOfRb */
-						CTRL_ATT_Z_Krb, /*_Krb */
-						CTRL_ATT_Z_rbThd, /*_rbThd */
-						CTRL_ATT_Z_rb, /*_rb */
-						CTRL_ATT_Z_maxI /*_maxI */
-					} /* z */
-				}, /* attCtrl */
 				MODE_AUTOSTAB_SCALE_ROLLPWM, /* rollPwmScale */
 				MODE_AUTOSTAB_SCALE_ROLLPWMEXP, /* rollPwmScaleExp */
 				MODE_AUTOSTAB_SCALE_PITCHPWM, /* pitchPwmScale */
@@ -496,7 +500,57 @@ autom::Ancs::Param config_ancs = {
 				GIMBAL_ROLL_OFFSET, /* offset */
 				GIMBAL_ROLL_IDX /* idxChannel */
 			} /* roll */
-		} /* gimbal */
+		}, /* gimbal */
+		{ /* radioChannel */
+			{  /* 1 */
+				RC_CH1_MIN, /* min */
+				RC_CH1_TRIM, /* trim */
+				RC_CH1_MAX, /* max */
+				RC_CH1_SCALE /* scale */
+			}, /* 1 */
+			{  /* 2 */
+				RC_CH2_MIN, /* min */
+				RC_CH2_TRIM, /* trim */
+				RC_CH2_MAX, /* max */
+				RC_CH2_SCALE /* scale */
+			}, /* 2 */
+			{  /* 3 */
+				RC_CH3_MIN, /* min */
+				RC_CH3_TRIM, /* trim */
+				RC_CH3_MAX, /* max */
+				RC_CH3_SCALE /* scale */
+			}, /* 3 */
+			{  /* 4 */
+				RC_CH4_MIN, /* min */
+				RC_CH4_TRIM, /* trim */
+				RC_CH4_MAX, /* max */
+				RC_CH4_SCALE /* scale */
+			}, /* 4 */
+			{  /* 5 */
+				RC_CH5_MIN, /* min */
+				RC_CH5_TRIM, /* trim */
+				RC_CH5_MAX, /* max */
+				RC_CH5_SCALE /* scale */
+			}, /* 5 */
+			{  /* 6 */
+				RC_CH6_MIN, /* min */
+				RC_CH6_TRIM, /* trim */
+				RC_CH6_MAX, /* max */
+				RC_CH6_SCALE /* scale */
+			}, /* 6 */
+			{  /* 7 */
+				RC_CH7_MIN, /* min */
+				RC_CH7_TRIM, /* trim */
+				RC_CH7_MAX, /* max */
+				RC_CH7_SCALE /* scale */
+			}, /* 7 */
+			{  /* 8 */
+				RC_CH8_MIN, /* min */
+				RC_CH8_TRIM, /* trim */
+				RC_CH8_MAX, /* max */
+				RC_CH8_SCALE /* scale */
+			} /* 8 */
+		} /* radioChannel */
 
 };
 
@@ -532,19 +586,19 @@ const mavlink::ParameterMgt::ParamInfo config[CONFIG_PARAMETERS_COUNT] = {
 		PARAM(REAL32, "EST_K_ACCO", &config_ancs.est.gainAcco, EST_KALMAN_GAIN_ACCO),
 		PARAM(REAL32, "EST_K_COMP", &config_ancs.est.gainAcco, EST_KALMAN_GAIN_COMPASS),
 
-		PARAM(REAL32, "CALIMU_NUM0", &config_ancs.procCalibImu.filtCoeffNum[0], PROC_CALIBIMU_FILT_NUM0),
-		PARAM(REAL32, "CALIMU_NUM1", &config_ancs.procCalibImu.filtCoeffNum[1], PROC_CALIBIMU_FILT_NUM1),
-		PARAM(REAL32, "CALIMU_DEN0", &config_ancs.procCalibImu.filtCoeffDen[0], PROC_CALIBIMU_FILT_DEN0),
-		PARAM(REAL32, "CALIMU_DEN1", &config_ancs.procCalibImu.filtCoeffDen[1], PROC_CALIBIMU_FILT_DEN1),
+		PARAM(REAL32, "CALIMU_NUM0", &config_ancs.procCalibImu.filt.coeffNum[0], PROC_CALIBIMU_FILT_NUM0),
+		PARAM(REAL32, "CALIMU_NUM1", &config_ancs.procCalibImu.filt.coeffNum[1], PROC_CALIBIMU_FILT_NUM1),
+		PARAM(REAL32, "CALIMU_DEN0", &config_ancs.procCalibImu.filt.coeffDen[0], PROC_CALIBIMU_FILT_DEN0),
+		PARAM(REAL32, "CALIMU_DEN1", &config_ancs.procCalibImu.filt.coeffDen[1], PROC_CALIBIMU_FILT_DEN1),
 		PARAM(UINT16, "CALIMU_NBBIAS", &config_ancs.procCalibImu.biasNbMeas, PROC_CALIBIMU_NBMEAS_BIAS),
 		PARAM(UINT16, "CALIMU_NBVAR", &config_ancs.procCalibImu.varNbMeas, PROC_CALIBIMU_NBMEAS_VAR),
 		PARAM(REAL32, "CALIMU_THDGYRO", &config_ancs.procCalibImu.gyroVarianceThd, PROC_CALIBIMU_GYRO_VARTHD),
 		PARAM(REAL32, "CALIMU_THDACCO", &config_ancs.procCalibImu.accoVarianceThd, PROC_CALIBIMU_ACCO_VARTHD),
 
-		PARAM(REAL32, "DECLIN_NUM0", &config_ancs.procCompDec.filtCoeffNum[0], PROC_COMPDEC_FILT_NUM0),
-		PARAM(REAL32, "DECLIN_NUM1", &config_ancs.procCompDec.filtCoeffNum[1], PROC_COMPDEC_FILT_NUM1),
-		PARAM(REAL32, "DECLIN_DEN0", &config_ancs.procCompDec.filtCoeffDen[0], PROC_COMPDEC_FILT_DEN0),
-		PARAM(REAL32, "DECLIN_DEN1", &config_ancs.procCompDec.filtCoeffDen[1], PROC_COMPDEC_FILT_DEN1),
+		PARAM(REAL32, "DECLIN_NUM0", &config_ancs.procCompDec.filt.coeffNum[0], PROC_COMPDEC_FILT_NUM0),
+		PARAM(REAL32, "DECLIN_NUM1", &config_ancs.procCompDec.filt.coeffNum[1], PROC_COMPDEC_FILT_NUM1),
+		PARAM(REAL32, "DECLIN_DEN0", &config_ancs.procCompDec.filt.coeffDen[0], PROC_COMPDEC_FILT_DEN0),
+		PARAM(REAL32, "DECLIN_DEN1", &config_ancs.procCompDec.filt.coeffDen[1], PROC_COMPDEC_FILT_DEN1),
 		PARAM(UINT16, "DECLIN_NB", &config_ancs.procCompDec.nbMeas, PROC_COMPDEC_NBMEAS),
 
 		PARAM(REAL32, "MOD_INFMAT_0_0", &config_ancs.modGen.infMat[0][0], MODULATOR_INFMAT_0_0),
@@ -602,27 +656,27 @@ const mavlink::ParameterMgt::ParamInfo config[CONFIG_PARAMETERS_COUNT] = {
 		PARAM(REAL32, "MOD_DSC_2", &config_ancs.modPinv.descVect[2], MODULATOR_DESCVECT_2),
 		PARAM(REAL32, "MOD_DSC_3", &config_ancs.modPinv.descVect[3], MODULATOR_DESCVECT_3),
 
-		PARAM(REAL32, "CTLATT_AS_X_KP", &config_ancs.modeStabilized.attCtrl.x.Kp, CTRL_ATT_X_Kp),
-		PARAM(REAL32, "CTLATT_AS_X_KD", &config_ancs.modeStabilized.attCtrl.x.Kd, CTRL_ATT_X_Kd),
-		PARAM(REAL32, "CTLATT_AS_X_KI", &config_ancs.modeStabilized.attCtrl.x.Ki, CTRL_ATT_X_Ki),
-		PARAM(UINT8, "CTLATT_AS_X_ISRB", &config_ancs.modeStabilized.attCtrl.x.useOfRb, CTRL_ATT_X_useOfRb),
-		PARAM(REAL32, "CTLATT_AS_X_KRB", &config_ancs.modeStabilized.attCtrl.x.Krb, CTRL_ATT_X_Krb),
-		PARAM(REAL32, "CTLATT_AS_X_RB", &config_ancs.modeStabilized.attCtrl.x.rbThd, CTRL_ATT_X_rbThd),
-		PARAM(REAL32, "CTLATT_AS_X_MAXI", &config_ancs.modeStabilized.attCtrl.x.maxI, CTRL_ATT_X_maxI),
-		PARAM(REAL32, "CTLATT_AS_Y_KP", &config_ancs.modeStabilized.attCtrl.y.Kp, CTRL_ATT_Y_Kp),
-		PARAM(REAL32, "CTLATT_AS_Y_KD", &config_ancs.modeStabilized.attCtrl.y.Kd, CTRL_ATT_Y_Kd),
-		PARAM(REAL32, "CTLATT_AS_Y_KI", &config_ancs.modeStabilized.attCtrl.y.Ki, CTRL_ATT_Y_Ki),
-		PARAM(UINT8, "CTLATT_AS_Y_ISRB", &config_ancs.modeStabilized.attCtrl.y.useOfRb, CTRL_ATT_Y_useOfRb),
-		PARAM(REAL32, "CTLATT_AS_Y_KRB", &config_ancs.modeStabilized.attCtrl.y.Krb, CTRL_ATT_Y_Krb),
-		PARAM(REAL32, "CTLATT_AS_Y_RB", &config_ancs.modeStabilized.attCtrl.y.rbThd, CTRL_ATT_Y_rbThd),
-		PARAM(REAL32, "CTLATT_AS_Y_MAXI", &config_ancs.modeStabilized.attCtrl.y.maxI, CTRL_ATT_Y_maxI),
-		PARAM(REAL32, "CTLATT_AS_Z_KP", &config_ancs.modeStabilized.attCtrl.z.Kp, CTRL_ATT_Z_Kp),
-		PARAM(REAL32, "CTLATT_AS_Z_KD", &config_ancs.modeStabilized.attCtrl.z.Kd, CTRL_ATT_Z_Kd),
-		PARAM(REAL32, "CTLATT_AS_Z_KI", &config_ancs.modeStabilized.attCtrl.z.Ki, CTRL_ATT_Z_Ki),
-		PARAM(UINT8, "CTLATT_AS_Z_ISRB", &config_ancs.modeStabilized.attCtrl.z.useOfRb, CTRL_ATT_Z_useOfRb),
-		PARAM(REAL32, "CTLATT_AS_Z_KRB", &config_ancs.modeStabilized.attCtrl.z.Krb, CTRL_ATT_Z_Krb),
-		PARAM(REAL32, "CTLATT_AS_Z_RB", &config_ancs.modeStabilized.attCtrl.z.rbThd, CTRL_ATT_Z_rbThd),
-		PARAM(REAL32, "CTLATT_AS_Z_MAXI", &config_ancs.modeStabilized.attCtrl.z.maxI, CTRL_ATT_Z_maxI),
+		PARAM(REAL32, "CTLATT_AS_X_KP", &config_ancs.attCtrl.x.Kp, CTRL_ATT_X_Kp),
+		PARAM(REAL32, "CTLATT_AS_X_KD", &config_ancs.attCtrl.x.Kd, CTRL_ATT_X_Kd),
+		PARAM(REAL32, "CTLATT_AS_X_KI", &config_ancs.attCtrl.x.Ki, CTRL_ATT_X_Ki),
+		PARAM(UINT8, "CTLATT_AS_X_ISRB", &config_ancs.attCtrl.x.useOfRb, CTRL_ATT_X_useOfRb),
+		PARAM(REAL32, "CTLATT_AS_X_KRB", &config_ancs.attCtrl.x.Krb, CTRL_ATT_X_Krb),
+		PARAM(REAL32, "CTLATT_AS_X_RB", &config_ancs.attCtrl.x.rbThd, CTRL_ATT_X_rbThd),
+		PARAM(REAL32, "CTLATT_AS_X_MAXI", &config_ancs.attCtrl.x.maxI, CTRL_ATT_X_maxI),
+		PARAM(REAL32, "CTLATT_AS_Y_KP", &config_ancs.attCtrl.y.Kp, CTRL_ATT_Y_Kp),
+		PARAM(REAL32, "CTLATT_AS_Y_KD", &config_ancs.attCtrl.y.Kd, CTRL_ATT_Y_Kd),
+		PARAM(REAL32, "CTLATT_AS_Y_KI", &config_ancs.attCtrl.y.Ki, CTRL_ATT_Y_Ki),
+		PARAM(UINT8, "CTLATT_AS_Y_ISRB", &config_ancs.attCtrl.y.useOfRb, CTRL_ATT_Y_useOfRb),
+		PARAM(REAL32, "CTLATT_AS_Y_KRB", &config_ancs.attCtrl.y.Krb, CTRL_ATT_Y_Krb),
+		PARAM(REAL32, "CTLATT_AS_Y_RB", &config_ancs.attCtrl.y.rbThd, CTRL_ATT_Y_rbThd),
+		PARAM(REAL32, "CTLATT_AS_Y_MAXI", &config_ancs.attCtrl.y.maxI, CTRL_ATT_Y_maxI),
+		PARAM(REAL32, "CTLATT_AS_Z_KP", &config_ancs.attCtrl.z.Kp, CTRL_ATT_Z_Kp),
+		PARAM(REAL32, "CTLATT_AS_Z_KD", &config_ancs.attCtrl.z.Kd, CTRL_ATT_Z_Kd),
+		PARAM(REAL32, "CTLATT_AS_Z_KI", &config_ancs.attCtrl.z.Ki, CTRL_ATT_Z_Ki),
+		PARAM(UINT8, "CTLATT_AS_Z_ISRB", &config_ancs.attCtrl.z.useOfRb, CTRL_ATT_Z_useOfRb),
+		PARAM(REAL32, "CTLATT_AS_Z_KRB", &config_ancs.attCtrl.z.Krb, CTRL_ATT_Z_Krb),
+		PARAM(REAL32, "CTLATT_AS_Z_RB", &config_ancs.attCtrl.z.rbThd, CTRL_ATT_Z_rbThd),
+		PARAM(REAL32, "CTLATT_AS_Z_MAXI", &config_ancs.attCtrl.z.maxI, CTRL_ATT_Z_maxI),
 
 		PARAM(INT8, "AS_SCL_R", &config_ancs.modeStabilized.rollPwmScale, MODE_AUTOSTAB_SCALE_ROLLPWM),
 		PARAM(INT8, "AS_SCL_REXP", &config_ancs.modeStabilized.rollPwmScaleExp, MODE_AUTOSTAB_SCALE_ROLLPWMEXP),
@@ -649,6 +703,38 @@ const mavlink::ParameterMgt::ParamInfo config[CONFIG_PARAMETERS_COUNT] = {
 		PARAM(INT16, "GBL_ROLL_OFFSET", &config_ancs.gimbal.roll.offset, GIMBAL_ROLL_OFFSET),
 		PARAM(UINT8, "GBL_ROLL_IDX", &config_ancs.gimbal.roll.idxChannel, GIMBAL_ROLL_IDX),
 
+		PARAM(UINT16, "RC_CH1_MIN",   &config_ancs.radioChannel[0].min,   RC_CH1_MIN),
+		PARAM(INT16,  "RC_CH1_TRIM",  &config_ancs.radioChannel[0].trim,  RC_CH1_TRIM),
+		PARAM(UINT16, "RC_CH1_MAX",   &config_ancs.radioChannel[0].max,   RC_CH1_MAX),
+		PARAM(REAL32, "RC_CH1_SCALE", &config_ancs.radioChannel[0].scale, RC_CH1_SCALE),
+		PARAM(UINT16, "RC_CH2_MIN",   &config_ancs.radioChannel[1].min,   RC_CH2_MIN),
+		PARAM(INT16,  "RC_CH2_TRIM",  &config_ancs.radioChannel[1].trim,  RC_CH2_TRIM),
+		PARAM(UINT16, "RC_CH2_MAX",   &config_ancs.radioChannel[1].max,   RC_CH2_MAX),
+		PARAM(REAL32, "RC_CH2_SCALE", &config_ancs.radioChannel[1].scale, RC_CH2_SCALE),
+		PARAM(UINT16, "RC_CH3_MIN",   &config_ancs.radioChannel[2].min,   RC_CH3_MIN),
+		PARAM(INT16,  "RC_CH3_TRIM",  &config_ancs.radioChannel[2].trim,  RC_CH3_TRIM),
+		PARAM(UINT16, "RC_CH3_MAX",   &config_ancs.radioChannel[2].max,   RC_CH3_MAX),
+		PARAM(REAL32, "RC_CH3_SCALE", &config_ancs.radioChannel[2].scale, RC_CH3_SCALE),
+		PARAM(UINT16, "RC_CH4_MIN",   &config_ancs.radioChannel[3].min,   RC_CH4_MIN),
+		PARAM(INT16,  "RC_CH4_TRIM",  &config_ancs.radioChannel[3].trim,  RC_CH4_TRIM),
+		PARAM(UINT16, "RC_CH4_MAX",   &config_ancs.radioChannel[3].max,   RC_CH4_MAX),
+		PARAM(REAL32, "RC_CH4_SCALE", &config_ancs.radioChannel[3].scale, RC_CH4_SCALE),
+		PARAM(UINT16, "RC_CH5_MIN",   &config_ancs.radioChannel[4].min,   RC_CH5_MIN),
+		PARAM(INT16,  "RC_CH5_TRIM",  &config_ancs.radioChannel[4].trim,  RC_CH5_TRIM),
+		PARAM(UINT16, "RC_CH5_MAX",   &config_ancs.radioChannel[4].max,   RC_CH5_MAX),
+		PARAM(REAL32, "RC_CH5_SCALE", &config_ancs.radioChannel[4].scale, RC_CH5_SCALE),
+		PARAM(UINT16, "RC_CH6_MIN",   &config_ancs.radioChannel[5].min,   RC_CH6_MIN),
+		PARAM(INT16,  "RC_CH6_TRIM",  &config_ancs.radioChannel[5].trim,  RC_CH6_TRIM),
+		PARAM(UINT16, "RC_CH6_MAX",   &config_ancs.radioChannel[5].max,   RC_CH6_MAX),
+		PARAM(REAL32, "RC_CH6_SCALE", &config_ancs.radioChannel[5].scale, RC_CH6_SCALE),
+		PARAM(UINT16, "RC_CH7_MIN",   &config_ancs.radioChannel[6].min,   RC_CH7_MIN),
+		PARAM(INT16,  "RC_CH7_TRIM",  &config_ancs.radioChannel[6].trim,  RC_CH7_TRIM),
+		PARAM(UINT16, "RC_CH7_MAX",   &config_ancs.radioChannel[6].max,   RC_CH7_MAX),
+		PARAM(REAL32, "RC_CH7_SCALE", &config_ancs.radioChannel[6].scale, RC_CH7_SCALE),
+		PARAM(UINT16, "RC_CH8_MIN",   &config_ancs.radioChannel[7].min,   RC_CH8_MIN),
+		PARAM(INT16,  "RC_CH8_TRIM",  &config_ancs.radioChannel[7].trim,  RC_CH8_TRIM),
+		PARAM(UINT16, "RC_CH8_MAX",   &config_ancs.radioChannel[7].max,   RC_CH8_MAX),
+		PARAM(REAL32, "RC_CH8_SCALE", &config_ancs.radioChannel[7].scale, RC_CH8_SCALE),
 
 //		// @Param: SERIAL3_BAUD
 //		// @DisplayName: Telemetry Baud Rate

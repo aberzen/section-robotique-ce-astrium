@@ -12,40 +12,6 @@
 
 namespace autom {
 
-const ControllerPid3Axes::Param dftAttCtrlParam =
-{
-		{ /* x */
-			0., /* Kp */
-			0., /* Kd */
-			0., /* Ki */
-			false, /* useOfRb */
-			0., /* Krb */
-			0., /* rbThd */
-			0., /* rb */
-			0. /* maxI */
-		}, /* x */
-		{ /* y */
-			0., /* Kp */
-			0., /* Kd */
-			0., /* Ki */
-			false, /* useOfRb */
-			0., /* Krb */
-			0., /* rbThd */
-			0., /* rb */
-			0. /* maxI */
-		}, /* y */
-		{ /* z */
-			0., /* Kp */
-			0., /* Kd */
-			0., /* Ki */
-			false, /* useOfRb */
-			0., /* Krb */
-			0., /* rbThd */
-			0., /* rb */
-			0. /* maxI */
-		} /* z */
-};
-
 Ancs::Ancs(
 		const float& dt_HF,
 		const float& dt_LF,
@@ -53,85 +19,82 @@ Ancs::Ancs(
 _param(param),
 _torque_B(0.,0.,0.),
 _force_B(0.,0.,0.),
-_torqueReal_B(0.,0.,0.),
-_forceReal_B(0.,0.,0.),
-_procImuCalib(
+torqueReal_B(0.,0.,0.),
+forceReal_B(0.,0.,0.),
+procImuCalib(
 		::system::System::system.board.meas.imu,
-		_estVal,
+		estimations,
 		_param.procCalibImu
 		),
-_procCompDec(
+procCompDec(
 		::system::System::system.board.meas,
-		_estVal,
+		estimations,
 		_param.est.declination,
 		_param.procCompDec
 		),
-_procDetectGround(
-		_estVal,
-		system::System::system.board.meas.imu,
-		_forceReal_B,
-		_groundDetectOutput,
-		_param.procGrdDetect,
+smGroundContact(
+		_param.smGroundContact,
 		_param.gen
 		),
 _est(
 		::system::System::system.board.meas,
-		_estVal,
+		estimations,
 		dt_HF,
 		_param.est
  	 	),
 _attCtrl(
 		_attGuid,
-		_estVal,
+		estimations,
 		_torque_B,
 		dt_HF,
-		dftAttCtrlParam
+		_param.attCtrl
 		),
-_mod(
+modulator(
 		 _torque_B,
 		 _force_B,
 		 system::System::system.board.pwmVal,
-		 _torqueReal_B,
-		 _forceReal_B,
+		 torqueReal_B,
+		 forceReal_B,
 		 _param.modGen,
 		 _param.modPinv,
 		 system::System::system.board.pwm
 		 ),
  _modeStabilitized(
-		_estVal,
-		_groundDetectOutput,
+		estimations,
 		_attGuid,
 		_force_B,
 		dt_LF,
 		_param.modeStabilized,
-		_param.gen,
-		_attCtrl
+		_param.gen
 		 ),
 _gimbal(
-		_estVal,
+		estimations,
 		param.gimbal
 		)
 {
+	uint8_t iChannel;
+	for (iChannel=0 ; iChannel<PWM_OUT_NUM_CHANNELS ; iChannel++)
+	{
+		radioChannels[iChannel] = new RadioChannel(
+				system::System::system.board.radio.channels[iChannel],
+				_param.radioChannel[iChannel]);
+	}
 }
 
 Ancs::~Ancs() {
-	// TODO Auto-generated destructor stub
 }
 
 /** @brief Init the process */
-infra::status Ancs::initialize()
+void Ancs::initialize()
 {
-	_procCompDec.initialize();
-	_procDetectGround.initialize();
-	_mod.initialize();
-	_est.initialize();
+	smGroundContact.reset();
+	modulator.initialize();
 	_gimbal.initialize();
 	execTransToInitCalibImu();
-	return 0;
 }
 
 /** @brief Execute the process */
-infra::status Ancs::execute()
+void Ancs::execute()
 {
 	/* Assert transition to flying mode */
 	switch (_state)
@@ -161,7 +124,6 @@ infra::status Ancs::execute()
 		evalTransFromFailSafe();
 		break;
 	}
-	return 0;
 }
 
 
@@ -169,12 +131,12 @@ infra::status Ancs::execute()
 void Ancs::execTransToInitCalibImu()
 {
  	/* Initialize the procedure */
-	_procImuCalib.start();
+	procImuCalib.reset();
 
 	/* Change state to calib Imu */
 	_state = E_STATE_INITIALIZATION_CALIB_IMU;
 
-//	Serial.printf("E_STATE_INITIALIZATION_CALIB_IMU\n");
+	Serial.printf("E_STATE_INITIALIZATION_CALIB_IMU\n");
 }
 
 
@@ -182,11 +144,11 @@ void Ancs::execTransToInitCalibImu()
 /** @brief Step initialization */
 void Ancs::stepInitCalibImu()
 {
-	switch (_procImuCalib.getState())
+	switch (procImuCalib.getState())
 	{
 	case ProcCalibGyroBias::E_PROCCALIBIMU_OFF:
 		/* Start calibration procedure */
-		_procImuCalib.start();
+		procImuCalib.start();
 		break;
 
 	case ProcCalibGyroBias::E_PROCCALIBIMU_ENDED:
@@ -195,14 +157,16 @@ void Ancs::stepInitCalibImu()
 
 	case ProcCalibGyroBias::E_PROCCALIBIMU_FAILED:
 		/* Someone move the sensor during calibration procedure */
-		_procImuCalib.stop();
-		_procImuCalib.start();
+		procImuCalib.reset();
 		break;
+	case ProcCalibGyroBias::E_PROCCALIBIMU_INIT:
+	case ProcCalibGyroBias::E_PROCCALIBIMU_COMP_BIAS:
+	case ProcCalibGyroBias::E_PROCCALIBIMU_COMP_VAR:
 	default:
 		/* Process board */
 		system::System::system.board.execute();
 		/* Execute calibration procedure */
-		_procImuCalib.onTick();
+		procImuCalib.onTick();
 		break;
 	}
 }
@@ -210,7 +174,7 @@ void Ancs::stepInitCalibImu()
 /** @brief Assert transitions from E_STATE_INITIALIZATION_CALIB_IMU */
 void Ancs::evalTransFromInitCalibImu()
 {
-	if (ProcCalibGyroBias::E_PROCCALIBIMU_ENDED == _procImuCalib.getState())
+	if (ProcCalibGyroBias::E_PROCCALIBIMU_ENDED == procImuCalib.getState())
 	{
 		/* Procedure is over, command transition to compass calibration */
 		execTransToInitCalibCompass();
@@ -221,40 +185,39 @@ void Ancs::evalTransFromInitCalibImu()
 void Ancs::execTransToInitCalibCompass()
 {
 	/* Initialize the procedure */
-	_procCompDec.initialize();
+	procCompDec.reset();
 
 	/* Set new state to compass calibration */
 	_state = E_STATE_INITIALIZATION_CALIB_COMPASS;
 
-//	Serial.printf("E_STATE_INITIALIZATION_CALIB_COMPASS\n");
+	Serial.printf("E_STATE_INITIALIZATION_CALIB_COMPASS\n");
 }
 
 /** @brief Step Compass calibration state */
 void Ancs::stepInitCalibCompass()
 {
-	switch (_procCompDec.getStatus())
+	switch (procCompDec.getState())
 	{
-	case infra::Procedure::E_PROC_STATUS_OFF:
+	case ProcCompassDeclination::E_STATE_OFF:
 		/* Start calibration procedure */
-		_procCompDec.start();
+		procCompDec.start();
 		break;
 
-	case infra::Procedure::E_PROC_STATUS_RUNNING:
+	case ProcCompassDeclination::E_STATE_INIT:
+	case ProcCompassDeclination::E_STATE_RUNNING:
 		/* Process board */
 		system::System::system.board.execute();
 		/* Execute calibration procedure */
-		_procCompDec.execute();
+		procCompDec.onTick();
 		break;
 
-	case infra::Procedure::E_PROC_STATUS_TERMINATED:
+	case ProcCompassDeclination::E_STATE_ENDED:
 		/* Calibration is over (and successfull), switch to ready state */
 		break;
 
-	case infra::Procedure::E_PROC_STATUS_FAILED:
-		/* Someone move the sensor during calibration procedure */
 	default:
 		/* or unexpected */
-		_procCompDec.reset();
+		procCompDec.reset();
 		break;
 	}
 }
@@ -262,7 +225,7 @@ void Ancs::stepInitCalibCompass()
 /** @brief Assert transitions from E_STATE_INITIALIZATION_CALIB_COMPASS */
 void Ancs::evalTransFromInitCalibCompass()
 {
-	if (infra::Procedure::E_PROC_STATUS_TERMINATED == _procCompDec.getStatus())
+	if (ProcCompassDeclination::E_STATE_ENDED == procCompDec.getState())
 	{
 		/* Procedure is over, command transition to ready */
 		execTransToReady();
@@ -277,8 +240,8 @@ void Ancs::execTransToReady()
 	/* Set demanded force and torque to null*/
 	_force_B(0., 0., 0.);
 	_torque_B(0., 0., 0.);
-	_forceReal_B(0., 0., 0.);
-	_torqueReal_B(0., 0., 0.);
+	forceReal_B(0., 0., 0.);
+	torqueReal_B(0., 0., 0.);
 
 	/* Process PWM */
 	for (idxMotor=0 ; idxMotor<CONFIG_NB_MOTOR ; idxMotor++)
@@ -288,10 +251,13 @@ void Ancs::execTransToReady()
 		system::System::system.board.pwm.disable_out(idxMotor);
 	}
 
+	/* Initialization of the estimator */
+	_est.initialize();
+
 	/* Set new state to compass calibration */
 	_state = E_STATE_READY;
 
-//	Serial.printf("E_STATE_READY\n");
+	Serial.printf("E_STATE_READY\n");
 }
 
 /** @brief Step ready */
@@ -314,7 +280,7 @@ void Ancs::stepReady()
 	_gimbal.execute();
 
 	/* Compute ground detection procedure */
-	_procDetectGround.execute();
+//	smGroundContact.onTick();
 }
 
 /** @brief Assert transitions from E_STATE_READY */
@@ -328,11 +294,11 @@ void Ancs::execTransToFlying()
 	/* Set demanded force and torque to null*/
 	_force_B(0., 0., 0.);
 	_torque_B(0., 0., 0.);
-	_forceReal_B(0., 0., 0.);
-	_torqueReal_B(0., 0., 0.);
+	forceReal_B(0., 0., 0.);
+	torqueReal_B(0., 0., 0.);
 
 	/* Arm motors */
-	_mod.arm();
+	modulator.arm();
 
 	/* Set new state to compass calibration */
 	_state = E_STATE_FLYING;
@@ -353,7 +319,7 @@ void Ancs::stepFlying()
 	_modeStabilitized.execute();
 
 	/* Process PWM */
-	_mod.execute();
+	modulator.execute();
 
 //	Serial.printf("qDem_IB = [%.5f %.5f %.5f %.5f]\n", this->.qDem_IB.scalar, _demAttData.qDem_IB.vector.x, _demAttData.qDem_IB.vector.y, _demAttData.qDem_IB.vector.z);
 //	Serial.printf("rateDem_B = [%.5f %.5f %.5f]\n", _demAttData.angRateDem_B.x, _demAttData.angRateDem_B.y, _demAttData.angRateDem_B.z);
@@ -376,11 +342,11 @@ void Ancs::execTransToFailsafe()
 	/* Set demanded force and torque to null*/
 	_force_B(0., 0., 0.);
 	_torque_B(0., 0., 0.);
-	_forceReal_B(0., 0., 0.);
-	_torqueReal_B(0., 0., 0.);
+	forceReal_B(0., 0., 0.);
+	torqueReal_B(0., 0., 0.);
 
 	/* Disarm motors */
-	_mod.disarm();
+	modulator.disarm();
 
 	_state = E_STATE_FAILSAFE;
 

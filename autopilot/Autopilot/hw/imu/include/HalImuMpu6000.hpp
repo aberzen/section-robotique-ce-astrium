@@ -57,13 +57,13 @@ public:
 	virtual ~HalImuMpu6000();
 
 	/** @brief Init the process */
-	virtual infra::status initialize();
+	virtual void initialize();
 
 	/** @brief Execute the process */
-	virtual infra::status execute();
+	virtual void execute();
 
 	/** @brief Reset the process */
-	virtual infra::status reset();
+	virtual void reset();
 
 protected:
 	/** @brief Write the register */

@@ -50,139 +50,119 @@ HalBarometerMs5611OverSpi::~HalBarometerMs5611OverSpi() {
 }
 
 /** @brief Initialize the sensor. */
-infra::status HalBarometerMs5611OverSpi::initialize()
+void HalBarometerMs5611OverSpi::initialize()
 {
 	int8_t result;
 
 	/* Call super */
-	if (0>(result=HalBarometer::initialize()))
-		return result;
+	HalBarometer::initialize();
 
 	/* Reset chip */
-	if (0>reset())
-	{
-		return -1;
-	}
+	reset();
 
 	/* Read ROM */
-	if (0>readRom())
-	{
-		return -1;
-	}
+	readRom();
 
 	/* Reserve device */
-	if (!this->_spi.select(1))
+	if (this->_spi.select(1))
 	{
-		return -1;
+		/* Program D2 convertion */
+		_spi.transfer0(CMD_CONVERT_D2_OSR4096);
+		_convState = E_CONVERT_D2;
+
+		/* Release device */
+		this->_spi.release();
 	}
-
-	/* Program D2 convertion */
-	_spi.transfer0(CMD_CONVERT_D2_OSR4096);
-	_convState = E_CONVERT_D2;
-
-	/* Release device */
-	this->_spi.release();
-
-	return 0;
 }
 
 
 /** @brief Reset the sensor. */
-infra::status HalBarometerMs5611OverSpi::reset()
+void HalBarometerMs5611OverSpi::reset()
 {
 	infra::status result;
 	/* Call super */
-	if (0>(result=HalBarometer::reset()))
-		return result;
+	HalBarometer::reset();
 
 	/* Reserve device */
-	if (!_spi.select(1))
+	if (_spi.select(1))
 	{
-		return -1;
+		/* Reset device */
+		_spi.transfer0(CMD_MS5611_RESET);
+
+		/* Release device */
+		_spi.release();
+
+		/* Wait at least 2.8ms */
+		infra::Task::delay(((3*configTICK_RATE_HZ)/1000)+1);
 	}
-
-	/* Reset device */
-	_spi.transfer0(CMD_MS5611_RESET);
-
-	/* Release device */
-	_spi.release();
-
-	/* Wait at least 2.8ms */
-	infra::Task::delay(((3*configTICK_RATE_HZ)/1000)+1);
-
-	return 0;
 }
 
 /** @brief Execute the process */
-infra::status HalBarometerMs5611OverSpi::execute()
+void HalBarometerMs5611OverSpi::execute()
 {
 	/* Reserve device */
-	if (!_spi.select(1))
+	if (_spi.select(1))
 	{
-		return -1;
+		/* Alternate D1 / D2 conversion */
+		switch (_convState)
+		{
+		case E_CONVERT_D1:
+
+			/* Read _D1 */
+			_spi.transfer24(0, _rawPressure);
+
+			/* Next state to D2 */
+			_spi.transfer0(CMD_CONVERT_D2_OSR4096);
+			_convState = E_CONVERT_D2;
+			convertRaw();
+			_out.isAvailable =  true;
+			break;
+
+
+		case E_CONVERT_D2:
+
+			/* Read _D1 */
+			_spi.transfer24(0, _rawTemperature);
+
+			/* Next state to D1 */
+			_spi.transfer0(CMD_CONVERT_D1_OSR4096);
+			_convState = E_CONVERT_D1;
+			_out.isAvailable =  false;
+			break;
+		default:
+			/* Error unknown state (-2) */
+			return;
+			break;
+		}
+		/* Release the spi */
+		_spi.release();
 	}
-	/* Alternate D1 / D2 conversion */
-	switch (_convState)
-	{
-	case E_CONVERT_D1:
-
-		/* Read _D1 */
-		_spi.transfer24(0, _rawPressure);
-
-		/* Next state to D2 */
-		_spi.transfer0(CMD_CONVERT_D2_OSR4096);
-		_convState = E_CONVERT_D2;
-		convertRaw();
-		_out.isAvailable =  true;
-		break;
-
-
-	case E_CONVERT_D2:
-
-		/* Read _D1 */
-		_spi.transfer24(0, _rawTemperature);
-
-		/* Next state to D1 */
-		_spi.transfer0(CMD_CONVERT_D1_OSR4096);
-		_convState = E_CONVERT_D1;
-		_out.isAvailable =  false;
-		break;
-	default:
-		/* Error unknown state (-2) */
-		return -2;
-		break;
-	}
-	/* Release the spi */
-	_spi.release();
-	return 0;
 }
 
 /** @brief Initialize the sensor. */
-infra::status HalBarometerMs5611OverSpi::readRom()
+void HalBarometerMs5611OverSpi::readRom()
 {
 	uint16_t crc = 0;
 
 	/* Reserve device */
-	if (!this->_spi.select(1))
+	if (this->_spi.select(1))
 	{
-		return -1;
+
+		/* Read ROM Coefficients */
+		_spi.transfer16((uint8_t)CMD_MS5611_PROM_C1, _coeffs[T_COEFF_C1], true);
+		_spi.transfer16((uint8_t)CMD_MS5611_PROM_C2, _coeffs[T_COEFF_C2], true);
+		_spi.transfer16((uint8_t)CMD_MS5611_PROM_C3, _coeffs[T_COEFF_C3], true);
+		_spi.transfer16((uint8_t)CMD_MS5611_PROM_C4, _coeffs[T_COEFF_C4], true);
+		_spi.transfer16((uint8_t)CMD_MS5611_PROM_C5, _coeffs[T_COEFF_C5], true);
+		_spi.transfer16((uint8_t)CMD_MS5611_PROM_C6, _coeffs[T_COEFF_C6], true);
+
+		/* Read ROM CRC */
+		_spi.transfer16((uint8_t)CMD_MS5611_PROM_CRC, crc, true);
+
+		// TODO: implement CRC checksum
+
+		this->_spi.release();
 	}
-
-	/* Read ROM Coefficients */
-	_spi.transfer16((uint8_t)CMD_MS5611_PROM_C1, _coeffs[T_COEFF_C1], true);
-	_spi.transfer16((uint8_t)CMD_MS5611_PROM_C2, _coeffs[T_COEFF_C2], true);
-	_spi.transfer16((uint8_t)CMD_MS5611_PROM_C3, _coeffs[T_COEFF_C3], true);
-	_spi.transfer16((uint8_t)CMD_MS5611_PROM_C4, _coeffs[T_COEFF_C4], true);
-	_spi.transfer16((uint8_t)CMD_MS5611_PROM_C5, _coeffs[T_COEFF_C5], true);
-	_spi.transfer16((uint8_t)CMD_MS5611_PROM_C6, _coeffs[T_COEFF_C6], true);
-
-	/* Read ROM CRC */
-	_spi.transfer16((uint8_t)CMD_MS5611_PROM_CRC, crc, true);
-
-	// TODO: implement CRC checksum
-
-	this->_spi.release();
-	return 0;
 }
 
 void HalBarometerMs5611OverSpi::convertRaw()

@@ -33,10 +33,10 @@ public:
 	virtual ~ControllerPid3Axes();
 
 	/** @brief Init the process */
-	virtual ::infra::status initialize();
+	virtual void initialize();
 
 	/** @brief Execute the process */
-	virtual ::infra::status execute();
+	virtual void execute();
 
 	/** @brief Execute the process */
 	virtual void updateCtrlErr() = 0;

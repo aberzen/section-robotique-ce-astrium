@@ -77,16 +77,15 @@ void DataStream::update()
 }
 
 /** @brief Init the process */
-infra::status DataStream::initialize()
+void DataStream::initialize()
 {
 	_counter = 0;
 	_period = 0;
 	_date = 0;
-	return 0;
 }
 
 /** @brief Execute the process */
-infra::status DataStream::execute()
+void DataStream::execute()
 {
 	if ((_period != 0) && (_counter == 0))
 	{
@@ -96,7 +95,6 @@ infra::status DataStream::execute()
 		/* Reset counters */
 		reset();
 	}
-	return 0;
 }
 
 /** @brief Stop streaming */

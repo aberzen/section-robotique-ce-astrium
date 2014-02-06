@@ -10,7 +10,6 @@
 
 #include <autom/mgt/include/Mode.hpp>
 #include <autom/gen/include/GenericParameters.hpp>
-#include <autom/proc/include/ProcDetectContact.hpp>
 
 namespace autom {
 
@@ -21,7 +20,6 @@ public:
 	 */
 	typedef struct
 	{
-		ControllerPid3Axes::Param attCtrl;
 		int8_t rollPwmScale;
 		int8_t rollPwmScaleExp; /* Scale and exp (typically 11 and -13 to obtain +/-45deg of inclination) */
 		int8_t pitchPwmScale;
@@ -38,38 +36,29 @@ public:
 	ModeStabilized(
 			/* Input */
 			const Estimator::Estimations& est,
-			const ProcDetectContact::Output& groundDetect,
 			/* Outputs */
 			AttGuid::Output& attGuid,
 			::math::Vector3f& force_B,
 			/* Parameters */
 			const float& dt,
 			const autom::ModeStabilized::Param& param,
-			const GenericParam& paramGen,
-			/* Dependencies */
-			AttitudeController& attCtrl
+			const GenericParam& paramGen
 			);
 	virtual ~ModeStabilized();
 
 	/** @brief Init the process */
-	virtual ::infra::status initialize();
+	virtual void initialize();
 
 	/** @brief Execute the process */
-	virtual ::infra::status execute();
+	virtual void execute();
 
 protected:
-
-	/* @brief Ground detection */
-	const ProcDetectContact::Output& _groundDetect;
 
 	/** @brief Time step duration */
 	const float& _dt;
 
 	/** @brief Parameters */
 	const autom::ModeStabilized::Param& _param;
-
-	/** @brief Generic parameters */
-	AttitudeController& _attCtrl;
 
 	/** @brief Generic parameters */
 	const autom::GenericParam& _paramGen;

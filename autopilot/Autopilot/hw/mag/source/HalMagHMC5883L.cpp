@@ -93,7 +93,7 @@ bool HalMagHMC5883L::write_register(uint8_t address, uint8_t value)
 }
 
 /** @brief Initialize the HW */
-infra::status HalMagHMC5883L::initialize()
+void HalMagHMC5883L::initialize()
 {
     /* Configuration is:
      * - CRA:
@@ -105,45 +105,32 @@ infra::status HalMagHMC5883L::initialize()
      * 	- MR:
      * 		- mode: Single Measurement ==> performed in commandSample
      */
-    if (!write_register(REG_ADDR_CRA, REG_VAL_CRA_MA_AV1 | REG_VAL_CRA_MS_NM))
-    {
-        return -2;
-    }
-    if (!write_register(REG_ADDR_CRB, REG_VAL_CRB_GN_1_3GA))
-    {
-        return -3;
-    }
+    write_register(REG_ADDR_CRA, REG_VAL_CRA_MA_AV1 | REG_VAL_CRA_MS_NM);
+    write_register(REG_ADDR_CRB, REG_VAL_CRB_GN_1_3GA);
 
     /* Program next sample */
-    if (0>commandSample())
-    	return -4;
-
-    return 0;
-}
+    commandSample();}
 
 /** @brief Reset the HW */
-infra::status HalMagHMC5883L::reset()
+void HalMagHMC5883L::reset()
 {
 	initialize();
-	return 0;
 }
 
 /** @brief Execute the driver */
-infra::status HalMagHMC5883L::execute()
+void HalMagHMC5883L::execute()
 {
 	/* Read data */
 	_out.isAvailable = true;
 	if (0>readRaw())
 	{
 		_out.isAvailable = false;
-		return -1;
 	}
-
-	/* Command a new read */
-	if (0>commandSample())
-		return -2;
-
-	return 0;
+	else
+	{
+		/* Command a new read */
+		commandSample();
+	}
 }
 
 /** @brief Program a measurement */

@@ -15,8 +15,9 @@
 #include <autom/proc/include/ProcCompassDeclination.hpp>
 #include <autom/mod/include/ModulatorPinv.hpp>
 #include <autom/mgt/include/ModeStabilized.hpp>
-#include <autom/proc/include/ProcDetectContact.hpp>
+#include <autom/sm/include/GroundContactState.hpp>
 #include <autom/gimbal/include/GimbalMgt.hpp>
+#include <autom/radio/include/RadioChannel.hpp>
 
 namespace autom {
 
@@ -46,11 +47,13 @@ public:
 		SimpleAttitudeKalmanFilter::Param est;
 		ProcCalibGyroBias::Param procCalibImu;
 		ProcCompassDeclination::Param procCompDec;
-		ProcDetectContact::Param procGrdDetect;
+		GroundContactState::Param smGroundContact;
 		Modulator<CONFIG_NB_MOTOR>::ParamGen modGen;
 		ModulatorPinv<CONFIG_NB_MOTOR>::ParamPinv modPinv;
+		ControllerPid3Axes::Param attCtrl;
 		ModeStabilized::Param modeStabilized;
 		GimbalMgt::Param gimbal;
+		RadioChannel::Param radioChannel[PWM_OUT_NUM_CHANNELS];
 	} Param ;
 public:
 	Ancs(
@@ -60,10 +63,10 @@ public:
 	virtual ~Ancs();
 
 	/** @brief Init the process */
-	virtual ::infra::status initialize() ;
+	virtual void initialize() ;
 
 	/** @brief Execute the process */
-	virtual ::infra::status execute() ;
+	virtual void execute() ;
 
 	/** @brief Getter for estimation values */
 	inline const Estimator::Estimations& getEstimationValues();
@@ -114,6 +117,32 @@ protected:
 	/** @brief Assert transitions from E_STATE_FAILSAFE */
 	void evalTransFromFailSafe();
 
+public:
+
+	/** @brief Calibration of IMU bias procedure */
+	ProcCalibGyroBias procImuCalib;
+
+	/** @brief Calibration of IMU bias procedure */
+	ProcCompassDeclination procCompDec;
+
+	/** @brief Modulator */
+	ModulatorPinv<CONFIG_NB_MOTOR> modulator;
+
+	/** @brief Realized torque */
+	math::Vector3f torqueReal_B;
+
+	/** @brief Realized force */
+	math::Vector3f forceReal_B;
+
+	/** @brief Estimation values */
+	Estimator::Estimations estimations;
+
+	/** @brief Calibration of IMU bias procedure */
+	GroundContactState smGroundContact;
+
+	/** @brief Calibration of IMU bias procedure */
+	RadioChannel* radioChannels[PWM_OUT_NUM_CHANNELS];
+
 protected:
 	/** @brief Setting */
 	Param _param;
@@ -127,36 +156,12 @@ protected:
 	/** @brief Demanded force */
 	math::Vector3f _force_B;
 
-	/** @brief Realized torque */
-	math::Vector3f _torqueReal_B;
-
-	/** @brief Realized force */
-	math::Vector3f _forceReal_B;
-
-	/** @brief Ground detection output */
-	ProcDetectContact::Output _groundDetectOutput;
-
-	/** @brief Estimation values */
-	Estimator::Estimations _estVal;
-
-	/** @brief Calibration of IMU bias procedure */
-	ProcCalibGyroBias _procImuCalib;
-
-	/** @brief Calibration of IMU bias procedure */
-	ProcCompassDeclination _procCompDec;
-
-	/** @brief Calibration of IMU bias procedure */
-	ProcDetectContact _procDetectGround;
-
 
 	/** @brief Simple estimator (for test purpose) */
 	SimpleAttitudeKalmanFilter _est;
 
 	/** @brief Attitude controller */
 	AttitudeController _attCtrl;
-
-	/** @brief Modulator */
-	ModulatorPinv<CONFIG_NB_MOTOR> _mod;
 
 	/** @brief Mode stabilized */
 	ModeStabilized _modeStabilitized;
@@ -167,12 +172,6 @@ protected:
 	/** @brief Current state */
 	State _state;
 };
-
-/** @brief Getter for estimation values */
-const Estimator::Estimations& Ancs::getEstimationValues()
-{
-	return _estVal;
-}
 
 } /* namespace autom */
 

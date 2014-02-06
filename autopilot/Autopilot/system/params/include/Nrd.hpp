@@ -99,6 +99,50 @@
 #define PROC_COMPDEC_NBMEAS 	(500) /* Number of the measurement for calibration */
 
 /* **************************************************** */
+/* Radio Parameters                                     */
+
+#define RC_CH1_MIN	1100
+#define RC_CH1_MAX	1900
+#define RC_CH1_TRIM	1500
+#define RC_CH1_SCALE	(2.5e-3)
+
+#define RC_CH2_MIN	1100
+#define RC_CH2_MAX	1900
+#define RC_CH2_TRIM	1500
+#define RC_CH2_SCALE	(2.5e-3)
+
+#define RC_CH3_MIN	1100
+#define RC_CH3_MAX	1900
+#define RC_CH3_TRIM	1100
+#define RC_CH3_SCALE	(1.25e-3)
+
+#define RC_CH4_MIN	1100
+#define RC_CH4_MAX	1900
+#define RC_CH4_TRIM	1500
+#define RC_CH4_SCALE	(2.5e-3)
+
+#define RC_CH5_MIN	1100
+#define RC_CH5_MAX	1900
+#define RC_CH5_TRIM	1500
+#define RC_CH5_SCALE	(2.5e-3)
+
+#define RC_CH6_MIN	1100
+#define RC_CH6_MAX	1900
+#define RC_CH6_TRIM	1500
+#define RC_CH6_SCALE	(2.5e-3)
+
+#define RC_CH7_MIN	1100
+#define RC_CH7_MAX	1900
+#define RC_CH7_TRIM	1500
+#define RC_CH7_SCALE	(2.5e-3)
+
+#define RC_CH8_MIN	1100
+#define RC_CH8_MAX	1900
+#define RC_CH8_TRIM	1500
+#define RC_CH8_SCALE	(2.5e-3)
+
+
+/* **************************************************** */
 /* Modulator parameters: pseudo inverse based modulator */
 
 #define MODULATOR_NB_MOTORS		4

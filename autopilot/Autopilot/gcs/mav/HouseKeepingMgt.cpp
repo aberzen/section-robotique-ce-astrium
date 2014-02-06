@@ -175,25 +175,21 @@ void HouseKeepingMgt::update()
 }
 
 /** @brief Init the process */
-infra::status HouseKeepingMgt::initialize()
+void HouseKeepingMgt::initialize()
 {
 	/* Initialize raw sensors */
 	_rawSensorsStream.initialize();
 	/* Update Estimator */
 	_estStream.initialize();
-
-	return 0;
 }
 
 /** @brief Execute the process */
-infra::status HouseKeepingMgt::execute()
+void HouseKeepingMgt::execute()
 {
 	/* Execute raw sensors data stream */
 	_rawSensorsStream.execute();
 	/* Update Estimator */
 	_estStream.execute();
-
-	return 0;
 }
 
 } /* namespace mavlink */

@@ -29,14 +29,16 @@ namespace autom {
 template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
 class DiscreteFilter : public Filter<T> {
 public:
+	typedef struct
+	{
+		T coeffNum[FILTER_SIZE_Y];
+		T coeffDen[FILTER_SIZE_X];
+	} Param;
+public:
 	DiscreteFilter(
-			const T coeffX[FILTER_SIZE_Y],
-			const T coeffY[FILTER_SIZE_X]
+			const Param& param
 			);
 	virtual ~DiscreteFilter();
-
-	// setCoeff - setter method for coefficient
-	void setCoeff(const T coeffX[FILTER_SIZE_X], const T coeffY[FILTER_SIZE_Y]);
 
 	// apply - Add a new raw value to the filter, retrieve the filtered result
     virtual T apply(T sample);
@@ -54,9 +56,7 @@ protected:
     uint8_t _sampleIdxX;
 
     /** @brief bk coefficients of the filter */
-    T _coeffY[FILTER_SIZE_Y];
-    /** @brief ak coefficients of the filter */
-    T _coeffX[FILTER_SIZE_X];
+    const Param& _param;
 
     /** @brief Saved Y(t-kT) values */
     T _valuesY[FILTER_SIZE_Y];

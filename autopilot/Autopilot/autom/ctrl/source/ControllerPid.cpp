@@ -32,15 +32,14 @@ ControllerPid::~ControllerPid(){
 }
 
 /** @brief Init the process */
-infra::status ControllerPid::initialize()
+void ControllerPid::initialize()
 {
 	this->_intCtrlErr = 0.;
 	this->_ctrlErrPrev = 0.;
-	return 0;
 }
 
 /** @brief Compute the controller value */
-infra::status ControllerPid::execute(){
+void ControllerPid::execute(){
 	/* 1) Compute integral term */
 	_intCtrlErr +=  this->_param.Ki * (_ctrlErr+_ctrlErrPrev)/2 * this->_dt;
 	_ctrlErrPrev = _ctrlErr;
@@ -60,7 +59,6 @@ infra::status ControllerPid::execute(){
 		/* 3a) No rate bias */
 		_out = this->_param.Kp * _ctrlErr + this->_param.Kd * _derivCtrlErr + this->_intCtrlErr;
 	}
-	return 0;
 }
 
 } /* namespace autom */

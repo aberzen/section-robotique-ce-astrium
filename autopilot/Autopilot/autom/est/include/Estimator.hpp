@@ -39,10 +39,10 @@ public:
 	virtual ~Estimator();
 
 	/** @brief Init the process */
-	virtual infra::status initialize() ;
+	virtual void initialize() ;
 
 	/** @brief Execute the process */
-	virtual infra::status execute() = 0;
+	virtual void execute() = 0;
 
 protected:
 

@@ -28,13 +28,13 @@ public:
 	virtual ~HalMagHMC5883L();
 
 	/** @brief Initialize the HW */
-	virtual infra::status initialize();
+	virtual void initialize();
 
 	/** @brief Reset the HW */
-	virtual infra::status reset();
+	virtual void reset();
 
 	/** @brief Execute the driver */
-	virtual infra::status execute();
+	virtual void execute();
 
 protected:
 	/** @brief Read register value */

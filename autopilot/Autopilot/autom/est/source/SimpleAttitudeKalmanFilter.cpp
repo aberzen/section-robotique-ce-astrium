@@ -36,19 +36,13 @@ SimpleAttitudeKalmanFilter::~SimpleAttitudeKalmanFilter() {
 }
 
 /** @brief Init the process */
-infra::status SimpleAttitudeKalmanFilter::initialize()
+void SimpleAttitudeKalmanFilter::initialize()
 {
-	infra::status res = KalmanFilter::initialize();
-	if (res != 0)
-	{
-		return res;
-	}
+	KalmanFilter::initialize();
 
 	_attitudeInnov_B(0.,0.,0.);
 	_attEstInvNrmPrev = 1.;
 	_invNrmMagProjPrev = _param.declination.invNrm;
-
-	return 0;
 }
 
 /** @brief Predict the state knowing the past */

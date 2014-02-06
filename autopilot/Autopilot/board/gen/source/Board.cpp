@@ -28,51 +28,21 @@ Board::~Board() {
 }
 
 /** @brief Init the process */
-infra::status Board::initialize()
+void Board::initialize()
 {
-	infra::status result;
-
-	result = imu.initialize();
-	if (result < 0)
-		return result;
-
-	result = compass.initialize();
-	if (result < 0)
-		return result;
-
-	result = baro.initialize();
-	if (result < 0)
-		return result;
-
-	result = pwm.initialize();
-	if (result < 0)
-		return result;
-
-	return 0;
+	imu.initialize();
+	compass.initialize();
+	baro.initialize();
+	pwm.initialize();
 }
 
 /** @brief Execute the process */
-infra::status Board::execute()
+void Board::execute()
 {
-	infra::status result;
-
-	result = imu.execute();
-	if (result < 0)
-		return result;
-
-	result = compass.execute();
-	if (result < 0)
-		return result;
-
-	result = baro.execute();
-	if (result < 0)
-		return result;
-
-	result = pwm.execute();
-	if (result < 0)
-		return result;
-
-	return 0;
+	imu.execute();
+	compass.execute();
+	baro.execute();
+	pwm.execute();
 }
 
 

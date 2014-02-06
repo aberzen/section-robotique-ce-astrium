@@ -5,7 +5,7 @@
  *      Author: Robotique
  */
 
-#include <hw/serial/include/FastSerial.hpp>
+//#include <hw/serial/include/FastSerial.hpp>
 #include <autom/proc/include/ProcCalibGyroBias.hpp>
 
 namespace autom {
@@ -20,13 +20,16 @@ ProcCalibGyroBias::ProcCalibGyroBias(
 	)
 : _param(param),
   _imu(imu),
-  _filtGyroX(_param.filtCoeffNum, _param.filtCoeffDen),
-  _filtGyroY(_param.filtCoeffNum, _param.filtCoeffDen),
-  _filtGyroZ(_param.filtCoeffNum, _param.filtCoeffDen),
-  _filtAccoX(_param.filtCoeffNum, _param.filtCoeffDen),
-  _filtAccoY(_param.filtCoeffNum, _param.filtCoeffDen),
-  _filtAccoZ(_param.filtCoeffNum, _param.filtCoeffDen),
   _est(est),
+  _filtGyroX(_param.filt),
+  _filtGyroY(_param.filt),
+  _filtGyroZ(_param.filt),
+  _filtAccoX(_param.filt),
+  _filtAccoY(_param.filt),
+  _filtAccoZ(_param.filt),
+  _sumGyroMeas(0., 0., 0.),
+  _sumAccoMeas(0., 0., 0.),
+  _count(0),
   _state(E_PROCCALIBIMU_COMP_BIAS)
 {
 }
@@ -38,6 +41,11 @@ ProcCalibGyroBias::~ProcCalibGyroBias() {
 /** @brief Start procedure */
 void ProcCalibGyroBias::start()
 {
+//	Serial.printf("filt=%.3f %.3f / %.3f %.3f\n",
+//			_param.filt.coeffNum[0],
+//			_param.filt.coeffNum[1],
+//			_param.filt.coeffDen[0],
+//			_param.filt.coeffDen[1]);
 	switch(_state)
 	{
 	case E_PROCCALIBIMU_OFF:
@@ -84,12 +92,23 @@ void ProcCalibGyroBias::stop()
 	_state = E_PROCCALIBIMU_OFF;
 }
 
+/** @brief Reset procedure */
+void ProcCalibGyroBias::reset()
+{
+	stop();
+	start();
+}
+
 /** @brief Initialize the filters from first measurements */
 void ProcCalibGyroBias::onTickInitFilters()
 {
 	if (_imu.isAvailable)
 	{
 		float init[2];
+
+//		Serial.printf("init=%.3f %.3f %.3f / %.3f %.3f %.3f\n",
+//				_imu.gyroMeas_B.x, _imu.gyroMeas_B.y, _imu.gyroMeas_B.z,
+//				_imu.accoMeas_B.x, _imu.accoMeas_B.y, _imu.accoMeas_B.z);
 
 		init[0] = _imu.gyroMeas_B.x;
 		init[1] = _imu.gyroMeas_B.x;
@@ -115,6 +134,7 @@ void ProcCalibGyroBias::onTickInitFilters()
 		init[1] = _imu.accoMeas_B.z;
 		_filtAccoZ.reset(init, init);
 
+		_count = _param.biasNbMeas;
 		_state = E_PROCCALIBIMU_COMP_BIAS;
 	}
 }
@@ -124,6 +144,10 @@ void ProcCalibGyroBias::onTickCompBias()
 {
 	if (_imu.isAvailable)
 	{
+//		Serial.printf("run=%.3f %.3f %.3f / %.3f %.3f %.3f\n",
+//				_imu.gyroMeas_B.x, _imu.gyroMeas_B.y, _imu.gyroMeas_B.z,
+//				_imu.accoMeas_B.x, _imu.accoMeas_B.y, _imu.accoMeas_B.z);
+
 		_est.imuGyroBias_B.x = _filtGyroX.apply(_imu.gyroMeas_B.x);
 		_est.imuGyroBias_B.y = _filtGyroY.apply(_imu.gyroMeas_B.y);
 		_est.imuGyroBias_B.z = _filtGyroZ.apply(_imu.gyroMeas_B.z);
@@ -131,6 +155,10 @@ void ProcCalibGyroBias::onTickCompBias()
 		_est.imuAccoBias_B.x = _filtAccoX.apply(_imu.accoMeas_B.x);
 		_est.imuAccoBias_B.y = _filtAccoY.apply(_imu.accoMeas_B.y);
 		_est.imuAccoBias_B.z = _filtAccoZ.apply(_imu.accoMeas_B.z);
+
+//		Serial.printf("bias=%.3f %.3f %.3f / %.3f %.3f %.3f\n",
+//				_est.imuGyroBias_B.x, _est.imuGyroBias_B.y, _est.imuGyroBias_B.z,
+//				_est.imuAccoBias_B.x, _est.imuAccoBias_B.y, _est.imuAccoBias_B.z);
 
 		if (_count == 0)
 		{

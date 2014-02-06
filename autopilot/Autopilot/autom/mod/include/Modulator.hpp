@@ -45,10 +45,10 @@ public:
 	virtual ~Modulator();
 
 	/** @brief Init the process */
-	virtual ::infra::status initialize();
+	virtual void initialize();
 
 	/** @brief Execute the process */
-	virtual ::infra::status execute() ;
+	virtual void execute() ;
 
 	/** @brief Arm the motors */
 	virtual void arm() ;
@@ -130,7 +130,7 @@ Modulator<NB_MOTORS>::~Modulator() {
 
 /** @brief Init the process */
 template <int8_t NB_MOTORS>
-::infra::status Modulator<NB_MOTORS>::initialize()
+void Modulator<NB_MOTORS>::initialize()
 {
 	uint8_t iMotor;
 
@@ -144,13 +144,11 @@ template <int8_t NB_MOTORS>
 
 	_torqueReal_B(0.,0.,0.);
 	_forceReal_B(0.,0.,0.);
-
-	return 0;
 }
 
 /** @brief Init the process */
 template <int8_t NB_MOTORS>
-::infra::status Modulator<NB_MOTORS>::execute()
+void Modulator<NB_MOTORS>::execute()
 {
 	if (_state == E_STATE_ARMED)
 	{
@@ -173,7 +171,6 @@ template <int8_t NB_MOTORS>
 		_torqueReal_B(0.,0.,0.);
 		_forceReal_B(0.,0.,0.);
 	}
-	return 0;
 }
 
 /** @brief Arm the motors */

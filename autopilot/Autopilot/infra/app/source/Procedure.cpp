@@ -19,29 +19,25 @@ Procedure::~Procedure() {
 }
 
 /** @brief Start current procedure*/
-infra::status Procedure::start() {
+void Procedure::start() {
 	_status = E_PROC_STATUS_RUNNING;
-	return 0;
 }
 
 /** @brief Stop current procedure*/
-infra::status Procedure::stop() {
+void Procedure::stop() {
 	_status = E_PROC_STATUS_OFF;
-	return 0;
 }
 
 /** @brief Start current procedure*/
-infra::status Procedure::reset() {
+void Procedure::reset() {
 	_status = E_PROC_STATUS_OFF;
 	initialize();
-	return 0;
 }
 
 /** @brief Execute the process */
-infra::status Procedure::execute(void) {
+void Procedure::execute(void) {
 	if (_status == E_PROC_STATUS_RUNNING)
-		return this->step();
-	return -1;
+		this->step();
 }
 
 } /* namespace infra */

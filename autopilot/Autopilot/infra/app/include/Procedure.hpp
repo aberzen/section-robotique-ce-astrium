@@ -25,16 +25,16 @@ public:
 	virtual ~Procedure();
 
 	/** @brief Start current procedure*/
-	virtual infra::status start();
+	virtual void start();
 
 	/** @brief Stop current procedure */
-	virtual infra::status stop();
+	virtual void stop();
 
 	/** @brief Execute the process */
-	virtual infra::status execute();
+	virtual void execute();
 
 	/** @brief Reset procedure step */
-	virtual infra::status reset();
+	virtual void reset();
 
 	/** @brief Is Running ? */
 	inline TStatus getStatus();

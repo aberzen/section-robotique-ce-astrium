@@ -30,18 +30,16 @@ ControllerPid3Axes::~ControllerPid3Axes() {
 }
 
 /** @brief Init the process */
-infra::status ControllerPid3Axes::initialize()
+void ControllerPid3Axes::initialize()
 {
 	/* Initialize per axis controllers */
 	_ctrl_x.initialize();
 	_ctrl_y.initialize();
 	_ctrl_z.initialize();
-
-	return 0;
 }
 
 /** @brief Execute the process */
-infra::status ControllerPid3Axes::execute()
+void ControllerPid3Axes::execute()
 {
 	/* Compute contol error */
 	updateCtrlErr();
@@ -50,8 +48,6 @@ infra::status ControllerPid3Axes::execute()
 	_ctrl_x.execute();
 	_ctrl_y.execute();
 	_ctrl_z.execute();
-
-	return 0;
 }
 
 } /* namespace autom */

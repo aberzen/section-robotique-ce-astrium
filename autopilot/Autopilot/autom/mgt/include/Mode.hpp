@@ -28,10 +28,10 @@ public:
 	virtual ~Mode();
 
 	/** @brief Init the process */
-	virtual ::infra::status initialize() = 0;
+	virtual void initialize() = 0;
 
 	/** @brief Execute the process */
-	virtual ::infra::status execute() = 0;
+	virtual void execute() = 0;
 
 protected:
 

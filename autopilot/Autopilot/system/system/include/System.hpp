@@ -24,10 +24,10 @@ public:
 	virtual ~System();
 
 	/** @brief Init the process */
-	virtual infra::status initialize();
+	virtual void initialize();
 
 	/** @brief Execute the process */
-	virtual infra::status execute();
+	virtual void execute();
 
 	/** @brief Get house keeping */
 	inline mavlink::ParameterMgt& getParameterMgt();

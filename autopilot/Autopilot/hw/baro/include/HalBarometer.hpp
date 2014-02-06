@@ -35,13 +35,13 @@ public:
 	virtual ~HalBarometer();
 
 	/** @brief Initialize the HW */
-	virtual ::infra::status initialize() ;
+	virtual void initialize() ;
 
 	/** @brief Reset the HW */
-	virtual ::infra::status reset() ;
+	virtual void reset() ;
 
 	/** @brief Execute the driver */
-	virtual ::infra::status execute() = 0;
+	virtual void execute() = 0;
 
 protected:
 	/** @brief Output interface*/

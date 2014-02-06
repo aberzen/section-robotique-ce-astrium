@@ -92,17 +92,11 @@ void RawSensorStream::sendData()
 			(int16_t) 0,
 			(int16_t) _rawBaroTemperature);
 
-//	Serial.print("RawSensorStream::sendData\n");
 //	Serial.print("- rawBaroPressure = "); Serial.print(_rawBaroPressure); Serial.println();
 //	Serial.print("- rawBaroTemperature = "); Serial.print(_rawBaroTemperature); Serial.println();
-//	Serial.print("- rawImuRate = ");
-//	Serial.print(_rawImuRate.x);Serial.print(" ");
-//	Serial.print(_rawImuRate.y);Serial.print(" ");
-//	Serial.print(_rawImuRate.z);Serial.println();
-//	Serial.print("- rawImuAcc = ");
-//	Serial.print(_rawImuAcc.x);Serial.print(" ");
-//	Serial.print(_rawImuAcc.y);Serial.print(" ");
-//	Serial.print(_rawImuAcc.z);Serial.println();
+//	Serial.printf("rateRaw=%d %d %d\n", _rawImuRate.x, _rawImuRate.y, _rawImuRate.z);
+//	Serial.printf("accRaw=%d %d %d\n", _rawImuAcc.x, _rawImuAcc.y, _rawImuAcc.z);
+//	Serial.printf("magRaw=%d %d %d\n", _rawMag.x, _rawMag.y, _rawMag.z);
 }
 
 } /* namespace mavlink */

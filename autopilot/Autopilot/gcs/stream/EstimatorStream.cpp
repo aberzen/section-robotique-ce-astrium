@@ -39,13 +39,13 @@ void EstimatorStream::sampleData()
 /** @brief Send data */
 void EstimatorStream::sendData()
 {
-//	Serial.printf("_q_BI={%f,%f,%f,%f}\n",
-//			_q_BI.getScalar(),
-//			_q_BI.getVector().x,
-//			_q_BI.getVector().y,
-//			_q_BI.getVector().z);
+//	Serial.printf("q_BI=%.3f %.3f %.3f %.3f\n",
+//			_q_BI.scalar,
+//			_q_BI.vector.x,
+//			_q_BI.vector.y,
+//			_q_BI.vector.z);
 //
-//	Serial.printf("_rate_B={%f,%f,%f}\n",
+//	Serial.printf("rate_B=%.3f %.3f %.3f\n",
 //			_rate_B.x,
 //			_rate_B.y,
 //			_rate_B.z);
@@ -78,6 +78,11 @@ void EstimatorStream::sendData()
 			2.*(qTmp_BI.scalar*qTmp_BI.vector.z + qTmp_BI.vector.x*qTmp_BI.vector.y),
 			1.-2.*(qTmp_BI.vector.y*qTmp_BI.vector.y+qTmp_BI.vector.z*qTmp_BI.vector.z));
 
+//	Serial.printf("euler=%.3f %.3f %.3f\n",
+//			roll,
+//			pitch,
+//			yaw);
+
 //	qTmp_BI.rotation_matrix(dcm);
 //	_q_BI.to_dcm(dcm);
 //	qTmp_BI.to_dcm(dcm);
@@ -92,6 +97,7 @@ void EstimatorStream::sendData()
 //	return ;
 //	_q_BI.to_euler(roll, pitch, yaw);
 //	_q_BI.to_euler(roll, pitch, yaw);
+
 	mavlink_msg_attitude_send(
 			_port,
 			millis(),

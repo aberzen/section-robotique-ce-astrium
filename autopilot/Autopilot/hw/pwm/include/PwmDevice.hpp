@@ -17,7 +17,7 @@ public:
 	virtual ~PwmDevice();
 
 	/** @brief Init the process */
-	virtual ::infra::status initialize();
+	virtual void initialize();
 
 	/** @brief switch On */
 	virtual void switchOn();

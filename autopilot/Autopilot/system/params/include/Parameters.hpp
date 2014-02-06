@@ -16,7 +16,7 @@
 namespace test {
 
 //#define CONFIG_PARAMETERS_COUNT	185
-#define CONFIG_PARAMETERS_COUNT	117
+#define CONFIG_PARAMETERS_COUNT	149
 extern PROGMEM const mavlink::ParameterMgt::ParamInfo config[CONFIG_PARAMETERS_COUNT];
 extern autom::Ancs::Param config_ancs;
 
