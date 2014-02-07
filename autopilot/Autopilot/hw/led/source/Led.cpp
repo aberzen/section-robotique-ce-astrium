@@ -9,7 +9,7 @@
 #include "../include/Led.hpp"
 
 
-namespace arducopter {
+namespace hw {
 
 Led::Led(uint8_t pin) :
 	_pin(pin),
@@ -76,4 +76,4 @@ void Led::_switchOff(void) {
 	digitalWrite(this->_pin, (uint8_t)LOW);
 }
 
-} /* namespace arducopter */
+} /* namespace hw */

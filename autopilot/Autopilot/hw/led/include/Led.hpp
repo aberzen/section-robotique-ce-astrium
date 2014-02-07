@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-namespace arducopter {
+namespace hw {
 
 typedef enum ELedState{
 	E_LED_ON=0,
@@ -53,5 +53,5 @@ inline LedState Led::getState(void) {
 	return this->_state;
 }
 
-} /* namespace arducopter */
+} /* namespace hw */
 #endif /* LED_H_ */
