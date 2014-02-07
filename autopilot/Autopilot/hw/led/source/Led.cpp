@@ -5,6 +5,7 @@
  *      Author: Aberzen
  */
 
+#include <Arduino.h>
 #include "../include/Led.hpp"
 
 
@@ -63,5 +64,16 @@ void Led::blink(void){
 	}
 }
 
+/* @bried switch on the led w/o state update */
+void Led::_switchOn(void) {
+	/* Switch off the led (HIGH is the voltage level) */
+	digitalWrite(this->_pin, (uint8_t)HIGH);
+}
+
+/* @bried switch off the led w/o state update */
+void Led::_switchOff(void) {
+	/* Switch off the led (LOW is the voltage level) */
+	digitalWrite(this->_pin, (uint8_t)LOW);
+}
 
 } /* namespace arducopter */

@@ -8,7 +8,6 @@
 #ifndef LED_H_
 #define LED_H_
 
-#include <Arduino.h>
 #include <stdint.h>
 
 namespace arducopter {
@@ -43,27 +42,15 @@ protected:
 
 private:
 	/* @bried switch on the led w/o state update */
-	inline void _switchOn(void);
+	void _switchOn(void);
 
 	/* @bried switch off the led w/o state update */
-	inline void _switchOff(void);
+	void _switchOff(void);
 };
 
 /** @brief Get led state */
 inline LedState Led::getState(void) {
 	return this->_state;
-}
-
-/* @bried switch on the led w/o state update */
-inline void Led::_switchOn(void) {
-	/* Switch off the led (HIGH is the voltage level) */
-	digitalWrite(this->_pin, (uint8_t)HIGH);
-}
-
-/* @bried switch off the led w/o state update */
-inline void Led::_switchOff(void) {
-	/* Switch off the led (LOW is the voltage level) */
-	digitalWrite(this->_pin, (uint8_t)LOW);
 }
 
 } /* namespace arducopter */
