@@ -18,8 +18,6 @@
 #include <hw/mag/include/HalMagHMC5883L.hpp>
 #include <hw/pwm/include/PwmApm25.hpp>
 
-#include <autom/est/include/Estimator.hpp>
-
 namespace board {
 
 class Apm25 : public Board {

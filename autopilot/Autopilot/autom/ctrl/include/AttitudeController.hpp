@@ -8,7 +8,6 @@
 #ifndef ATTITUDECONTROLLER_HPP_
 #define ATTITUDECONTROLLER_HPP_
 
-#include <autom/guid/include/AttGuid.hpp>
 #include <autom/est/include/Estimator.hpp>
 #include <autom/ctrl/include/ControllerPid3Axes.hpp>
 
@@ -16,9 +15,15 @@ namespace autom {
 
 class AttitudeController: public ControllerPid3Axes {
 public:
+	typedef struct
+	{
+		::math::Quaternion qDem_IB;
+		::math::Vector3f angRateDem_B;
+	} Input;
+public:
 	AttitudeController(
 			/* Inputs */
-			const AttGuid::Output& guid,
+			const Input& guid,
 			const Estimator::Estimations& est,
 			/* Outputs */
 			::math::Vector3f& torque_B,
@@ -34,7 +39,7 @@ public:
 protected:
 
 	/** @brief Guidance */
-	const AttGuid::Output& _guid;
+	const Input& _guid;
 
 	/** @brief Estimations */
 	const Estimator::Estimations& _est;

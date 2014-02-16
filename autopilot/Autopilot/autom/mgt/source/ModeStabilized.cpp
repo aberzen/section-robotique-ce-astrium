@@ -5,7 +5,6 @@
  *      Author: Robotique
  */
 
-#include <hw/serial/include/FastSerial.hpp>
 #include <autom/mgt/include/ModeStabilized.hpp>
 #include <system/system/include/System.hpp>
 
@@ -19,17 +18,12 @@ namespace autom {
 
 
 ModeStabilized::ModeStabilized(
-		/* Input */
-		const Estimator::Estimations& est,
-		/* Outputs */
-		AttGuid::Output& attGuid,
-		::math::Vector3f& force_B,
 		/* Parameters */
 		const float& dt,
 		const ::autom::ModeStabilized::Param& param,
 		const GenericParam& paramGen
 		)
-: Mode(est, attGuid, force_B),
+: Process(),
   _dt(dt),
   _param(param),
   _paramGen(paramGen),
@@ -37,21 +31,25 @@ ModeStabilized::ModeStabilized(
   _prevInvNormRotZ(1.),
   _prevInvNormGuid(1.),
   _angleRollPrev(0.),
-  _anglePitchPrev(0.),
-  _thrustPrev(0.)
+  _anglePitchPrev(0.)
 {
 }
 
 ModeStabilized::~ModeStabilized() {
-	// TODO Auto-generated destructor stub
 }
 
 /** @brief Init the process */
 void ModeStabilized::initialize()
 {
+	initializeFromEstimations();
+}
+
+/** @brief Initialize internal state from estimations */
+void ModeStabilized::initializeFromEstimations()
+{
 	/* Compute the current seat and yaw rotations */
 	math::Vector3f z_I(0.,0.,1.);
-	math::Vector3f z_B = _est.attitude_IB.rotateQconjVQ(z_I);
+	math::Vector3f z_B = system::System::system.ancs.estimations.attitude_IB.rotateQconjVQ(z_I);
 	math::Vector3f cross = (z_I % z_B) * (-0.5);
 	math::Quaternion qCorr(1-cross*cross, cross);
 	qCorr.normalize(2, 1.);
@@ -61,106 +59,132 @@ void ModeStabilized::initialize()
 	_anglePitchPrev = qCorr.vector.y*2.;
 
 	/* Save yaw rotation */
-	_rotZ = _est.attitude_IB * qCorr;
+	_rotZ = system::System::system.ancs.estimations.attitude_IB * qCorr;
 	_rotZ.vector.x = 0.;
 	_rotZ.vector.y = 0.;
 	_prevInvNormRotZ = _rotZ.normalize(2, 1.);
 	_prevInvNormGuid = _prevInvNormRotZ;
+
+	system::System::system.ancs.attGuid.qDem_IB = system::System::system.ancs.estimations.attitude_IB;
+	system::System::system.ancs.attGuid.angRateDem_B = system::System::system.ancs.estimations.rate_B;
 }
 
 /** @brief Execute the process */
 void ModeStabilized::execute()
 {
-	float tmp;
-	float angleRoll = this->_angleRollPrev;
-	float anglePitch = this->_anglePitchPrev;
-	float rateYaw = this->_attGuid.angRateDem_B.z;
-	float thrust = _thrustPrev;
-
-	hw::Pwm::Output& rc = system::System::system.board.radio;
-	if (rc.isAvailable)
+	if (system::System::system.ancs.smGroundContact.getState() == GroundContactState::E_STATE_FLYING)
 	{
-		/* Compute roll and pitch from user inputs */
-		tmp = (float) ((((int16_t)rc.channels[MODE_STABILIZED_RC_ROLL])-((MAX_PULSEWIDTH+MIN_PULSEWIDTH) >> 1)) * _param.rollPwmScale);
-		angleRoll = ldexpf(tmp, _param.rollPwmScaleExp);
-
-		tmp = (float) ((((int16_t)rc.channels[MODE_STABILIZED_RC_PITCH])-((MAX_PULSEWIDTH+MIN_PULSEWIDTH) >> 1)) * _param.pitchPwmScale);
-		anglePitch = ldexpf(tmp, _param.pitchPwmScaleExp);
-
-		/* Compute yaw rate from user inputs */
-		tmp = (float) ((((int16_t)rc.channels[MODE_STABILIZED_RC_YAWRATE])-((MAX_PULSEWIDTH+MIN_PULSEWIDTH) >> 1)) * _param.yawRatePwmScale);
-		if (math_abs(tmp) > 10)
-			rateYaw = ldexpf(tmp, _param.yawRatePwmScaleExp);
-		else
-			rateYaw = 0.;
-
-		/* Compute thrust from user inputs */
-		tmp = (float) ((((int16_t)rc.channels[MODE_STABILIZED_RC_THRUST])-MIN_PULSEWIDTH - 300) * _param.thrustPwmScale);
-		thrust = ldexpf(tmp, _param.thrustPwmScaleExp);
-
-
-//		Serial.printf("radio{%d} = [%d %d %d %d]\n", rc.isAvailable, rc.channels[0], rc.channels[1], rc.channels[2], rc.channels[3]);
-//		Serial.printf("anglePitch = %.5f\n", anglePitch);
-//		Serial.printf("angleRoll = %.5f\n", angleRoll);
-//		Serial.printf("rateYaw = %.5f\n", rateYaw);
-//		Serial.printf("thrust= %.5f\n", thrust);
+		/* Flying */
+		executeFlying();
 	}
+	else
+	{
+		/* On ground or similar */
+		executeOnGround();
+	}
+}
 
-	/* Compute seat quaternion */
-	math::Quaternion dQSeat(1., angleRoll*0.5, anglePitch*0.5, 0.);
-//	dQSeat.normalize(1,1.);
-//	Serial.printf("dQSeat = {%.5f %.5f %.5f %.5f}\n", dQSeat.scalar, dQSeat.vector.x, dQSeat.vector.y, dQSeat.vector.z);
+/** @brief Execute the process when on ground */
+void ModeStabilized::executeOnGround()
+{
+	float thrust, roll, pitch, yawRate;
 
-	/* Compute yaw increment quaternion from rate */
-	math::Quaternion dQYaw(1., 0., 0., rateYaw*_dt*0.5);
-//	dQYaw.normalize(1,1.);
-//	Serial.printf("dQYaw = {%.5f %.5f %.5f %.5f}\n", dQYaw.scalar, dQYaw.vector.x, dQYaw.vector.y, dQYaw.vector.z);
+	/* Get commands */
+	computeCommandsFromRc(thrust, roll, pitch, yawRate);
 
-	/* Compute Yaw rotation */
-//	Serial.printf("_rotZ (prev) = {%.5f %.5f %.5f %.5f}\n", _rotZ.scalar, _rotZ.vector.x, _rotZ.vector.y, _rotZ.vector.z);
-	_rotZ *= dQYaw;
-//	Serial.printf("_rotZ = {%.5f %.5f %.5f %.5f}\n", _rotZ.scalar, _rotZ.vector.x, _rotZ.vector.y, _rotZ.vector.z);
-//	Serial.printf("_prevInvNormRotZ (prev) = %.5f\n", _prevInvNormRotZ);
-	_prevInvNormRotZ = _rotZ.normalize(1,_prevInvNormRotZ);
-//	Serial.printf("_prevInvNormRotZ = %.5f\n", _prevInvNormRotZ);
-
-	/* Compute commanded attitude */
-	_attGuid.qDem_IB = _rotZ * dQSeat;
-//	Serial.printf("_prevInvNormGuid (prev) = %.5f\n", _prevInvNormGuid);
-	_prevInvNormGuid = _attGuid.qDem_IB.normalize(1,_prevInvNormGuid);
-//	Serial.printf("_prevInvNormGuid = %.5f\n", _prevInvNormGuid);
-
-	/* Update acceleration and rate */
-	_attGuid.angRateDem_B((angleRoll-_angleRollPrev)/_dt, (anglePitch-_anglePitchPrev)/_dt, rateYaw);
-	_angleRollPrev = angleRoll;
-	_anglePitchPrev = anglePitch;
-
-
-//	Serial.printf("radio{%d} = [%d %d %d %d]\n", rc.isAvailable, rc.channels[0], rc.channels[1], rc.channels[2], rc.channels[3]);
-//	Serial.printf("anglePitch = %.5f\n", anglePitch);
-//	Serial.printf("angleRoll = %.5f\n", angleRoll);
-//	Serial.printf("rateYaw = %.5f\n", rateYaw);
-//	Serial.printf("qDem_IB = {%.5f %.5f %.5f %.5f}\n", _attGuid.qDem_IB.scalar, _attGuid.qDem_IB.vector.x, _attGuid.qDem_IB.vector.y, _attGuid.qDem_IB.vector.z);
-//	Serial.printf("rateDem_B = {%.5f %.5f %.5f}\n", _attGuid.angRateDem_B.x, _attGuid.angRateDem_B.y, _attGuid.angRateDem_B.z);
-
+	/* Compute demanded attitude to minimize control errors */
+	initializeFromEstimations();
 
 	/* Compute demanded force */
-	if (thrust < 0.)
+	computeDemandedForce(thrust);
+}
+
+/** @brief Execute the process when flying */
+void ModeStabilized::executeFlying()
+{
+	float thrust, roll, pitch, yawRate;
+
+	/* Get commands */
+	computeCommandsFromRc(thrust, roll, pitch, yawRate);
+
+	/* Compute demanded attitude */
+	computeDemandedAttGuid(roll, pitch, yawRate);
+
+	/* Compute demanded force */
+	computeDemandedForce(thrust);
+}
+
+/** @brief Compute demanded attitude */
+void ModeStabilized::computeDemandedAttGuid(float& roll, float& pitch, float& yawRate)
+{
+	/* Compute seat quaternion */
+	math::Quaternion dQSeat(1., roll*0.5, pitch*0.5, 0.);
+
+	/* Compute yaw increment quaternion from rate */
+	math::Quaternion dQYaw(1., 0., 0., yawRate*_dt*0.5);
+
+	/* Compute Yaw rotation */
+	_rotZ *= dQYaw;
+	_prevInvNormRotZ = _rotZ.normalize(1,_prevInvNormRotZ);
+
+	/* Compute commanded attitude */
+	system::System::system.ancs.attGuid.qDem_IB = _rotZ * dQSeat;
+	_prevInvNormGuid = system::System::system.ancs.attGuid.qDem_IB.normalize(1,_prevInvNormGuid);
+
+	/* Update acceleration and rate */
+	system::System::system.ancs.attGuid.angRateDem_B((roll-_angleRollPrev)/_dt, (pitch-_anglePitchPrev)/_dt, yawRate);
+	_angleRollPrev = roll;
+	_anglePitchPrev = pitch;
+}
+
+
+/** @brief Compute commands from RC */
+void ModeStabilized::computeCommandsFromRc(float& thrust, float& roll, float& pitch, float& yawRate)
+{
+	float tmp;
+	int16_t pwm, limit;
+	RadioChannel** rc = &system::System::system.ancs.radioChannels[0];
+
+	/* Compute roll and pitch from user inputs */
+	rc[MODE_STABILIZED_RC_ROLL]->readChannel(pwm);
+	tmp = (float) (pwm * _param.rollPwmScale);
+	roll = ldexpf(tmp, _param.rollPwmScaleExp);
+
+	rc[MODE_STABILIZED_RC_PITCH]->readChannel(pwm);
+	tmp = (float) (pwm * _param.pitchPwmScale);
+	pitch = ldexpf(tmp, _param.pitchPwmScaleExp);
+
+	/* Compute yaw rate from user inputs */
+	yawRate = 0.;
+	if (system::System::system.ancs.smGroundContact.getState() == GroundContactState::E_STATE_FLYING)
 	{
-		thrust = 0.;
-		_thrustPrev = thrust;
-		this->_force_B(0.,0.,0.);
+		rc[MODE_STABILIZED_RC_YAWRATE]->readChannel(pwm);
+		if (math_abs(tmp) > _param.deadzone)
+		{
+			tmp = (float) (pwm * _param.yawRatePwmScale);
+			yawRate = ldexpf(tmp, _param.yawRatePwmScaleExp);
+		}
 	}
 
-	tmp = _paramGen.mass*thrust;
-	this->_force_B(_param.thrustDir_B_x * tmp, _param.thrustDir_B_y * tmp, _param.thrustDir_B_z * tmp);
-	_thrustPrev = thrust;
-//	Serial.printf("_force_B = %.5f %.5f %.5f\n", this->_force_B.x, this->_force_B.y, this->_force_B.z);
-//	Serial.printf("_param.thrustPwm = %d %d\n", _param.thrustPwmScale, _param.thrustPwmScaleExp);
-//	Serial.printf("_param.thrustDir_B = %.5f %.5f %.5f\n", this->_param.thrustDir_B_x, this->_param.thrustDir_B_y, this->_param.thrustDir_B_z);
-//	Serial.printf("_param.mass = %.5f\n", _param.mass);
+	/* Compute thrust from user inputs */
+	rc[MODE_STABILIZED_RC_THRUST]->readChannel(pwm);
+	rc[MODE_STABILIZED_RC_THRUST]->getMin(limit);
+	pwm-=limit;
+	thrust = 0.;
+	if (pwm>=_param.deadzone)
+	{
+		tmp = (float) (pwm * _param.thrustPwmScale);
+		thrust = ldexpf(tmp, _param.thrustPwmScaleExp);
+	}
+}
 
-	/* Execute attitude control */
+/** @brief Compute demanded force*/
+void ModeStabilized::computeDemandedForce(float& thrust)
+{
+	/* Compute demanded force */
+	float forceNorm = _paramGen.mass*thrust;
+	system::System::system.ancs.force_B(_param.thrustDir_B_x * forceNorm, _param.thrustDir_B_y * forceNorm, _param.thrustDir_B_z * forceNorm);
+
 }
 
 } /* namespace autom */

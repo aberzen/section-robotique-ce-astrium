@@ -5,8 +5,8 @@
  *      Author: Robotique
  */
 
-#include <hw/serial/include/FastSerial.hpp>
 #include <autom/ctrl/include/ControllerPid.hpp>
+
 namespace autom {
 
 ControllerPid::ControllerPid(
@@ -17,15 +17,15 @@ ControllerPid::ControllerPid(
 		float& out,
 		/* Parameters */
 		const float& dt,
-		const Param& param) :
-		_ctrlErr(ctrlErr),
-		_derivCtrlErr(derivCtrlErr),
-		_out(out),
-		_dt(dt),
-		_param(param),
-		_ctrlErrPrev(0.),
-		_intCtrlErr(0.)
-		 {
+		const Param& param)
+: _ctrlErr(ctrlErr),
+  _derivCtrlErr(derivCtrlErr),
+  _out(out),
+  _dt(dt),
+  _param(param),
+  _ctrlErrPrev(0.),
+  _intCtrlErr(0.)
+{
 }
 
 ControllerPid::~ControllerPid(){

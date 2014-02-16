@@ -6,7 +6,6 @@
  */
 
 #include <infra/include/Task.hpp>
-#include <hw/serial/include/FastSerial.hpp>
 #include <gcs/include/Channel.hpp>
 #include "../include/EstimatorStream.hpp"
 #include <system/system/include/System.hpp>

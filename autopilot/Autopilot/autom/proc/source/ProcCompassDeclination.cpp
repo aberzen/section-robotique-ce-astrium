@@ -6,7 +6,6 @@
  */
 
 #include <autom/proc/include/ProcCompassDeclination.hpp>
-#include <hw/serial/include/FastSerial.hpp>
 
 namespace autom {
 
@@ -77,20 +76,16 @@ void ProcCompassDeclination::onTick()
 			_count = _param.nbMeas;
 			_state = E_STATE_RUNNING;
 		}
-		else
-		{
-			Serial.printf("No measurement\n");
-		}
 		break;
 	case E_STATE_RUNNING:
 		if (_meas.imu.isAvailable && _meas.compass.isAvailable)
 		{
 			float yaw = 0.;
-			Serial.printf("filt=%.3f %.3f / %.3f %.3f\n",
-					_param.filt.coeffNum[0],
-					_param.filt.coeffNum[1],
-					_param.filt.coeffDen[0],
-					_param.filt.coeffDen[1]);
+//			Serial.printf("filt=%.3f %.3f / %.3f %.3f\n",
+//					_param.filt.coeffNum[0],
+//					_param.filt.coeffNum[1],
+//					_param.filt.coeffDen[0],
+//					_param.filt.coeffDen[1]);
 
 			/* Only consider when both measurements are available */
 			::math::Vector3f accoMeasDir_B = (_meas.imu.accoMeas_B - _est.imuAccoBias_B);
@@ -105,7 +100,7 @@ void ProcCompassDeclination::onTick()
 			tmp *= _out.invNrm;
 			::math::Vector3f x_I(1.,0.,0.);
 			yaw = atan2((tmp%x_I).norm(),tmp*x_I);
-			Serial.printf("yaw=%.3f\n",yaw);
+//			Serial.printf("yaw=%.3f\n",yaw);
 			if (_count != 0)
 			{
 				_count --;

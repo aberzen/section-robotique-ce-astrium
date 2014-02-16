@@ -11,8 +11,6 @@
 #ifndef _SPI_H_INCLUDED
 #define _SPI_H_INCLUDED
 
-namespace hw {
-
 #include <stddef.h>
 #include <stdio.h>
 #include <avr/pgmspace.h>
@@ -20,6 +18,9 @@ namespace hw {
 #include <FreeRTOS.h>
 #include <Arduino.h>
 #include <semphr.h>
+
+namespace hw {
+
 
 #define SPI_CLOCK_DIV4 0x00
 #define SPI_CLOCK_DIV16 0x01

@@ -417,9 +417,16 @@ autom::Ancs::Param config_ancs = {
 				PROC_COMPDEC_NBMEAS /* biasNbMeas */
 		}, /* procCompDec */
 		{ /* procGrdDetect */
-				0.981, /* detectThd */
+				PHYSICS_GRAVITY*PHYSICS_MASS*0.2588190, /* detectThd ==> gravity force projected on X (with 15deg of estimation error) */
+				PHYSICS_GRAVITY*PHYSICS_MASS*0.2588190, /* detectThd ==> gravity force projected on Y (with 15deg of estimation error)*/
+				PHYSICS_GRAVITY*PHYSICS_MASS*0.10, /* detectThd ==> 10% of gravity force */
 				20 /* filtDur */
 		}, /* procGrdDetect */
+		{ /* smFlying */
+				150, /* armingTimer [50Hz ticks] */
+				750, /* safeTimer [50Hz ticks] */
+				150 /* deadzone pwm duraton [ms] */
+		}, /* smFlying */
 		{ /* modGen */
 				{
 						MODULATOR_INFMAT_0,
@@ -471,19 +478,22 @@ autom::Ancs::Param config_ancs = {
 				CTRL_ATT_Z_maxI /*_maxI */
 			} /* z */
 		}, /* attCtrl */
-		{ /* modeStabilized */
-				MODE_AUTOSTAB_SCALE_ROLLPWM, /* rollPwmScale */
-				MODE_AUTOSTAB_SCALE_ROLLPWMEXP, /* rollPwmScaleExp */
-				MODE_AUTOSTAB_SCALE_PITCHPWM, /* pitchPwmScale */
-				MODE_AUTOSTAB_SCALE_PITCHPWMEXP, /* pitchPwmScaleExp */
-				MODE_AUTOSTAB_SCALE_YAWRATEPWM, /* yawRatePwmScale */
-				MODE_AUTOSTAB_SCALE_YAWRATEPWMEXP, /* yawRatePwmScaleExp */
-				MODE_AUTOSTAB_SCALE_THRUSTPWM, /* thrustPwmScale */
-				MODE_AUTOSTAB_SCALE_THRUSTPWMEXP, /* thrustPwmScaleExp */
-				MODE_AUTOSTAB_SCALE_THRUSTDIR_B_X, /* thrustDir_B_x */
-				MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Y, /* thrustDir_B_y */
-				MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Z /* thrustDir_B_z */
-		}, /* modeStabilized */
+		{ /* modeMgt */
+				{ /* modeStabilized */
+					MODE_AUTOSTAB_SCALE_ROLLPWM, /* rollPwmScale */
+					MODE_AUTOSTAB_SCALE_ROLLPWMEXP, /* rollPwmScaleExp */
+					MODE_AUTOSTAB_SCALE_PITCHPWM, /* pitchPwmScale */
+					MODE_AUTOSTAB_SCALE_PITCHPWMEXP, /* pitchPwmScaleExp */
+					MODE_AUTOSTAB_SCALE_YAWRATEPWM, /* yawRatePwmScale */
+					MODE_AUTOSTAB_SCALE_YAWRATEPWMEXP, /* yawRatePwmScaleExp */
+					MODE_AUTOSTAB_SCALE_THRUSTPWM, /* thrustPwmScale */
+					MODE_AUTOSTAB_SCALE_THRUSTPWMEXP, /* thrustPwmScaleExp */
+					MODE_AUTOSTAB_DEADZONE, /* deadzone */
+					MODE_AUTOSTAB_THRUSTDIR_B_X, /* thrustDir_B_x */
+					MODE_AUTOSTAB_THRUSTDIR_B_Y, /* thrustDir_B_y */
+					MODE_AUTOSTAB_THRUSTDIR_B_Z /* thrustDir_B_z */
+				}, /* modeStabilized */
+		}, /* modeMgt */
 		{ /* gimbal */
 			{ /* pitch */
 				GIMBAL_PITCH_MAX, /* angleMax */
@@ -505,50 +515,42 @@ autom::Ancs::Param config_ancs = {
 			{  /* 1 */
 				RC_CH1_MIN, /* min */
 				RC_CH1_TRIM, /* trim */
-				RC_CH1_MAX, /* max */
-				RC_CH1_SCALE /* scale */
+				RC_CH1_MAX /* max */
 			}, /* 1 */
 			{  /* 2 */
 				RC_CH2_MIN, /* min */
 				RC_CH2_TRIM, /* trim */
-				RC_CH2_MAX, /* max */
-				RC_CH2_SCALE /* scale */
+				RC_CH2_MAX /* max */
 			}, /* 2 */
 			{  /* 3 */
 				RC_CH3_MIN, /* min */
 				RC_CH3_TRIM, /* trim */
-				RC_CH3_MAX, /* max */
-				RC_CH3_SCALE /* scale */
+				RC_CH3_MAX /* max */
 			}, /* 3 */
 			{  /* 4 */
 				RC_CH4_MIN, /* min */
 				RC_CH4_TRIM, /* trim */
-				RC_CH4_MAX, /* max */
-				RC_CH4_SCALE /* scale */
+				RC_CH4_MAX /* max */
 			}, /* 4 */
 			{  /* 5 */
 				RC_CH5_MIN, /* min */
 				RC_CH5_TRIM, /* trim */
-				RC_CH5_MAX, /* max */
-				RC_CH5_SCALE /* scale */
+				RC_CH5_MAX /* max */
 			}, /* 5 */
 			{  /* 6 */
 				RC_CH6_MIN, /* min */
 				RC_CH6_TRIM, /* trim */
-				RC_CH6_MAX, /* max */
-				RC_CH6_SCALE /* scale */
+				RC_CH6_MAX /* max */
 			}, /* 6 */
 			{  /* 7 */
 				RC_CH7_MIN, /* min */
 				RC_CH7_TRIM, /* trim */
-				RC_CH7_MAX, /* max */
-				RC_CH7_SCALE /* scale */
+				RC_CH7_MAX /* max */
 			}, /* 7 */
 			{  /* 8 */
 				RC_CH8_MIN, /* min */
 				RC_CH8_TRIM, /* trim */
-				RC_CH8_MAX, /* max */
-				RC_CH8_SCALE /* scale */
+				RC_CH8_MAX /* max */
 			} /* 8 */
 		} /* radioChannel */
 
@@ -678,17 +680,18 @@ const mavlink::ParameterMgt::ParamInfo config[CONFIG_PARAMETERS_COUNT] = {
 		PARAM(REAL32, "CTLATT_AS_Z_RB", &config_ancs.attCtrl.z.rbThd, CTRL_ATT_Z_rbThd),
 		PARAM(REAL32, "CTLATT_AS_Z_MAXI", &config_ancs.attCtrl.z.maxI, CTRL_ATT_Z_maxI),
 
-		PARAM(INT8, "AS_SCL_R", &config_ancs.modeStabilized.rollPwmScale, MODE_AUTOSTAB_SCALE_ROLLPWM),
-		PARAM(INT8, "AS_SCL_REXP", &config_ancs.modeStabilized.rollPwmScaleExp, MODE_AUTOSTAB_SCALE_ROLLPWMEXP),
-		PARAM(INT8, "AS_SCL_P", &config_ancs.modeStabilized.pitchPwmScale, MODE_AUTOSTAB_SCALE_PITCHPWM),
-		PARAM(INT8, "AS_SCL_PEXP", &config_ancs.modeStabilized.pitchPwmScaleExp, MODE_AUTOSTAB_SCALE_PITCHPWMEXP),
-		PARAM(INT8, "AS_SCL_Y", &config_ancs.modeStabilized.yawRatePwmScale, MODE_AUTOSTAB_SCALE_YAWRATEPWM),
-		PARAM(INT8, "AS_SCL_YEXP", &config_ancs.modeStabilized.yawRatePwmScaleExp, MODE_AUTOSTAB_SCALE_YAWRATEPWMEXP),
-		PARAM(INT8, "AS_SCL_T", &config_ancs.modeStabilized.thrustPwmScale, MODE_AUTOSTAB_SCALE_THRUSTPWM),
-		PARAM(INT8, "AS_SCL_TEXP", &config_ancs.modeStabilized.thrustPwmScaleExp, MODE_AUTOSTAB_SCALE_THRUSTPWMEXP),
-		PARAM(REAL32, "AS_SCL_T_X", &config_ancs.modeStabilized.thrustDir_B_x, MODE_AUTOSTAB_SCALE_THRUSTDIR_B_X),
-		PARAM(REAL32, "AS_SCL_T_Y", &config_ancs.modeStabilized.thrustDir_B_y, MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Y),
-		PARAM(REAL32, "AS_SCL_T_Z", &config_ancs.modeStabilized.thrustDir_B_z, MODE_AUTOSTAB_SCALE_THRUSTDIR_B_Z),
+		PARAM(INT8, "AS_SCL_R", &config_ancs.modeMgt.modeStabilized.rollPwmScale, MODE_AUTOSTAB_SCALE_ROLLPWM),
+		PARAM(INT8, "AS_SCL_REXP", &config_ancs.modeMgt.modeStabilized.rollPwmScaleExp, MODE_AUTOSTAB_SCALE_ROLLPWMEXP),
+		PARAM(INT8, "AS_SCL_P", &config_ancs.modeMgt.modeStabilized.pitchPwmScale, MODE_AUTOSTAB_SCALE_PITCHPWM),
+		PARAM(INT8, "AS_SCL_PEXP", &config_ancs.modeMgt.modeStabilized.pitchPwmScaleExp, MODE_AUTOSTAB_SCALE_PITCHPWMEXP),
+		PARAM(INT8, "AS_SCL_Y", &config_ancs.modeMgt.modeStabilized.yawRatePwmScale, MODE_AUTOSTAB_SCALE_YAWRATEPWM),
+		PARAM(INT8, "AS_SCL_YEXP", &config_ancs.modeMgt.modeStabilized.yawRatePwmScaleExp, MODE_AUTOSTAB_SCALE_YAWRATEPWMEXP),
+		PARAM(INT8, "AS_SCL_T", &config_ancs.modeMgt.modeStabilized.thrustPwmScale, MODE_AUTOSTAB_SCALE_THRUSTPWM),
+		PARAM(INT8, "AS_SCL_TEXP", &config_ancs.modeMgt.modeStabilized.thrustPwmScaleExp, MODE_AUTOSTAB_SCALE_THRUSTPWMEXP),
+		PARAM(UINT16, "AS_SCL_DZ", &config_ancs.modeMgt.modeStabilized.deadzone, MODE_AUTOSTAB_DEADZONE),
+		PARAM(REAL32, "AS_SCL_T_X", &config_ancs.modeMgt.modeStabilized.thrustDir_B_x, MODE_AUTOSTAB_THRUSTDIR_B_X),
+		PARAM(REAL32, "AS_SCL_T_Y", &config_ancs.modeMgt.modeStabilized.thrustDir_B_y, MODE_AUTOSTAB_THRUSTDIR_B_Y),
+		PARAM(REAL32, "AS_SCL_T_Z", &config_ancs.modeMgt.modeStabilized.thrustDir_B_z, MODE_AUTOSTAB_THRUSTDIR_B_Z),
 
 
 		PARAM(REAL32, "GBL_PITCH_MAX", &config_ancs.gimbal.pitch.angleMax, GIMBAL_PITCH_MAX),
@@ -703,38 +706,30 @@ const mavlink::ParameterMgt::ParamInfo config[CONFIG_PARAMETERS_COUNT] = {
 		PARAM(INT16, "GBL_ROLL_OFFSET", &config_ancs.gimbal.roll.offset, GIMBAL_ROLL_OFFSET),
 		PARAM(UINT8, "GBL_ROLL_IDX", &config_ancs.gimbal.roll.idxChannel, GIMBAL_ROLL_IDX),
 
-		PARAM(UINT16, "RC_CH1_MIN",   &config_ancs.radioChannel[0].min,   RC_CH1_MIN),
-		PARAM(INT16,  "RC_CH1_TRIM",  &config_ancs.radioChannel[0].trim,  RC_CH1_TRIM),
-		PARAM(UINT16, "RC_CH1_MAX",   &config_ancs.radioChannel[0].max,   RC_CH1_MAX),
-		PARAM(REAL32, "RC_CH1_SCALE", &config_ancs.radioChannel[0].scale, RC_CH1_SCALE),
-		PARAM(UINT16, "RC_CH2_MIN",   &config_ancs.radioChannel[1].min,   RC_CH2_MIN),
-		PARAM(INT16,  "RC_CH2_TRIM",  &config_ancs.radioChannel[1].trim,  RC_CH2_TRIM),
-		PARAM(UINT16, "RC_CH2_MAX",   &config_ancs.radioChannel[1].max,   RC_CH2_MAX),
-		PARAM(REAL32, "RC_CH2_SCALE", &config_ancs.radioChannel[1].scale, RC_CH2_SCALE),
-		PARAM(UINT16, "RC_CH3_MIN",   &config_ancs.radioChannel[2].min,   RC_CH3_MIN),
-		PARAM(INT16,  "RC_CH3_TRIM",  &config_ancs.radioChannel[2].trim,  RC_CH3_TRIM),
-		PARAM(UINT16, "RC_CH3_MAX",   &config_ancs.radioChannel[2].max,   RC_CH3_MAX),
-		PARAM(REAL32, "RC_CH3_SCALE", &config_ancs.radioChannel[2].scale, RC_CH3_SCALE),
-		PARAM(UINT16, "RC_CH4_MIN",   &config_ancs.radioChannel[3].min,   RC_CH4_MIN),
-		PARAM(INT16,  "RC_CH4_TRIM",  &config_ancs.radioChannel[3].trim,  RC_CH4_TRIM),
-		PARAM(UINT16, "RC_CH4_MAX",   &config_ancs.radioChannel[3].max,   RC_CH4_MAX),
-		PARAM(REAL32, "RC_CH4_SCALE", &config_ancs.radioChannel[3].scale, RC_CH4_SCALE),
-		PARAM(UINT16, "RC_CH5_MIN",   &config_ancs.radioChannel[4].min,   RC_CH5_MIN),
-		PARAM(INT16,  "RC_CH5_TRIM",  &config_ancs.radioChannel[4].trim,  RC_CH5_TRIM),
-		PARAM(UINT16, "RC_CH5_MAX",   &config_ancs.radioChannel[4].max,   RC_CH5_MAX),
-		PARAM(REAL32, "RC_CH5_SCALE", &config_ancs.radioChannel[4].scale, RC_CH5_SCALE),
-		PARAM(UINT16, "RC_CH6_MIN",   &config_ancs.radioChannel[5].min,   RC_CH6_MIN),
-		PARAM(INT16,  "RC_CH6_TRIM",  &config_ancs.radioChannel[5].trim,  RC_CH6_TRIM),
-		PARAM(UINT16, "RC_CH6_MAX",   &config_ancs.radioChannel[5].max,   RC_CH6_MAX),
-		PARAM(REAL32, "RC_CH6_SCALE", &config_ancs.radioChannel[5].scale, RC_CH6_SCALE),
-		PARAM(UINT16, "RC_CH7_MIN",   &config_ancs.radioChannel[6].min,   RC_CH7_MIN),
-		PARAM(INT16,  "RC_CH7_TRIM",  &config_ancs.radioChannel[6].trim,  RC_CH7_TRIM),
-		PARAM(UINT16, "RC_CH7_MAX",   &config_ancs.radioChannel[6].max,   RC_CH7_MAX),
-		PARAM(REAL32, "RC_CH7_SCALE", &config_ancs.radioChannel[6].scale, RC_CH7_SCALE),
-		PARAM(UINT16, "RC_CH8_MIN",   &config_ancs.radioChannel[7].min,   RC_CH8_MIN),
-		PARAM(INT16,  "RC_CH8_TRIM",  &config_ancs.radioChannel[7].trim,  RC_CH8_TRIM),
-		PARAM(UINT16, "RC_CH8_MAX",   &config_ancs.radioChannel[7].max,   RC_CH8_MAX),
-		PARAM(REAL32, "RC_CH8_SCALE", &config_ancs.radioChannel[7].scale, RC_CH8_SCALE),
+		PARAM(INT16, "RC_CH1_MIN",   &config_ancs.radioChannel[0].min,   RC_CH1_MIN),
+		PARAM(INT16, "RC_CH1_TRIM",  &config_ancs.radioChannel[0].trim,  RC_CH1_TRIM),
+		PARAM(INT16, "RC_CH1_MAX",   &config_ancs.radioChannel[0].max,   RC_CH1_MAX),
+		PARAM(INT16, "RC_CH2_MIN",   &config_ancs.radioChannel[1].min,   RC_CH2_MIN),
+		PARAM(INT16, "RC_CH2_TRIM",  &config_ancs.radioChannel[1].trim,  RC_CH2_TRIM),
+		PARAM(INT16, "RC_CH2_MAX",   &config_ancs.radioChannel[1].max,   RC_CH2_MAX),
+		PARAM(INT16, "RC_CH3_MIN",   &config_ancs.radioChannel[2].min,   RC_CH3_MIN),
+		PARAM(INT16, "RC_CH3_TRIM",  &config_ancs.radioChannel[2].trim,  RC_CH3_TRIM),
+		PARAM(INT16, "RC_CH3_MAX",   &config_ancs.radioChannel[2].max,   RC_CH3_MAX),
+		PARAM(INT16, "RC_CH4_MIN",   &config_ancs.radioChannel[3].min,   RC_CH4_MIN),
+		PARAM(INT16, "RC_CH4_TRIM",  &config_ancs.radioChannel[3].trim,  RC_CH4_TRIM),
+		PARAM(INT16, "RC_CH4_MAX",   &config_ancs.radioChannel[3].max,   RC_CH4_MAX),
+		PARAM(INT16, "RC_CH5_MIN",   &config_ancs.radioChannel[4].min,   RC_CH5_MIN),
+		PARAM(INT16, "RC_CH5_TRIM",  &config_ancs.radioChannel[4].trim,  RC_CH5_TRIM),
+		PARAM(INT16, "RC_CH5_MAX",   &config_ancs.radioChannel[4].max,   RC_CH5_MAX),
+		PARAM(INT16, "RC_CH6_MIN",   &config_ancs.radioChannel[5].min,   RC_CH6_MIN),
+		PARAM(INT16, "RC_CH6_TRIM",  &config_ancs.radioChannel[5].trim,  RC_CH6_TRIM),
+		PARAM(INT16, "RC_CH6_MAX",   &config_ancs.radioChannel[5].max,   RC_CH6_MAX),
+		PARAM(INT16, "RC_CH7_MIN",   &config_ancs.radioChannel[6].min,   RC_CH7_MIN),
+		PARAM(INT16, "RC_CH7_TRIM",  &config_ancs.radioChannel[6].trim,  RC_CH7_TRIM),
+		PARAM(INT16, "RC_CH7_MAX",   &config_ancs.radioChannel[6].max,   RC_CH7_MAX),
+		PARAM(INT16, "RC_CH8_MIN",   &config_ancs.radioChannel[7].min,   RC_CH8_MIN),
+		PARAM(INT16, "RC_CH8_TRIM",  &config_ancs.radioChannel[7].trim,  RC_CH8_TRIM),
+		PARAM(INT16, "RC_CH8_MAX",   &config_ancs.radioChannel[7].max,   RC_CH8_MAX),
 
 //		// @Param: SERIAL3_BAUD
 //		// @DisplayName: Telemetry Baud Rate

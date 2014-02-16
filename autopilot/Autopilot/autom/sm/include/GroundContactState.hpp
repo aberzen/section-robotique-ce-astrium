@@ -9,10 +9,11 @@
 #define GROUNDCONTACTSTATE_HPP_
 
 #include <autom/gen/include/GenericParameters.hpp>
+#include <infra/app/include/Process.hpp>
 
 namespace autom {
 
-class GroundContactState {
+class GroundContactState : public infra::Process {
 public:
 	typedef enum
 	{
@@ -23,7 +24,9 @@ public:
 	} State;
 	typedef struct
 	{
-		float detectThd;
+		float detectThdX;
+		float detectThdY;
+		float detectThdZ;
 		uint8_t filtDur;
 	} Param;
 public:
@@ -35,6 +38,9 @@ public:
 			const GenericParam& paramGen
 			);
 	virtual ~GroundContactState();
+
+	/** @brief Init the process */
+	virtual void initialize() ;
 
 
 	/** @brief Getter method for state */
@@ -49,8 +55,8 @@ public:
 	/** @brief Reset the state machine */
 	virtual void reset();
 
-	/** @brief On tick */
-	virtual void onTick();
+	/** @brief Execute on tick */
+	virtual void execute();
 
 
 protected:

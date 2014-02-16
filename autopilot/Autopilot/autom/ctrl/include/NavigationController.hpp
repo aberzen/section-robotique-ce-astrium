@@ -9,7 +9,6 @@
 #define NAVIGATIONCONTROLLER_HPP_
 
 #include <autom/ctrl/include/ControllerPid3Axes.hpp>
-#include <autom/guid/include/NavGuid.hpp>
 #include <autom/est/include/Estimator.hpp>
 
 namespace autom {
@@ -17,9 +16,15 @@ namespace autom {
 
 class NavigationController: public autom::ControllerPid3Axes {
 public:
+	typedef struct
+	{
+		::math::Vector3f posDem_I;
+		::math::Vector3f velDem_I;
+	} Input;
+public:
 	NavigationController(
 			/* Inputs */
-			const NavGuid::Output& guid,
+			const Input& guid,
 			const Estimator::Estimations& est,
 			/* Outputs */
 			::math::Vector3f& force_I,
@@ -34,7 +39,7 @@ public:
 
 protected:
 	/** @brief Guidance */
-	const NavGuid::Output& _guid;
+	const Input& _guid;
 
 	/** @brief Estimations */
 	const Estimator::Estimations& _est;

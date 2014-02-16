@@ -9,30 +9,32 @@
 #define FLYINGSTATE_HPP_
 
 #include <stdint.h>
+#include <infra/app/include/Process.hpp>
 
 namespace autom {
 
-class FlyingState {
+class FlyingState : public infra::Process {
 public:
 	typedef enum
 	{
-		E_STATE_OFF = 0,
-		E_STATE_DISARMED,
-		E_STATE_ARMING,
-		E_STATE_ARMED_AND_LANDED,
-		E_STATE_ARMED_AND_FLYING,
-		E_STATE_DISARMING
+		E_STATE_DISARMED = 0,
+		E_STATE_ARMED
 	} State;
 
 	typedef struct
 	{
 		uint16_t armingTimer;
+		uint16_t safeTimer;
+		int16_t deadzone;
 	} Param;
 public:
 	FlyingState(
 			const Param& param
 			);
 	virtual ~FlyingState();
+
+	/** @brief Initialize the state machine */
+	virtual void initialize();
 
 	/** @brief Getter method for state */
 	inline State getState();
@@ -47,30 +49,30 @@ public:
 	virtual void reset();
 
 	/** @brief On tick */
-	virtual void onTick();
+	virtual void execute();
+
+	/** @brief Disarm the system */
+	virtual void disarm();
+
+	/** @brief Arm the system */
+	virtual void arm();
 
 protected:
 
 	/** @brief Process disarmed state */
 	void processDisarmed();
 
-	/** @brief Process arming state */
-	void processArming();
-
-	/** @brief Process armed and landed state */
-	void processArmedLanded();
-
-	/** @brief Process armed and flying state */
-	void processArmedFlying();
-
-	/** @brief Process arming state */
-	void processDisarming();
+	/** @brief Process armed state */
+	void processArmed();
 
 	/** @brief Check if throttles are in arming position */
 	bool areThrottlesInArmingPosition();
 
 	/** @brief Check if throttles are in disarming position */
 	bool areThrottlesInDisarmingPosition();
+
+	/** @brief Check if all commands are in neutral position */
+	bool areThrottlesInNeutralPosition();
 
 protected:
 	/** @brief Parameters */
@@ -81,6 +83,9 @@ protected:
 
 	/** @brief Arming / Disarming timer */
 	uint16_t _armingTimer;
+
+	/** @brief Safe timer ensure fall back in disarmed mode when on ground for a certain time */
+	uint16_t _safeTimer;
 };
 
 /** @brief Getter method for state */

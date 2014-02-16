@@ -41,7 +41,8 @@ HalBarometerMs5611OverSpi::HalBarometerMs5611OverSpi(
 HalBarometer(out),
 _spi(spi),
 _rawPressure(0),
-_rawTemperature(0)
+_rawTemperature(0),
+myLed(25)
 {
 }
 
@@ -73,6 +74,8 @@ void HalBarometerMs5611OverSpi::initialize()
 		/* Release device */
 		this->_spi.release();
 	}
+
+	myLed.switchOn();
 }
 
 
@@ -95,6 +98,7 @@ void HalBarometerMs5611OverSpi::reset()
 		/* Wait at least 2.8ms */
 		infra::Task::delay(((3*configTICK_RATE_HZ)/1000)+1);
 	}
+	myLed.switchOff();
 }
 
 /** @brief Execute the process */
@@ -137,6 +141,7 @@ void HalBarometerMs5611OverSpi::execute()
 		/* Release the spi */
 		_spi.release();
 	}
+	myLed.blink();
 }
 
 /** @brief Initialize the sensor. */

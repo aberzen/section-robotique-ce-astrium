@@ -5,7 +5,6 @@
  *      Author: Robotique
  */
 
-//#include <hw/serial/include/FastSerial.hpp>
 #include <autom/proc/include/ProcCalibGyroBias.hpp>
 
 namespace autom {

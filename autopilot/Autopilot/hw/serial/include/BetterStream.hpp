@@ -11,8 +11,6 @@
 #ifndef __BETTERSTREAM_H
 #define __BETTERSTREAM_H
 
-#include <avr/pgmspace.h>
-
 #include <infra/include/Stream.hpp>
 #include <infra/include/Character.hpp>
 
@@ -34,8 +32,7 @@ public:
 #define printf_P(fmt, ...) _printf_P((const prog_char *)fmt, ## __VA_ARGS__)
 
 private:
-        void            _vprintf(unsigned char, const char *, va_list)
-                __attribute__ ((format(__printf__, 3, 0)));
+        void _vprintf(unsigned char, const char *, va_list) __attribute__ ((format(__printf__, 3, 0)));
 };
 
 #endif // __BETTERSTREAM_H

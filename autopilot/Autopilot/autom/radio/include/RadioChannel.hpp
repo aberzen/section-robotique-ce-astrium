@@ -10,16 +10,24 @@
 
 #include <hw/pwm/include/Pwm.hpp>
 
+#define RC_CHANNEL_ROLL 	0
+#define RC_CHANNEL_PITCH 	1
+#define RC_CHANNEL_THRUST 	2
+#define RC_CHANNEL_YAW 		3
+#define RC_CHANNEL_EXTRA0 	4
+#define RC_CHANNEL_EXTRA1 	5
+#define RC_CHANNEL_EXTRA2 	6
+#define RC_CHANNEL_EXTRA3 	7
+
 namespace autom {
 
 class RadioChannel {
 public:
 	typedef struct
 	{
-		uint16_t min;
+		int16_t min;
 		int16_t trim;
-		uint16_t max;
-		float scale;
+		int16_t max;
 	} Param;
 public:
 	RadioChannel(
@@ -30,9 +38,15 @@ public:
 			);
 	virtual ~RadioChannel();
 
-	/** @brief Read the channel value ensuring null value when pwm equals zero,
-	 * saturating pwm between min and max, and using scale to place pwm between [-1 and 1]*/
-	void readChannel(float& val);
+	/** @brief Read the channel value ensuring null value when pwm equals trim
+	 * and limited to min / max values*/
+	void readChannel(int16_t& signedPwmVal);
+
+	/** @brief Get min value computed as trim-min*/
+	void getMin(int16_t& min);
+
+	/** @brief Get max value computed as trim+max*/
+	void getMax(int16_t& max);
 
 protected:
 	/** @brief Pwm raw val */

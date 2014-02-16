@@ -5,7 +5,6 @@
  *      Author: Robotique
  */
 
-#include <hw/serial/include/FastSerial.hpp>
 #include <hw/pwm/include/PwmDevice.hpp>
 
 namespace hw {

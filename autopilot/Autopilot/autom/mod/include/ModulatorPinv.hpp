@@ -30,7 +30,7 @@ public:
 			::math::Vector3f& torqueReal_B,
 			::math::Vector3f& forceReal_B,
 			/* Param */
-			typename ::autom::Modulator<NB_MOTORS>::ParamGen paramGen,
+			const typename ::autom::Modulator<NB_MOTORS>::ParamGen& paramGen,
 			const ParamPinv& paramPinv,
 			/* Dependencies */
 			hw::Pwm& pwm);
@@ -58,19 +58,17 @@ ModulatorPinv<NB_MOTORS>::ModulatorPinv(
 		::math::Vector3f& torqueReal_B,
 		::math::Vector3f& forceReal_B,
 		/* Param */
-		typename ::autom::Modulator<NB_MOTORS>::ParamGen paramGen,
+		const typename ::autom::Modulator<NB_MOTORS>::ParamGen& paramGen,
 		const ParamPinv& paramPinv,
 		/* Dependencies */
 		hw::Pwm& pwm)
 : ::autom::Modulator<NB_MOTORS>::Modulator(torque_B, force_B, out, torqueReal_B, forceReal_B, paramGen, pwm),
   _paramPinv(paramPinv)
 {
-	// TODO Auto-generated constructor stub
 }
 
 template <int8_t NB_MOTORS>
 ModulatorPinv<NB_MOTORS>::~ModulatorPinv() {
-	// TODO Auto-generated destructor stub
 }
 
 /** @brief Update the PWM value */
@@ -82,13 +80,13 @@ void ModulatorPinv<NB_MOTORS>::updatePwm()
 	/* 1) Compute the requested motor square of PWM ratio using pseudo inverse */
 	for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 	{
-		this->_sqRatios[iMotor] =   this->_torque_B.x * _paramPinv.pInvInfMat[iMotor][0]
-				           + this->_torque_B.y * _paramPinv.pInvInfMat[iMotor][1]
-						   + this->_torque_B.z * _paramPinv.pInvInfMat[iMotor][2]
-						   + this->_force_B.x * _paramPinv.pInvInfMat[iMotor][3]
-						   + this->_force_B.y * _paramPinv.pInvInfMat[iMotor][4]
-						   + this->_force_B.z * _paramPinv.pInvInfMat[iMotor][5];
-
+		this->_sqRatios[iMotor] =
+				 this->_torque_B.x * _paramPinv.pInvInfMat[iMotor][0]
+			   + this->_torque_B.y * _paramPinv.pInvInfMat[iMotor][1]
+			   + this->_torque_B.z * _paramPinv.pInvInfMat[iMotor][2]
+			   + this->_force_B.x * _paramPinv.pInvInfMat[iMotor][3]
+			   + this->_force_B.y * _paramPinv.pInvInfMat[iMotor][4]
+			   + this->_force_B.z * _paramPinv.pInvInfMat[iMotor][5];
 	}
 
 	/* 2) Scale to have only positive values */

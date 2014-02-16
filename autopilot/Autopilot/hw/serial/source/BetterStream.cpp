@@ -11,7 +11,8 @@
 //
 // Enhancements to the Arduino Stream class.
 //
-#include <Arduino.h>
+#include <avr/pgmspace.h>
+
 #include <limits.h>
 
 #include "../include/BetterStream.hpp"

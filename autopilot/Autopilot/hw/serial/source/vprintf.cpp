@@ -39,8 +39,6 @@
 
 #include "../include/BetterStream.hpp"
 
-#include <avr/pgmspace.h>
-#include <stdarg.h>
 #include <string.h>
 
 extern "C" {

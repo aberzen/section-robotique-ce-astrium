@@ -59,7 +59,7 @@ public:
 protected:
 
 	/** @brief Update the produced torsor */
-	virtual void updateRealTosor() ;
+	virtual void updateRealTorsor() ;
 
 	/** @brief Update the PWM value */
 	virtual void updatePwm() = 0 ;
@@ -118,13 +118,10 @@ Modulator<NB_MOTORS>::Modulator(
   _paramGen(param),
   _pwm(pwm)
 {
-	// TODO Auto-generated constructor stub
-
 }
 
 template <int8_t NB_MOTORS>
 Modulator<NB_MOTORS>::~Modulator() {
-	// TODO Auto-generated destructor stub
 }
 
 
@@ -134,6 +131,19 @@ void Modulator<NB_MOTORS>::initialize()
 {
 	uint8_t iMotor;
 
+#ifdef DEBUG_PRINTF2
+		Serial.printf("infMat{%p}=[\n", (void*)&_paramGen.infMat);
+		for (int iDoF=0 ; iDoF<6 ; iDoF++)
+		{
+			Serial.printf("%.5f %.5f %.5f %.5f ;\n",
+					_paramGen.infMat[iDoF][0],
+					_paramGen.infMat[iDoF][1],
+					_paramGen.infMat[iDoF][2],
+					_paramGen.infMat[iDoF][3]);
+		}
+		Serial.printf("];\n");
+
+#endif
 	for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 	{
 		_out.channels[iMotor] = MIN_PULSEWIDTH;
@@ -156,7 +166,7 @@ void Modulator<NB_MOTORS>::execute()
 		updatePwm();
 
 		/* Compute produced torsor */
-		updateRealTosor();
+		updateRealTorsor();
 	}
 	else
 	{
@@ -196,13 +206,17 @@ void Modulator<NB_MOTORS>::disarm()
 
 /** @brief Update the produced torsor */
 template <int8_t NB_MOTORS>
-void Modulator<NB_MOTORS>::updateRealTosor()
+void Modulator<NB_MOTORS>::updateRealTorsor()
 {
 	uint8_t iMotor;
 
 	/* Initialize to zero */
 	_torqueReal_B(0.,0.,0.);
 	_forceReal_B(0.,0.,0.);
+
+#ifdef DEBUG_PRINTF2
+		Serial.printf("_sqRatios=");
+#endif
 
 	/* Compute the produced torsor */
 	for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
@@ -213,7 +227,13 @@ void Modulator<NB_MOTORS>::updateRealTosor()
 		_forceReal_B.x += _paramGen.infMat[3][iMotor] * _sqRatios[iMotor];
 		_forceReal_B.y += _paramGen.infMat[4][iMotor] * _sqRatios[iMotor];
 		_forceReal_B.z += _paramGen.infMat[5][iMotor] * _sqRatios[iMotor];
+#ifdef DEBUG_PRINTF2
+		Serial.printf("%.3f ", _sqRatios[iMotor]);
+#endif
 	}
+#ifdef DEBUG_PRINTF2
+	Serial.printf("\n");
+#endif
 
 }
 

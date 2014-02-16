@@ -5,7 +5,6 @@
  *      Author: Robotique
  */
 
-#include <hw/serial/include/FastSerial.hpp>
 #include <hw/servo/include/Servo.hpp>
 #include <math/include/MathMacro.hpp>
 

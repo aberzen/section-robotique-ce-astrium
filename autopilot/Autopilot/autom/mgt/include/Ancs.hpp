@@ -8,7 +8,6 @@
 #ifndef ANCS_HPP_
 #define ANCS_HPP_
 
-#include <hw/serial/include/FastSerial.hpp>
 #include <infra/app/include/Process.hpp>
 #include <autom/est/include/SimpleAttitudeKalmanFilter.hpp>
 #include <autom/proc/include/ProcCalibGyroBias.hpp>
@@ -18,28 +17,17 @@
 #include <autom/sm/include/GroundContactState.hpp>
 #include <autom/gimbal/include/GimbalMgt.hpp>
 #include <autom/radio/include/RadioChannel.hpp>
+#include <autom/ctrl/include/AttitudeController.hpp>
+#include <autom/mgt/include/ModeManagement.hpp>
+#include <autom/sm/include/FlyingState.hpp>
+#include <autom/sm/include/GlobalState.hpp>
 
 namespace autom {
 
 #define CONFIG_NB_MOTOR	4
 
-class Ancs : public infra::Process {
+class Ancs {
 public:
-	typedef enum
-	{
-		E_STATE_UNDEFINED = 0,
-		E_STATE_INITIALIZATION_CALIB_IMU,
-		E_STATE_INITIALIZATION_CALIB_COMPASS,
-		E_STATE_READY,
-		E_STATE_FLYING,
-		E_STATE_FAILSAFE
-	} State;
-
-	typedef struct
-	{
-		ControllerPid3Axes::Param att;
-		ControllerPid3Axes::Param nav;
-	} ModeParam;
 
 	typedef struct
 	{
@@ -48,10 +36,11 @@ public:
 		ProcCalibGyroBias::Param procCalibImu;
 		ProcCompassDeclination::Param procCompDec;
 		GroundContactState::Param smGroundContact;
+		FlyingState::Param smFLying;
 		Modulator<CONFIG_NB_MOTOR>::ParamGen modGen;
 		ModulatorPinv<CONFIG_NB_MOTOR>::ParamPinv modPinv;
 		ControllerPid3Axes::Param attCtrl;
-		ModeStabilized::Param modeStabilized;
+		ModeManagement::Param modeMgt;
 		GimbalMgt::Param gimbal;
 		RadioChannel::Param radioChannel[PWM_OUT_NUM_CHANNELS];
 	} Param ;
@@ -61,61 +50,6 @@ public:
 			const float& dt_LF,
 			const Param& param);
 	virtual ~Ancs();
-
-	/** @brief Init the process */
-	virtual void initialize() ;
-
-	/** @brief Execute the process */
-	virtual void execute() ;
-
-	/** @brief Getter for estimation values */
-	inline const Estimator::Estimations& getEstimationValues();
-
-protected:
-	/** @brief Execute the transition to E_STATE_INITIALIZATION_CALIB_IMU */
-	void execTransToInitCalibImu();
-
-	/** @brief Step initialization to E_STATE_INITIALIZATION_CALIB_IMU */
-	void stepInitCalibImu();
-
-	/** @brief Assert transitions from E_STATE_INITIALIZATION_CALIB_IMU */
-	void evalTransFromInitCalibImu();
-
-	/** @brief Execute the transition to E_STATE_INITIALIZATION_CALIB_COMPASS */
-	void execTransToInitCalibCompass();
-
-	/** @brief Step initialization to E_STATE_INITIALIZATION_CALIB_COMPASS */
-	void stepInitCalibCompass();
-
-	/** @brief Assert transitions from E_STATE_INITIALIZATION_CALIB_COMPASS */
-	void evalTransFromInitCalibCompass();
-
-	/** @brief Execute the transition to E_STATE_READY */
-	void execTransToReady();
-
-	/** @brief Step to E_STATE_READY */
-	void stepReady();
-
-	/** @brief Assert transitions from E_STATE_READY */
-	void evalTransFromReady();
-
-	/** @brief Execute the transition to E_STATE_FLYING */
-	void execTransToFlying();
-
-	/** @brief Step to E_STATE_FLYING */
-	void stepFlying();
-
-	/** @brief Assert transitions from E_STATE_FLYING */
-	void evalTransFromFlying();
-
-	/** @brief Execute the transition to E_STATE_FAILSAFE */
-	void execTransToFailsafe();
-
-	/** @brief Step to E_STATE_FAILSAFE */
-	void stepFailsafe();
-
-	/** @brief Assert transitions from E_STATE_FAILSAFE */
-	void evalTransFromFailSafe();
 
 public:
 
@@ -137,40 +71,42 @@ public:
 	/** @brief Estimation values */
 	Estimator::Estimations estimations;
 
-	/** @brief Calibration of IMU bias procedure */
+	/** @brief Ground detection */
 	GroundContactState smGroundContact;
+
+	/** @brief Arming / disarming */
+	FlyingState smFlyingState;
+
+	/** @brief Global state machine */
+	GlobalState smGlobal;
 
 	/** @brief Calibration of IMU bias procedure */
 	RadioChannel* radioChannels[PWM_OUT_NUM_CHANNELS];
 
+	/** @brief Simple estimator (for test purpose) */
+	SimpleAttitudeKalmanFilter est;
+
+	/** @brief Attitude controller */
+	AttitudeController attCtrl;
+
+	/** @brief Gimbal management */
+	GimbalMgt gimbal;
+
+	/** @brief Demanded attitude guidance */
+	autom::AttitudeController::Input attGuid;
+
+	/** @brief Demanded torque */
+	math::Vector3f torque_B;
+
+	/** @brief Demanded force */
+	math::Vector3f force_B;
+
+	/** @brief Demanded force */
+	ModeManagement modeMgt;
+
 protected:
 	/** @brief Setting */
 	Param _param;
-
-	/** @brief Demanded attitude guidance */
-	autom::AttGuid::Output _attGuid;
-
-	/** @brief Demanded torque */
-	math::Vector3f _torque_B;
-
-	/** @brief Demanded force */
-	math::Vector3f _force_B;
-
-
-	/** @brief Simple estimator (for test purpose) */
-	SimpleAttitudeKalmanFilter _est;
-
-	/** @brief Attitude controller */
-	AttitudeController _attCtrl;
-
-	/** @brief Mode stabilized */
-	ModeStabilized _modeStabilitized;
-
-	/** @brief Gimbal management */
-	GimbalMgt _gimbal;
-
-	/** @brief Current state */
-	State _state;
 };
 
 } /* namespace autom */

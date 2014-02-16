@@ -11,7 +11,7 @@ namespace autom {
 
 NavigationController::NavigationController(
 		/* Inputs */
-		const NavGuid::Output& guid,
+		const Input& guid,
 		const Estimator::Estimations& est,
 		/* Outputs */
 		::math::Vector3f& force_I,

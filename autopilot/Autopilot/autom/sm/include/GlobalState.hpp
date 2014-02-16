@@ -8,11 +8,15 @@
 #ifndef GLOBALSTATE_HPP_
 #define GLOBALSTATE_HPP_
 
-#include <infra/app/include/Process.hpp>
+#include <infra/sched/include/FrameScheduling.hpp>
+
+#define SCHED_NB_FRAME			 2
+#define SCHED_FRAME0_NB_PROC	 9
+#define SCHED_FRAME1_NB_PROC	 9
 
 namespace autom {
 
-class GlobalState : public infra::Process {
+class GlobalState : public infra::FrameScheduling {
 public:
 	typedef enum
 	{
@@ -49,8 +53,18 @@ protected:
 	void processReady();
 
 protected:
-	/** @brief */
+	/** @brief Current state */
 	State _state;
+
+	/** @brief Frames */
+	infra::FrameScheduling::Frame _frames[SCHED_NB_FRAME];
+
+	/** @brief Processes list for frame1 */
+	infra::Process* _frame0Processes[SCHED_FRAME0_NB_PROC];
+
+	/** @brief Processes list for frame2 */
+	infra::Process* _frame1Processes[SCHED_FRAME1_NB_PROC];
+
 };
 
 /** @brief Getter method for current state */

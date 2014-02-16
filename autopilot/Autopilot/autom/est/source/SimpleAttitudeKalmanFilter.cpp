@@ -5,7 +5,6 @@
  *      Author: Robotique
  */
 
-#include <hw/serial/include/FastSerial.hpp>
 #include <autom/est/include/SimpleAttitudeKalmanFilter.hpp>
 
 namespace autom {
@@ -27,12 +26,9 @@ SimpleAttitudeKalmanFilter::SimpleAttitudeKalmanFilter(
   _attEstInvNrmPrev(1.),
   _invNrmMagProjPrev(_param.declination.invNrm)
 {
-	// TODO Auto-generated constructor stub
-
 }
 
 SimpleAttitudeKalmanFilter::~SimpleAttitudeKalmanFilter() {
-	// TODO Auto-generated destructor stub
 }
 
 /** @brief Init the process */

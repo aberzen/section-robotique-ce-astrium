@@ -8,7 +8,6 @@
 #include <gcs/include/Channel.hpp>
 #include "../include/RawSensorStream.hpp"
 #include <system/system/include/System.hpp>
-#include <hw/serial/include/FastSerial.hpp>
 #include <Arduino.h>
 
 namespace mavlink {

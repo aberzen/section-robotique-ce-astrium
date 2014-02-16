@@ -8,11 +8,11 @@
 #ifndef CYCLICTASK_HPP_
 #define CYCLICTASK_HPP_
 
+
 #include "Task.hpp"
 #include <semphr.h>
 
 namespace infra {
-
 
 class CyclicTask : public Task {
 public:
@@ -59,5 +59,8 @@ protected:
 
 };
 
-} /* namespace hw */
+} /* namespace infra */
+
+
+
 #endif /* CYCLICTASK_HPP_ */

@@ -18,7 +18,6 @@
  *                            Automatically resets when we call InputCh to read channels
  *
  */
-//#include <hw/serial/include/FastSerial.hpp>
 #include "../include/PwmApm25.hpp"
 #include <infra/include/Task.hpp>
 

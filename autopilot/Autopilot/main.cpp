@@ -5,19 +5,15 @@
  *      Author: Aberzen
  */
 
-
-#include <FreeRTOS.h>
-#include <task.h>
-#include <semphr.h>
-
-#include <hw/serial/include/FastSerial.hpp>
-
-#include <stdint.h>
-
 #include <Arduino.h>
 
 #include <board/apm/include/Apm25.hpp>
+
+#include <system/tasks/include/ControlCyclicTask.hpp>
+#include <system/tasks/include/MavTask.hpp>
 #include <system/system/include/System.hpp>
+
+#include <gcs/include/SerialChannel.hpp>
 
 board::Apm25::Param param = {
 	{ /* imu */
@@ -26,37 +22,10 @@ board::Apm25::Param param = {
 		hw::HalImuMpu6000::E_UPT_FREQ_100HZ /* frequence */
 	} /* imu */
 };
-static board::Apm25 boardApm25(param);
 
+static board::Apm25 boardApm25(param);
 static system::System sys(boardApm25);
 system::System& system::System::system = sys;
-
-//board::Board& board::Board::board = boardApm25;
-
-#include <system/tasks/include/ControlCyclicTask.hpp>
-
-//static struct test::Variables varList = {
-//	154,
-//	-98,
-//	0xABCD,
-//	-0xABCD,
-//	0xCAFEDECA,
-//	0xDEADC0FF,
-//	1458.54365487
-//};
-//
-//const mavlink::ParameterMgt::ParamInfo info[7] PROGMEM = {
-//		{MAV_PARAM_TYPE_UINT8, "VAR1", &varList.var1, {UINT8 : 154}},
-//		{MAV_PARAM_TYPE_INT8, "VAR2", &varList.var2, {INT8 : -98}},
-//		{MAV_PARAM_TYPE_UINT16, "VAR3", &varList.var3, {UINT16 : 0xABCD}},
-//		{MAV_PARAM_TYPE_INT16, "VAR4", &varList.var4, {INT16 : -0xABCD}},
-//		{MAV_PARAM_TYPE_UINT32, "VAR5", &varList.var5, {UINT32 : 0xCAFEDECA}},
-//		{MAV_PARAM_TYPE_INT32, "VAR6", &varList.var6, {INT32 : 0xDEADC0FF}},
-//		{MAV_PARAM_TYPE_REAL32, "VAR7", &varList.var7, {REAL32 : 1458.54365487}}
-//};
-
-#include <system/tasks/include/MavTask.hpp>
-#include <gcs/include/SerialChannel.hpp>
 
 mavlink_system_t mavlink_system = {7, 1, 0, 0};
 mavlink::SerialChannel mavChan0(MAVLINK_COMM_0, Serial);

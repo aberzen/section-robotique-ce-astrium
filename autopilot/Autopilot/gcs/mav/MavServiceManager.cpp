@@ -7,7 +7,6 @@
 
 #include "../include/MavServiceManager.hpp"
 #include <Arduino.h>
-#include <hw/serial/include/FastSerial.hpp>
 
 namespace mavlink {
 

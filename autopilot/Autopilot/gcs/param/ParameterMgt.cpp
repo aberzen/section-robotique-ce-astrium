@@ -12,7 +12,11 @@
 #include "../include/ParameterMgt.hpp"
 #include <gcs/include/Channel.hpp>
 
+#include <system/params/include/Nrd.hpp>
+
 namespace mavlink {
+
+const uint16_t ParameterMgt::eepromRefRevision = CONFIG_MAVLINK_EEPROMREV;
 
 ParameterMgt::ParameterMgt(const ParamInfo* infos, uint8_t paramCount) :
 		infos(infos),

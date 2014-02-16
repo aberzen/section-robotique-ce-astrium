@@ -5,7 +5,6 @@
  *      Author: Aberzen
  */
 
-#include <hw/serial/include/FastSerial.hpp>
 #include "../include/System.hpp"
 #include <system/params/include/Nrd.hpp>
 #include <system/params/include/Parameters.hpp>
@@ -65,6 +64,32 @@ void System::initialize()
 	/* Initialize the board */
 	board.initialize();
 
+//	Serial.printf("pInfMat=[\n");
+//	for (int iMotor=0 ; iMotor<4 ; iMotor++)
+//	{
+//		Serial.printf("%3f %3f %3f %3f ;\n",
+//				test::config_ancs.modPinv.pInvInfMat[iMotor][0],
+//				test::config_ancs.modPinv.pInvInfMat[iMotor][1],
+//				test::config_ancs.modPinv.pInvInfMat[iMotor][2],
+//				test::config_ancs.modPinv.pInvInfMat[iMotor][3],
+//				test::config_ancs.modPinv.pInvInfMat[iMotor][4],
+//				test::config_ancs.modPinv.pInvInfMat[iMotor][5]
+//				);
+//	}
+//	Serial.printf("];\n");
+//
+//	Serial.printf("infMat=[\n");
+//	for (int iDoF=0 ; iDoF<6 ; iDoF++)
+//	{
+//		Serial.printf("%3f %3f %3f %3f ;\n",
+//				test::config_ancs.modGen.infMat[iDoF][0],
+//				test::config_ancs.modGen.infMat[iDoF][1],
+//				test::config_ancs.modGen.infMat[iDoF][2],
+//				test::config_ancs.modGen.infMat[iDoF][3]
+//				);
+//	}
+//	Serial.printf("];\n");
+
 	/* Update house keeping */
 	getMavHouseKeeping().initialize();
 
@@ -72,14 +97,26 @@ void System::initialize()
 	getMavSvcMgr().initialize();
 
 	/* Set mav period to 100ms */
-	getMavHouseKeeping().setDataStream(
-			10,
-			MAV_DATA_STREAM_ALL,
-			1
-	);
+//	getMavHouseKeeping().setDataStream(
+//			10,
+//			MAV_DATA_STREAM_ALL,
+//			1
+//	);
 
 	/* Initialize the attitude and navigation control system */
-	system::System::system.ancs.initialize();
+	system::System::system.ancs.smGlobal.initialize();
+
+//	Serial.printf("infMat{%p}=[\n", (void*)&test::config_ancs.modGen.infMat);
+//	for (int iDoF=0 ; iDoF<6 ; iDoF++)
+//	{
+//		Serial.printf("%3f %3f %3f %3f ;\n",
+//				test::config_ancs.modGen.infMat[iDoF][0],
+//				test::config_ancs.modGen.infMat[iDoF][1],
+//				test::config_ancs.modGen.infMat[iDoF][2],
+//				test::config_ancs.modGen.infMat[iDoF][3]
+//				);
+//	}
+//	Serial.printf("];\n");
 }
 
 /** @brief Execute the process */
