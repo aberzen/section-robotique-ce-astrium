@@ -10,8 +10,6 @@
 namespace arducopter {
 
 Application::Application() {
-	// TODO Auto-generated constructor stub
-
 }
 
 } /* namespace arducopter */

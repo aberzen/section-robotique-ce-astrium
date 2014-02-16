@@ -16,7 +16,6 @@ class Application : public arducopter::MessageListener {
 public:
 	Application();
 	virtual ~Application() {
-		// TODO Auto-generated destructor stub
 	}
 };
 

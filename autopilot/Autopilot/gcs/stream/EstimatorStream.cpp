@@ -17,12 +17,9 @@ EstimatorStream::EstimatorStream(mavlink_channel_t port, const autom::Estimator:
 		DataStream(port),
 		_est(est)
 {
-	// TODO Auto-generated constructor stub
-
 }
 
 EstimatorStream::~EstimatorStream() {
-	// TODO Auto-generated constructor stub
 }
 
 /** @brief Sample the data */

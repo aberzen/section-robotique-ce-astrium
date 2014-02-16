@@ -7,8 +7,6 @@
 
 #include <infra/include/Task.hpp>
 #include "../include/HalMagHMC5883L.hpp"
-#include <config/include/nrd.h>
-
 
 namespace hw {
 

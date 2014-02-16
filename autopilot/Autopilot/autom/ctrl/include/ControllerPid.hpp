@@ -21,7 +21,7 @@ namespace autom {
  * This controller performs a proportional, derivative and integral control
  * with rate bias support and integral term saturation.
  *
- * The output value is computed in XXX steps.
+ * The output value is computed in 3 steps.
  * 0) Assumption
  * ctrlErr = guid - meas
  *

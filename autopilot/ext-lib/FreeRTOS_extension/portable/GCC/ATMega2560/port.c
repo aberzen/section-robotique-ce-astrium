@@ -120,8 +120,6 @@ any details of its type. */
 typedef void tskTCB;
 extern volatile tskTCB * volatile pxCurrentTCB;
 
-static portTickType portTicksPerSecond;
-
 /*-----------------------------------------------------------*/
 
 /* 

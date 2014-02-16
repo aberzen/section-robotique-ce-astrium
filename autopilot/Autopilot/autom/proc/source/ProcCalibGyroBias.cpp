@@ -33,8 +33,8 @@ ProcCalibGyroBias::ProcCalibGyroBias(
 {
 }
 
-ProcCalibGyroBias::~ProcCalibGyroBias() {
-	// TODO Auto-generated destructor stub
+ProcCalibGyroBias::~ProcCalibGyroBias()
+{
 }
 
 /** @brief Start procedure */

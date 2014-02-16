@@ -20,13 +20,11 @@ Servo::Servo(
 		hw::Pwm& pwm)
 : PwmDevice(channel, param.idxChannel,pwm),
   _param(param)
-	{
-	// TODO Auto-generated constructor stub
-
+{
 }
 
-Servo::~Servo() {
-	// TODO Auto-generated destructor stub
+Servo::~Servo()
+{
 }
 
 /** @brief switch On */

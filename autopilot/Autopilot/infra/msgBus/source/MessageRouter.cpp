@@ -10,8 +10,6 @@
 namespace arducopter {
 
 MessageRouter::MessageRouter() {
-	// TODO Auto-generated constructor stub
-
 }
 
 } /* namespace arducopter */

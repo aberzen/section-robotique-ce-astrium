@@ -16,12 +16,9 @@ Gps::Gps(
 : Driver(),
   _out(out)
 {
-	// TODO Auto-generated constructor stub
-
 }
 
 Gps::~Gps() {
-	// TODO Auto-generated destructor stub
 }
 
 

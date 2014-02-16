@@ -10,13 +10,9 @@
 namespace mavlink {
 
 DigivcamMgt::DigivcamMgt() {
-	// TODO Auto-generated constructor stub
-
 }
 
 DigivcamMgt::~DigivcamMgt() {
-	// TODO Auto-generated constructor stub
-
 }
 
 void DigivcamMgt::configure(

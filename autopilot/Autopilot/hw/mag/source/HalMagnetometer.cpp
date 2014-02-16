@@ -14,11 +14,10 @@ HalMagnetometer::HalMagnetometer(Output& out, RawOutput& rawOut) :
 	_rawOut(rawOut),
 	_out(out)
 {
-	// TODO Auto-generated constructor stub
-
 }
 
-HalMagnetometer::~HalMagnetometer() {
+HalMagnetometer::~HalMagnetometer()
+{
 }
 
 } /* namespace hw */

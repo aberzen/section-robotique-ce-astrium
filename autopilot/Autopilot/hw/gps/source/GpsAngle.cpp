@@ -10,12 +10,9 @@
 namespace hw {
 
 GpsAngle::GpsAngle() {
-	// TODO Auto-generated constructor stub
-
 }
 
 GpsAngle::~GpsAngle() {
-	// TODO Auto-generated destructor stub
 }
 
 } /* namespace hw */

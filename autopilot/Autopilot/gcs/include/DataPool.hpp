@@ -15,9 +15,7 @@ namespace mavlink {
 class DataPool {
 public:
 	DataPool();
-	virtual ~DataPool() {
-		// TODO Auto-generated destructor stub
-	}
+	virtual ~DataPool() {}
 
 public:
 	math::Vector3f _rawMag_B;

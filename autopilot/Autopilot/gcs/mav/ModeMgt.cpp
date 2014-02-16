@@ -10,14 +10,10 @@
 namespace mavlink {
 
 ModeMgt::ModeMgt() {
-	// TODO Auto-generated constructor stub
-
 }
 
 
 ModeMgt::~ModeMgt() {
-	// TODO Auto-generated constructor stub
-
 }
 
 void ModeMgt::setMode(

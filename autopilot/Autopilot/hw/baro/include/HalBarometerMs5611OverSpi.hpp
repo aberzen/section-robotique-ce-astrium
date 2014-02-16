@@ -10,7 +10,6 @@
 
 #include <hw/baro/include/HalBarometer.hpp>
 #include <hw/spi/include/SpiSlave.hpp>
-#include <hw/led/include/Led.hpp>
 
 #define MS5611_ROM_SIZE	(6)
 
@@ -80,9 +79,6 @@ protected:
 
 	/** @brief Raw temperature */
 	uint32_t _rawTemperature;
-
-	/*  */
-	hw::Led myLed;
 };
 
 /** @brief Get a coefficient */

@@ -169,9 +169,9 @@ void ModeStabilized::computeCommandsFromRc(float& thrust, float& roll, float& pi
 	/* Compute thrust from user inputs */
 	rc[MODE_STABILIZED_RC_THRUST]->readChannel(pwm);
 	rc[MODE_STABILIZED_RC_THRUST]->getMin(limit);
-	pwm-=limit;
+	pwm = math_max(0, pwm-limit);
 	thrust = 0.;
-	if (pwm>=_param.deadzone)
+	if (((uint16_t)pwm)>=_param.deadzone)
 	{
 		tmp = (float) (pwm * _param.thrustPwmScale);
 		thrust = ldexpf(tmp, _param.thrustPwmScaleExp);

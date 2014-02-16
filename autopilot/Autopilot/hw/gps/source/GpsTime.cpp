@@ -10,12 +10,9 @@
 namespace hw {
 
 GpsTime::GpsTime() {
-	// TODO Auto-generated constructor stub
-
 }
 
 GpsTime::~GpsTime() {
-	// TODO Auto-generated destructor stub
 }
 
 } /* namespace hw */

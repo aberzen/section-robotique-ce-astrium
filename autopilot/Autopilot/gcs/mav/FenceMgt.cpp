@@ -10,13 +10,9 @@
 namespace mavlink {
 
 FenceMgt::FenceMgt() {
-	// TODO Auto-generated constructor stub
-
 }
 
 FenceMgt::~FenceMgt() {
-	// TODO Auto-generated constructor stub
-
 }
 
 void FenceMgt::setPoint(

@@ -29,7 +29,7 @@ RadioChannel::~RadioChannel()
  * saturating pwm between min and max, and using scale to place pwm between [-1 and 1]*/
 void RadioChannel::readChannel(int16_t& signedPwmVal)
 {
-	int16_t pwmValSat = math_max(_param.min, math_min(_param.max, _pwmVal));
+	int16_t pwmValSat = math_max(_param.min, math_min(_param.max, (int16_t)_pwmVal));
 
 	/* Trig the zero val */
 	signedPwmVal = pwmValSat - _param.trim;

@@ -25,14 +25,12 @@ FrameScheduling::FrameScheduling(const FrameScheduling::Frame* frame)
 }
 
 FrameScheduling::~FrameScheduling() {
-	// TODO Auto-generated destructor stub
 }
 
 
 /** @brief Init the process */
 void FrameScheduling::initialize()
 {
-
 }
 
 /** @brief Execute the process */

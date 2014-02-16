@@ -10,12 +10,9 @@
 namespace mavlink {
 
 CommandMgt::CommandMgt() {
-	// TODO Auto-generated constructor stub
-
 }
 
 CommandMgt::~CommandMgt() {
-	// TODO Auto-generated destructor stub
 }
 
 void CommandMgt::cmd(

@@ -27,13 +27,13 @@ Apm25::Apm25(
 		/* Param */
 		Param& param)
 : Board(_imu, _baro, _compass, _gps, _pwm),
-  _spiBus(),
   _i2cBus(),
+  _spiBus(),
   _spiSlaveImu(_spiBus, IMU_MPU6000_SPI_CS_PIN),
   _spiSlaveBaro(_spiBus, BARO_MS5611_SPI_CS_PIN),
   _imu(_spiSlaveImu, meas.imu, rawMeas.imu, param.imu),
-  _baro(_spiSlaveBaro, meas.baro),
   _compass(_i2cBus, meas.compass, rawMeas.compass),
+  _baro(_spiSlaveBaro, meas.baro),
   _gps(meas.gps),
   _pwm(pwmVal,radio)
 {

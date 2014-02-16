@@ -10,12 +10,9 @@
 namespace hw {
 
 GpsPosition::GpsPosition() {
-	// TODO Auto-generated constructor stub
-
 }
 
 GpsPosition::~GpsPosition() {
-	// TODO Auto-generated destructor stub
 }
 
 } /* namespace hw */

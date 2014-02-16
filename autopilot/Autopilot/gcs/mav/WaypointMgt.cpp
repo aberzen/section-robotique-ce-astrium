@@ -10,8 +10,6 @@
 namespace mavlink {
 
 WaypointMgt::WaypointMgt() {
-	// TODO Auto-generated constructor stub
-
 }
 
 WaypointMgt::~WaypointMgt() {

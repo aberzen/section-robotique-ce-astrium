@@ -10,14 +10,10 @@
 namespace mavlink {
 
 MountMgt::MountMgt() {
-	// TODO Auto-generated constructor stub
-
 }
 
 
 MountMgt::~MountMgt() {
-	// TODO Auto-generated constructor stub
-
 }
 
 

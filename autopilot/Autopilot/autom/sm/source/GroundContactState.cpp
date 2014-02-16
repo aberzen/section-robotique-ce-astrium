@@ -5,7 +5,6 @@
  *      Author: Robotique
  */
 
-#include <autom/proc/include/GroundContactState.hpp>
 #include <math/include/MathMacro.hpp>
 #include <system/system/include/System.hpp>
 
