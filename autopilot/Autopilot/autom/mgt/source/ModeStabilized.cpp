@@ -184,7 +184,6 @@ void ModeStabilized::computeDemandedForce(float& thrust)
 	/* Compute demanded force */
 	float forceNorm = _paramGen.mass*thrust;
 	system::System::system.ancs.force_B(_param.thrustDir_B_x * forceNorm, _param.thrustDir_B_y * forceNorm, _param.thrustDir_B_z * forceNorm);
-
 }
 
 } /* namespace autom */

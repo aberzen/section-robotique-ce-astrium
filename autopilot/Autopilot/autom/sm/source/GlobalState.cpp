@@ -88,6 +88,9 @@ void GlobalState::execute()
 	case E_STATE_READY:
 		processReady();
 		break;
+	case E_STATE_FAILSAFE:
+		processFailsafe();
+		break;
 	}
 }
 
@@ -137,6 +140,21 @@ void GlobalState::processReady()
 {
 	/* Call to super / execute the scheduling frame */
 	FrameScheduling::execute();
+}
+
+/** @brief Process the failsafe state */
+void GlobalState::processFailsafe()
+{
+	/* Nothing to do */
+}
+
+
+/** @brief Command failsafe */
+void GlobalState::cmdFailsafe()
+{
+	/* Disarm */
+	system::System::system.ancs.smFlyingState.disarm();
+	_state = E_STATE_FAILSAFE;
 }
 
 

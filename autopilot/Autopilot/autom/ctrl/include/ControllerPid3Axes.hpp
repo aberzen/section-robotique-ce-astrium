@@ -38,11 +38,19 @@ public:
 	/** @brief Execute the process */
 	virtual void execute();
 
-	/** @brief Execute the process */
-	virtual void updateCtrlErr() = 0;
-
 	/** @brief Setter method of controller parameters */
 	inline void setParam(const Param& param);
+
+	/** @brief Getter method for control angular error */
+	inline const math::Vector3f& getCtrlError() const;
+
+	/** @brief Getter method for control rate error */
+	inline const math::Vector3f& getCtrlDerivError() const;
+
+protected:
+
+	/** @brief Execute the process */
+	virtual void updateCtrlErr() = 0;
 
 protected:
 
@@ -75,6 +83,18 @@ void ControllerPid3Axes::setParam(const ControllerPid3Axes::Param& param)
 	_ctrl_x.setParam(_param.x);
 	_ctrl_y.setParam(_param.y);
 	_ctrl_z.setParam(_param.z);
+}
+
+/** @brief Getter method for control angular error */
+inline const math::Vector3f& ControllerPid3Axes::getCtrlError() const
+{
+	return _ctrlErr;
+}
+
+/** @brief Getter method for control rate error */
+inline const math::Vector3f& ControllerPid3Axes::getCtrlDerivError() const
+{
+	return _ctrlErrDeriv;
 }
 
 } /* namespace autom */

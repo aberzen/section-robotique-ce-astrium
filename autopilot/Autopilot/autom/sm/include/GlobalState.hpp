@@ -23,7 +23,8 @@ public:
 		E_STATE_OFF = 0,
 		E_STATE_INITIALIZING_IMU,
 		E_STATE_INITIALIZING_COMPASS,
-		E_STATE_READY
+		E_STATE_READY,
+		E_STATE_FAILSAFE
 	} State;
 public:
 	GlobalState();
@@ -38,6 +39,9 @@ public:
 	/** @brief Execute the process */
 	virtual void execute();
 
+	/** @brief Command failsafe */
+	void cmdFailsafe();
+
 protected:
 
 	/** @brief Process the off state */
@@ -51,6 +55,9 @@ protected:
 
 	/** @brief Process the off state */
 	void processReady();
+
+	/** @brief Process the failsafe state */
+	void processFailsafe();
 
 protected:
 	/** @brief Current state */

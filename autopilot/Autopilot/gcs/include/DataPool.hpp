@@ -15,7 +15,7 @@ namespace mavlink {
 class DataPool {
 public:
 	DataPool();
-	virtual ~DataPool() {}
+	virtual ~DataPool();
 
 public:
 	math::Vector3f _rawMag_B;
