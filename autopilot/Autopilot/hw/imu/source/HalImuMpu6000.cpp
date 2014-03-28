@@ -265,8 +265,11 @@ void HalImuMpu6000::initialize()
     // Disable I2C bus (recommended on datasheet)
     register_write(MPUREG_USER_CTRL, BIT_USER_CTRL_I2C_IF_DIS);
 
-    // FS & DLPF   de-activate the filtering
-    register_write(MPUREG_CONFIG, BITS_DLPF_CFG_256HZ_NOLPF2);
+//    // FS & DLPF   de-activate the filtering
+//    register_write(MPUREG_CONFIG, BITS_DLPF_CFG_256HZ_NOLPF2);
+
+	// FS & DLPF activate filtering at 98HZ
+	register_write(MPUREG_CONFIG, BITS_DLPF_CFG_98HZ);
 
     // Sample rate (since no filter activated, the sampling rate is
     // 8kHz instead of 1kHz)
