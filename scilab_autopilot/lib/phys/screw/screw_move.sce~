@@ -1,0 +1,4 @@
+function [screw_P] = wrench_move(wrench_O, PO)
+	screw_P = wrench_new(screw_O.resultant, ...
+        screw_O.moment + vect_crossProd(PO, wrench_O.resultant));
+endfunction
