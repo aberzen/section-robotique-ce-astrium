@@ -43,8 +43,8 @@ void ControlCyclicTask::runCycle(void)
 		_missed = 0;
 	}
 
-//	system::System::system.ancs.smGlobal.execute();
-//	system::System::system.getMavHouseKeeping().update();
+	system::System::system.ancs.smGlobal.execute();
+	system::System::system.getMavHouseKeeping().update();
 }
 
 
