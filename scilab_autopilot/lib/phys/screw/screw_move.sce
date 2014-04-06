@@ -1,0 +1,9 @@
+function [screw_P] = screw_move(screw_O, PO)
+	R = screw_getResultant(screw_O);
+	M = screw_getMoment(screw_O);
+	
+	screw_P = screw_new( ...
+        R, ...
+        M + vect_crossProd(PO, R) ...
+    );
+endfunction
