@@ -18,6 +18,7 @@ public:
 	typedef struct {
 		float pInvInfMat[NB_MOTORS][6];
 		float descVect[NB_MOTORS];
+		uint16_t pwmMinOffset;
 	} ParamPinv ;
 public:
 
@@ -80,13 +81,13 @@ void ModulatorPinv<NB_MOTORS>::updatePwm()
 	/* 1) Compute the requested motor square of PWM ratio using pseudo inverse */
 	for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 	{
-		this->_sqRatios[iMotor] =
-				 this->_torque_B.x * _paramPinv.pInvInfMat[iMotor][0]
-			   + this->_torque_B.y * _paramPinv.pInvInfMat[iMotor][1]
-			   + this->_torque_B.z * _paramPinv.pInvInfMat[iMotor][2]
-			   + this->_force_B.x * _paramPinv.pInvInfMat[iMotor][3]
-			   + this->_force_B.y * _paramPinv.pInvInfMat[iMotor][4]
-			   + this->_force_B.z * _paramPinv.pInvInfMat[iMotor][5];
+		this->_ratios[iMotor] =
+				 this->_force_B.x * _paramPinv.pInvInfMat[iMotor][0]
+			   + this->_force_B.y * _paramPinv.pInvInfMat[iMotor][1]
+			   + this->_force_B.z * _paramPinv.pInvInfMat[iMotor][2]
+			   + this->_torque_B.x * _paramPinv.pInvInfMat[iMotor][3]
+			   + this->_torque_B.y * _paramPinv.pInvInfMat[iMotor][4]
+			   + this->_torque_B.z * _paramPinv.pInvInfMat[iMotor][5];
 	}
 
 	/* 2) Scale to have only positive values */
@@ -99,11 +100,8 @@ void ModulatorPinv<NB_MOTORS>::updatePwm()
 
 	for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 	{
-		/* 3) Compute the square root for each ratio */
-		float ratio = sqrt(this->_sqRatios[iMotor]);
-
-		/* 5) Convert into PWM*/
-		this->_out.channels[iMotor] = ratio*(MAX_PULSEWIDTH-MIN_PULSEWIDTH)+MIN_PULSEWIDTH;
+		/* 4) Convert into PWM*/
+		this->_out.channels[iMotor] = ((uint16_t) this->_ratios[iMotor])+this->_paramPinv.pwmMinOffset;
 	}
 
 }
@@ -125,23 +123,23 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda0()
 
 	for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 	{
-		if (_paramPinv.descVect[iMotor] == 0. && this->_sqRatios[iMotor]<0.)
+		if (_paramPinv.descVect[iMotor] == 0. && this->_ratios[iMotor]<0.)
 		{
 			/* Not possible to force it to be positive */
 			/* Error: bad descent vector definition */
 			success = false;
 		}
-		else if (this->_sqRatios[iMotor] < 0.)
+		else if (this->_ratios[iMotor] < 0.)
 		{
 			if (_paramPinv.descVect[iMotor] > 0.)
 			{
 				/* Compute positive lambda */
-				lbdPos = math_max(lbdPos, - this->_sqRatios[iMotor] / _paramPinv.descVect[iMotor]);
+				lbdPos = math_max(lbdPos, - this->_ratios[iMotor] / _paramPinv.descVect[iMotor]);
 			}
 			else if (_paramPinv.descVect[iMotor] < 0.)
 			{
 				/* Compute negative lambda */
-				lbdNeg = math_min(lbdNeg, - this->_sqRatios[iMotor] / _paramPinv.descVect[iMotor]);
+				lbdNeg = math_min(lbdNeg, - this->_ratios[iMotor] / _paramPinv.descVect[iMotor]);
 			}
 		}
 		else
@@ -150,10 +148,10 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda0()
 			{
 				/* Define the smallest acceptable lambda */
 				if (isLbdMin)
-					lbdMin = math_max(lbdMin,- this->_sqRatios[iMotor] / _paramPinv.descVect[iMotor]);
+					lbdMin = math_max(lbdMin,- this->_ratios[iMotor] / _paramPinv.descVect[iMotor]);
 				else
 				{
-					lbdMin = - this->_sqRatios[iMotor] / _paramPinv.descVect[iMotor];
+					lbdMin = - this->_ratios[iMotor] / _paramPinv.descVect[iMotor];
 					isLbdMin = true;
 				}
 			}
@@ -161,10 +159,10 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda0()
 			{
 				/* Define the greatest acceptable lambda */
 				if (isLbdMax)
-					lbdMax = math_min(lbdMax,- this->_sqRatios[iMotor] / _paramPinv.descVect[iMotor]);
+					lbdMax = math_min(lbdMax,- this->_ratios[iMotor] / _paramPinv.descVect[iMotor]);
 				else
 				{
-					lbdMax = - this->_sqRatios[iMotor] / _paramPinv.descVect[iMotor];
+					lbdMax = - this->_ratios[iMotor] / _paramPinv.descVect[iMotor];
 					isLbdMax = true;
 				}
 			}
@@ -228,10 +226,10 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda0()
 		/* There is a lambda */
 		for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 		{
-			this->_sqRatios[iMotor] += lbdRes * _paramPinv.descVect[iMotor];
+			this->_ratios[iMotor] += lbdRes * _paramPinv.descVect[iMotor];
 
-			if (this->_sqRatios[iMotor]<0.)
-				this->_sqRatios[iMotor] = 0.;
+			if (this->_ratios[iMotor]<0.)
+				this->_ratios[iMotor] = 0.;
 
 		}
 	}
@@ -240,7 +238,7 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda0()
 		/* We are in the shit */
 		for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 		{
-			this->_sqRatios[iMotor] = 0.;
+			this->_ratios[iMotor] = 0.;
 		}
 	}
 
@@ -264,23 +262,23 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda1()
 
 	for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 	{
-		if (_paramPinv.descVect[iMotor] == 0. && this->_sqRatios[iMotor]>1.)
+		if (_paramPinv.descVect[iMotor] == 0. && this->_ratios[iMotor]>1.)
 		{
 			/* Not possible to force it to be inferior to 1 using lambda*/
 			/* Error: bad descent vector definition */
 			success = false;
 		}
-		else if (this->_sqRatios[iMotor] > 1.)
+		else if (this->_ratios[iMotor] > 1.)
 		{
 			if (_paramPinv.descVect[iMotor] > 0.)
 			{
 				/* Compute negative lambda */
-				lbdNeg = math_min(lbdNeg, (1. - this->_sqRatios[iMotor]) / _paramPinv.descVect[iMotor]);
+				lbdNeg = math_min(lbdNeg, (1. - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor]);
 			}
 			else if (_paramPinv.descVect[iMotor] < 0.)
 			{
 				/* Compute positive lambda */
-				lbdPos = math_max(lbdPos, (1. - this->_sqRatios[iMotor]) / _paramPinv.descVect[iMotor]);
+				lbdPos = math_max(lbdPos, (1. - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor]);
 			}
 		}
 		else
@@ -289,18 +287,18 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda1()
 			{
 				/* Define the smallest acceptable lambda */
 				if (isLbdMin)
-					lbdMin = math_max(lbdMin,- this->_sqRatios[iMotor] / _paramPinv.descVect[iMotor]);
+					lbdMin = math_max(lbdMin,- this->_ratios[iMotor] / _paramPinv.descVect[iMotor]);
 				else
 				{
-					lbdMin = - this->_sqRatios[iMotor] / _paramPinv.descVect[iMotor];
+					lbdMin = - this->_ratios[iMotor] / _paramPinv.descVect[iMotor];
 					isLbdMin = true;
 				}
 				/* Define the greatest acceptable lambda */
 				if (isLbdMax)
-					lbdMax = math_min(lbdMax,(1.- this->_sqRatios[iMotor]) / _paramPinv.descVect[iMotor]);
+					lbdMax = math_min(lbdMax,(1.- this->_ratios[iMotor]) / _paramPinv.descVect[iMotor]);
 				else
 				{
-					lbdMax = (1. - this->_sqRatios[iMotor]) / _paramPinv.descVect[iMotor];
+					lbdMax = (1. - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor];
 					isLbdMax = true;
 				}
 			}
@@ -308,18 +306,18 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda1()
 			{
 				/* Define the smallest acceptable lambda */
 				if (isLbdMin)
-					lbdMin = math_max(lbdMin,(1. - this->_sqRatios[iMotor]) / _paramPinv.descVect[iMotor]);
+					lbdMin = math_max(lbdMin,(1. - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor]);
 				else
 				{
-					lbdMin = (1. - this->_sqRatios[iMotor]) / _paramPinv.descVect[iMotor];
+					lbdMin = (1. - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor];
 					isLbdMin = true;
 				}
 				/* Define the greatest acceptable lambda */
 				if (isLbdMax)
-					lbdMax = math_min(lbdMax,- this->_sqRatios[iMotor] / _paramPinv.descVect[iMotor]);
+					lbdMax = math_min(lbdMax,- this->_ratios[iMotor] / _paramPinv.descVect[iMotor]);
 				else
 				{
-					lbdMax = - this->_sqRatios[iMotor] / _paramPinv.descVect[iMotor];
+					lbdMax = - this->_ratios[iMotor] / _paramPinv.descVect[iMotor];
 					isLbdMax = true;
 				}
 			}
@@ -383,12 +381,12 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda1()
 		/* There is a lambda */
 		for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 		{
-			this->_sqRatios[iMotor] += lbdRes * _paramPinv.descVect[iMotor];
+			this->_ratios[iMotor] += lbdRes * _paramPinv.descVect[iMotor];
 
-			if (this->_sqRatios[iMotor]<0)
-				this->_sqRatios[iMotor] = 0;
+			if (this->_ratios[iMotor]<0)
+				this->_ratios[iMotor] = 0;
 
-			maxSqrtRatio = math_max(maxSqrtRatio, this->_sqRatios[iMotor]);
+			maxSqrtRatio = math_max(maxSqrtRatio, this->_ratios[iMotor]);
 		}
 
 		if (maxSqrtRatio > 1.)
@@ -396,10 +394,10 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda1()
 			/* Scale down */
 			for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 			{
-				this->_sqRatios[iMotor] /= maxSqrtRatio;
+				this->_ratios[iMotor] /= maxSqrtRatio;
 
-				if (this->_sqRatios[iMotor]>1.)
-					this->_sqRatios[iMotor] = 1.;
+				if (this->_ratios[iMotor]>1.)
+					this->_ratios[iMotor] = 1.;
 
 			}
 
@@ -410,7 +408,7 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda1()
 		/* We are in the shit */
 		for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 		{
-			this->_sqRatios[iMotor] = 0.;
+			this->_ratios[iMotor] = 0.;
 		}
 	}
 

@@ -444,7 +444,8 @@ autom::Ancs::Param config_ancs = {
 						MODULATOR_PINVINFMAT_2,
 						MODULATOR_PINVINFMAT_3,
 				}, /* pInvInfMat */
-				MODULATOR_DESCVECT
+				MODULATOR_DESCVECT,
+				MODULATOR_PWMMINOFFSET
 		}, /* modPinv */
 		{ /* attCtrl */
 			{ /* x */

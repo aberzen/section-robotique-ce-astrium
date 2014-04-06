@@ -88,7 +88,7 @@ protected:
 	hw::Pwm& _pwm;
 
 	/** @brief Parameter */
-	float _sqRatios[NB_MOTORS];
+	float _ratios[NB_MOTORS];
 
 	/** @brief State of internal state machine */
 	State _state;
@@ -147,7 +147,7 @@ void Modulator<NB_MOTORS>::initialize()
 	for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 	{
 		_out.channels[iMotor] = MIN_PULSEWIDTH;
-		_sqRatios[iMotor] = 0;
+		_ratios[iMotor] = 0;
 		_pwm.force_out(iMotor);
 		_pwm.enable_out(iMotor);
 	}
@@ -174,7 +174,7 @@ void Modulator<NB_MOTORS>::execute()
 		for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 		{
 			_out.channels[iMotor] = MIN_PULSEWIDTH;
-			_sqRatios[iMotor] = 0;
+			_ratios[iMotor] = 0;
 		}
 
 		/* Produced torsor is zero */
@@ -198,7 +198,7 @@ void Modulator<NB_MOTORS>::disarm()
 	for (idxMotor=0 ; idxMotor<NB_MOTORS ; idxMotor++)
 	{
 		_out.channels[idxMotor] = MIN_PULSEWIDTH;
-		_sqRatios[idxMotor] = 0;
+		_ratios[idxMotor] = 0;
 		_pwm.force_out(idxMotor);
 	}
 	_state = E_STATE_DISARMED;
@@ -215,20 +215,20 @@ void Modulator<NB_MOTORS>::updateRealTorsor()
 	_forceReal_B(0.,0.,0.);
 
 #ifdef DEBUG_PRINTF2
-		Serial.printf("_sqRatios=");
+		Serial.printf("_ratios=");
 #endif
 
 	/* Compute the produced torsor */
 	for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 	{
-		_torqueReal_B.x += _paramGen.infMat[0][iMotor] * _sqRatios[iMotor];
-		_torqueReal_B.y += _paramGen.infMat[1][iMotor] * _sqRatios[iMotor];
-		_torqueReal_B.z += _paramGen.infMat[2][iMotor] * _sqRatios[iMotor];
-		_forceReal_B.x += _paramGen.infMat[3][iMotor] * _sqRatios[iMotor];
-		_forceReal_B.y += _paramGen.infMat[4][iMotor] * _sqRatios[iMotor];
-		_forceReal_B.z += _paramGen.infMat[5][iMotor] * _sqRatios[iMotor];
+		_forceReal_B.x += _paramGen.infMat[0][iMotor] * _ratios[iMotor];
+		_forceReal_B.y += _paramGen.infMat[1][iMotor] * _ratios[iMotor];
+		_forceReal_B.z += _paramGen.infMat[2][iMotor] * _ratios[iMotor];
+		_torqueReal_B.x += _paramGen.infMat[3][iMotor] * _ratios[iMotor];
+		_torqueReal_B.y += _paramGen.infMat[4][iMotor] * _ratios[iMotor];
+		_torqueReal_B.z += _paramGen.infMat[5][iMotor] * _ratios[iMotor];
 #ifdef DEBUG_PRINTF2
-		Serial.printf("%.3f ", _sqRatios[iMotor]);
+		Serial.printf("%.3f ", _ratios[iMotor]);
 #endif
 	}
 #ifdef DEBUG_PRINTF2
