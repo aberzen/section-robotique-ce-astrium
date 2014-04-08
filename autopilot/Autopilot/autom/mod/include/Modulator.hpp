@@ -116,7 +116,8 @@ Modulator<NB_MOTORS>::Modulator(
   _torqueReal_B(torqueReal_B),
   _forceReal_B(forceReal_B),
   _paramGen(param),
-  _pwm(pwm)
+  _pwm(pwm),
+  _state(E_STATE_DISARMED)
 {
 }
 
@@ -131,19 +132,6 @@ void Modulator<NB_MOTORS>::initialize()
 {
 	uint8_t iMotor;
 
-#ifdef DEBUG_PRINTF2
-		Serial.printf("infMat{%p}=[\n", (void*)&_paramGen.infMat);
-		for (int iDoF=0 ; iDoF<6 ; iDoF++)
-		{
-			Serial.printf("%.5f %.5f %.5f %.5f ;\n",
-					_paramGen.infMat[iDoF][0],
-					_paramGen.infMat[iDoF][1],
-					_paramGen.infMat[iDoF][2],
-					_paramGen.infMat[iDoF][3]);
-		}
-		Serial.printf("];\n");
-
-#endif
 	for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 	{
 		_out.channels[iMotor] = MIN_PULSEWIDTH;
@@ -214,10 +202,6 @@ void Modulator<NB_MOTORS>::updateRealTorsor()
 	_torqueReal_B(0.,0.,0.);
 	_forceReal_B(0.,0.,0.);
 
-#ifdef DEBUG_PRINTF2
-		Serial.printf("_ratios=");
-#endif
-
 	/* Compute the produced torsor */
 	for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 	{
@@ -227,14 +211,7 @@ void Modulator<NB_MOTORS>::updateRealTorsor()
 		_torqueReal_B.x += _paramGen.infMat[3][iMotor] * _ratios[iMotor];
 		_torqueReal_B.y += _paramGen.infMat[4][iMotor] * _ratios[iMotor];
 		_torqueReal_B.z += _paramGen.infMat[5][iMotor] * _ratios[iMotor];
-#ifdef DEBUG_PRINTF2
-		Serial.printf("%.3f ", _ratios[iMotor]);
-#endif
 	}
-#ifdef DEBUG_PRINTF2
-	Serial.printf("\n");
-#endif
-
 }
 
 } /* namespace autom */

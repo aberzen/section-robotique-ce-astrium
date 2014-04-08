@@ -94,7 +94,7 @@ void ModulatorPinv<NB_MOTORS>::updatePwm()
 	bool success = scaleLambda0();
 	if (success)
 	{
-		/* 3) Scale to have ratio inferior to 1. */
+		/* 3) Scale to have ratio inferior to MAX_PWM-MIN. */
 		success = scaleLambda1();
 	}
 
@@ -248,7 +248,8 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda0()
 template <int8_t NB_MOTORS>
 bool ModulatorPinv<NB_MOTORS>::scaleLambda1()
 {
-	/* 1) Use descent vector to force square of the ratio to be positive */
+	/* 1) Use descent vector to force square of the ratio to be smaller than the max acceptable value */
+	const float maxAcceptableValue = MAX_PULSEWIDTH - _paramPinv.pwmMinOffset;
 	float lbdRes = 0.;
 	float lbdPos = 0.;
 	float lbdNeg = 0.;
@@ -258,27 +259,27 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda1()
 	bool isLbdMin = false;
 	bool success = true;
 	int8_t iMotor;
-	float maxSqrtRatio = 1.;
+	float maxRatio = maxAcceptableValue;
 
 	for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 	{
-		if (_paramPinv.descVect[iMotor] == 0. && this->_ratios[iMotor]>1.)
+		if (_paramPinv.descVect[iMotor] == 0. && this->_ratios[iMotor]>maxAcceptableValue)
 		{
 			/* Not possible to force it to be inferior to 1 using lambda*/
 			/* Error: bad descent vector definition */
 			success = false;
 		}
-		else if (this->_ratios[iMotor] > 1.)
+		else if (this->_ratios[iMotor] > maxAcceptableValue)
 		{
 			if (_paramPinv.descVect[iMotor] > 0.)
 			{
 				/* Compute negative lambda */
-				lbdNeg = math_min(lbdNeg, (1. - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor]);
+				lbdNeg = math_min(lbdNeg, (maxAcceptableValue - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor]);
 			}
 			else if (_paramPinv.descVect[iMotor] < 0.)
 			{
 				/* Compute positive lambda */
-				lbdPos = math_max(lbdPos, (1. - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor]);
+				lbdPos = math_max(lbdPos, (maxAcceptableValue - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor]);
 			}
 		}
 		else
@@ -287,7 +288,7 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda1()
 			{
 				/* Define the smallest acceptable lambda */
 				if (isLbdMin)
-					lbdMin = math_max(lbdMin,- this->_ratios[iMotor] / _paramPinv.descVect[iMotor]);
+					lbdMin = math_max(lbdMin, - this->_ratios[iMotor] / _paramPinv.descVect[iMotor]);
 				else
 				{
 					lbdMin = - this->_ratios[iMotor] / _paramPinv.descVect[iMotor];
@@ -295,10 +296,10 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda1()
 				}
 				/* Define the greatest acceptable lambda */
 				if (isLbdMax)
-					lbdMax = math_min(lbdMax,(1.- this->_ratios[iMotor]) / _paramPinv.descVect[iMotor]);
+					lbdMax = math_min(lbdMax,(maxAcceptableValue - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor]);
 				else
 				{
-					lbdMax = (1. - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor];
+					lbdMax = (maxAcceptableValue - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor];
 					isLbdMax = true;
 				}
 			}
@@ -306,10 +307,10 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda1()
 			{
 				/* Define the smallest acceptable lambda */
 				if (isLbdMin)
-					lbdMin = math_max(lbdMin,(1. - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor]);
+					lbdMin = math_max(lbdMin,(maxAcceptableValue - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor]);
 				else
 				{
-					lbdMin = (1. - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor];
+					lbdMin = (maxAcceptableValue - this->_ratios[iMotor]) / _paramPinv.descVect[iMotor];
 					isLbdMin = true;
 				}
 				/* Define the greatest acceptable lambda */
@@ -375,7 +376,7 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda1()
 			}
 		}
 	}
-//	Serial.printf("mod_2: success = %d\n",success);
+
 	if (success)
 	{
 		/* There is a lambda */
@@ -386,18 +387,19 @@ bool ModulatorPinv<NB_MOTORS>::scaleLambda1()
 			if (this->_ratios[iMotor]<0)
 				this->_ratios[iMotor] = 0;
 
-			maxSqrtRatio = math_max(maxSqrtRatio, this->_ratios[iMotor]);
+			maxRatio = math_max(maxRatio, this->_ratios[iMotor]);
 		}
 
-		if (maxSqrtRatio > 1.)
+		if (maxRatio > maxAcceptableValue)
 		{
+			float tmp = maxAcceptableValue/maxRatio;
 			/* Scale down */
 			for (iMotor=0 ; iMotor<NB_MOTORS ; iMotor++)
 			{
-				this->_ratios[iMotor] /= maxSqrtRatio;
+				this->_ratios[iMotor] *= tmp;
 
-				if (this->_ratios[iMotor]>1.)
-					this->_ratios[iMotor] = 1.;
+				if (this->_ratios[iMotor]>maxAcceptableValue)
+					this->_ratios[iMotor] = maxAcceptableValue;
 
 			}
 
