@@ -17,7 +17,7 @@
 #include <autom/sm/include/GroundContactState.hpp>
 #include <autom/gimbal/include/GimbalMgt.hpp>
 #include <autom/radio/include/RadioChannel.hpp>
-#include <autom/ctrl/include/AttitudeController.hpp>
+#include <autom/ctrl/include/ControllerPid3Axes.hpp>
 #include <autom/mgt/include/ModeManagement.hpp>
 #include <autom/sm/include/FlyingState.hpp>
 #include <autom/sm/include/GlobalState.hpp>
@@ -43,6 +43,9 @@ public:
 		ModeManagement::Param modeMgt;
 		GimbalMgt::Param gimbal;
 		RadioChannel::Param radioChannel[PWM_OUT_NUM_CHANNELS];
+		DiscreteFilter<float, float, 2, 2>::Param filtX;
+		DiscreteFilter<float, float, 2, 2>::Param filtY;
+		DiscreteFilter<float, float, 2, 2>::Param filtZ;
 	} Param ;
 public:
 	Ancs(
@@ -87,13 +90,33 @@ public:
 	SimpleAttitudeKalmanFilter est;
 
 	/** @brief Attitude controller */
-	AttitudeController attCtrl;
+	ControllerPid3Axes attCtrl;
+
+	/** @brief Attitude control error */
+	math::Vector3f attCtrlError;
+
+	/** @brief First order phase advance filter for attitude control */
+	DiscreteFilter<float, float, 2, 2> filtX;
+	DiscreteFilter<float, float, 2, 2> filtY;
+	DiscreteFilter<float, float, 2, 2> filtZ;
+
+	/** @brief Rate control error */
+	math::Vector3f rateCtrlError;
+
+	/** @brief Demanded attitude */
+	math::Quaternion attDem_IB;
+
+	/** @brief Demanded rate */
+	math::Vector3f rateDem_B;
 
 	/** @brief Gimbal management */
 	GimbalMgt gimbal;
 
-	/** @brief Demanded attitude guidance */
-	autom::AttitudeController::Input attGuid;
+	/** @brief Demanded torque */
+	math::Vector3f torquePid_B;
+
+	/** @brief Demanded force */
+	math::Vector3f forcePid_B;
 
 	/** @brief Demanded torque */
 	math::Vector3f torque_B;

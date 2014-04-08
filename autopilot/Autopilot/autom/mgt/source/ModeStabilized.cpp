@@ -6,6 +6,7 @@
  */
 
 #include <autom/mgt/include/ModeStabilized.hpp>
+#include <autom/ctrl/include/AttitudeControlError.hpp>
 #include <system/system/include/System.hpp>
 
 
@@ -65,8 +66,8 @@ void ModeStabilized::initializeFromEstimations()
 	_prevInvNormRotZ = _rotZ.normalize(2, 1.);
 	_prevInvNormGuid = _prevInvNormRotZ;
 
-	system::System::system.ancs.attGuid.qDem_IB = system::System::system.ancs.estimations.attitude_IB;
-	system::System::system.ancs.attGuid.angRateDem_B = system::System::system.ancs.estimations.rate_B;
+	system::System::system.ancs.attDem_IB = system::System::system.ancs.estimations.attitude_IB;
+	system::System::system.ancs.rateDem_B = system::System::system.ancs.estimations.rate_B;
 }
 
 /** @brief Execute the process */
@@ -97,6 +98,17 @@ void ModeStabilized::executeOnGround()
 
 	/* Compute demanded force */
 	computeDemandedForce(thrust);
+
+	/* Update control errors and torque */
+	system::System::system.ancs.rateCtrlError(0., 0., 0.);
+	system::System::system.ancs.attCtrlError(0., 0., 0.);
+
+	/* Reset filter */
+	system::System::system.ancs.filtX.reset();
+	system::System::system.ancs.filtY.reset();
+	system::System::system.ancs.filtZ.reset();
+
+	system::System::system.ancs.torque_B(0., 0., 0.);
 }
 
 /** @brief Execute the process when flying */
@@ -107,11 +119,46 @@ void ModeStabilized::executeFlying()
 	/* Get commands */
 	computeCommandsFromRc(thrust, roll, pitch, yawRate);
 
-	/* Compute demanded attitude */
-	computeDemandedAttGuid(roll, pitch, yawRate);
-
 	/* Compute demanded force */
 	computeDemandedForce(thrust);
+
+	if (thrust != 0)
+	{
+		/* Compute demanded attitude */
+		computeDemandedAttGuid(roll, pitch, yawRate);
+
+		/* Compute control errors */
+		system::System::system.ancs.rateCtrlError = system::System::system.ancs.rateDem_B - system::System::system.ancs.estimations.rate_B;
+		AttitudeControlError::compControlError(system::System::system.ancs.attDem_IB, system::System::system.ancs.estimations.attitude_IB, system::System::system.ancs.attCtrlError);
+
+		/* Apply Controller */
+		system::System::system.ancs.attCtrl.compCommand(
+				system::System::system.ancs.attCtrlError,
+				system::System::system.ancs.rateCtrlError,
+				system::System::system.ancs.torquePid_B);
+
+		/* Apply filter */
+		system::System::system.ancs.torque_B.x = system::System::system.ancs.filtX.apply(system::System::system.ancs.torquePid_B.x);
+		system::System::system.ancs.torque_B.y = system::System::system.ancs.filtX.apply(system::System::system.ancs.torquePid_B.y);
+		system::System::system.ancs.torque_B.z = system::System::system.ancs.filtX.apply(system::System::system.ancs.torquePid_B.z);
+	}
+	else
+	{
+		/* Compute demanded attitude to minimize control errors */
+		initializeFromEstimations();
+
+		/* Update control errors and torque */
+		system::System::system.ancs.rateCtrlError(0., 0., 0.);
+		system::System::system.ancs.attCtrlError(0., 0., 0.);
+
+		/* Reset filter */
+		system::System::system.ancs.filtX.reset();
+		system::System::system.ancs.filtY.reset();
+		system::System::system.ancs.filtZ.reset();
+
+		system::System::system.ancs.torque_B(0., 0., 0.);
+
+	}
 }
 
 /** @brief Compute demanded attitude */
@@ -128,11 +175,11 @@ void ModeStabilized::computeDemandedAttGuid(float& roll, float& pitch, float& ya
 	_prevInvNormRotZ = _rotZ.normalize(1,_prevInvNormRotZ);
 
 	/* Compute commanded attitude */
-	system::System::system.ancs.attGuid.qDem_IB = _rotZ * dQSeat;
-	_prevInvNormGuid = system::System::system.ancs.attGuid.qDem_IB.normalize(1,_prevInvNormGuid);
+	system::System::system.ancs.attDem_IB(_rotZ * dQSeat);
+	_prevInvNormGuid = system::System::system.ancs.attDem_IB.normalize(1,_prevInvNormGuid);
 
 	/* Update acceleration and rate */
-	system::System::system.ancs.attGuid.angRateDem_B((roll-_angleRollPrev)/_dt, (pitch-_anglePitchPrev)/_dt, yawRate);
+	system::System::system.ancs.rateDem_B((roll-_angleRollPrev)/_dt, (pitch-_anglePitchPrev)/_dt, yawRate);
 	_angleRollPrev = roll;
 	_anglePitchPrev = pitch;
 }
@@ -159,23 +206,28 @@ void ModeStabilized::computeCommandsFromRc(float& thrust, float& roll, float& pi
 	if (system::System::system.ancs.smGroundContact.getState() == GroundContactState::E_STATE_FLYING)
 	{
 		rc[MODE_STABILIZED_RC_YAWRATE]->readChannel(pwm);
-		if (math_abs(tmp) > _param.deadzone)
+		if (tmp > _param.deadzone)
 		{
-			tmp = (float) (pwm * _param.yawRatePwmScale);
-			yawRate = ldexpf(tmp, _param.yawRatePwmScaleExp);
+			tmp -= _param.deadzone;
 		}
+		else if (tmp < -_param.deadzone)
+		{
+			tmp += _param.deadzone;
+		}
+		else
+		{
+			tmp = 0;
+		}
+		tmp = (float) (pwm * _param.yawRatePwmScale);
+		yawRate = ldexpf(tmp, _param.yawRatePwmScaleExp);
 	}
 
 	/* Compute thrust from user inputs */
 	rc[MODE_STABILIZED_RC_THRUST]->readChannel(pwm);
 	rc[MODE_STABILIZED_RC_THRUST]->getMin(limit);
-	pwm = math_max(0, pwm-limit);
-	thrust = 0.;
-	if (((uint16_t)pwm)>=_param.deadzone)
-	{
-		tmp = (float) (pwm * _param.thrustPwmScale);
-		thrust = ldexpf(tmp, _param.thrustPwmScaleExp);
-	}
+	pwm = math_max(0, pwm-limit-_param.deadzone);
+	tmp = (float) (pwm * _param.thrustPwmScale);
+	thrust = ldexpf(tmp, _param.thrustPwmScaleExp);
 }
 
 /** @brief Compute demanded force*/

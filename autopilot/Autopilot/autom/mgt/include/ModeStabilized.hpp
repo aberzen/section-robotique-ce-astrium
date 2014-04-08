@@ -29,7 +29,7 @@ public:
 		int8_t yawRatePwmScaleExp; /* Scale and exp (typically 11 and -13 to obtain +/-45deg/s of rate) */
 		int8_t thrustPwmScale; /* */
 		int8_t thrustPwmScaleExp; /* Scale and exp (typically 1 and -6 for [0 2g]) */
-		uint16_t deadzone;
+		int16_t deadzone;
 		float thrustDir_B_x;
 		float thrustDir_B_y;
 		float thrustDir_B_z;

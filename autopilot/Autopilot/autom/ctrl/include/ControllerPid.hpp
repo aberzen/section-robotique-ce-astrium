@@ -41,7 +41,7 @@ namespace autom {
  *
  */
 
-class ControllerPid : public infra::Process {
+class ControllerPid {
 public:
 	typedef struct
 	{
@@ -65,11 +65,6 @@ public:
 
 public:
 	ControllerPid(
-			/* Inputs */
-			const float& ctrlErr,
-			const float& derivCtrlErr,
-			/* Outputs */
-			float& out,
 			/* Parameters */
 			const float& dt,
 			const Param& param
@@ -90,19 +85,13 @@ public:
 	/** @brief Init the process */
 	virtual void initialize();
 
-	/** @brief Execute the process */
-	virtual void execute();
+	/** @brief Compute command */
+	virtual void compCommand(
+			const float& ctrlErr,
+			const float& derivCtrlErr,
+			float& command);
 
 protected:
-	/* @brief Control error */
-	const float& _ctrlErr;
-
-	/* @brief Derivative of the control error */
-	const float& _derivCtrlErr;
-
-	/* Outputs (torque, force, etc) */
-	float& _out;
-
 	/** @brief Integration period */
 	const float& _dt;
 
