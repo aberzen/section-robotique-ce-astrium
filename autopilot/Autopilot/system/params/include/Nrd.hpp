@@ -15,9 +15,9 @@
 
 #define PHYSICS_GRAVITY 		(9.81) 	/* [m/s^2] gravity acceleration norm */
 #define PHYSICS_MASS 			(1.600) /* [Kg] mass */
-#define PHYSICS_INERTIA_XX 		(0.024) /* [Kg.m^2] Diagonal inertia XX */
-#define PHYSICS_INERTIA_YY 		(0.024) /* [Kg.m^2] Diagonal inertia YY */
-#define PHYSICS_INERTIA_ZZ 		(0.096) /* [Kg.m^2] Diagonal inertia ZZ */
+#define PHYSICS_INERTIA_XX 		(0.0229623) /* [Kg.m^2] Diagonal inertia XX */
+#define PHYSICS_INERTIA_YY 		(0.0448513) /* [Kg.m^2] Diagonal inertia YY */
+#define PHYSICS_INERTIA_ZZ 		(0.0617154) /* [Kg.m^2] Diagonal inertia ZZ */
 
 /* **************************************************** */
 /* Hardware configuration */
@@ -40,8 +40,8 @@
 /* **************************************************** */
 /* Attitude controller: angular attitude with rate bias */
 
-#define CTRL_ATT_X_Kp		(3.7899281)
-#define CTRL_ATT_X_Kd		(0.4222301)
+#define CTRL_ATT_X_Kp		(2.9967466)
+#define CTRL_ATT_X_Kd		(0.3147850)
 #define CTRL_ATT_X_Ki		(0.)
 #define CTRL_ATT_X_maxI		(0.)
 #define CTRL_ATT_X_useOfRb	(false)
@@ -49,8 +49,8 @@
 #define CTRL_ATT_X_rbThd	(0.)
 #define CTRL_ATT_X_rb		(0.)
 
-#define CTRL_ATT_Y_Kp		(3.7899281)
-#define CTRL_ATT_Y_Kd		(0.4222301)
+#define CTRL_ATT_Y_Kp		(5.8534217)
+#define CTRL_ATT_Y_Kd		(0.6148567)
 #define CTRL_ATT_Y_Ki		(0.)
 #define CTRL_ATT_Y_maxI		(0.)
 #define CTRL_ATT_Y_useOfRb	(false)
@@ -58,14 +58,38 @@
 #define CTRL_ATT_Y_rbThd	(0.)
 #define CTRL_ATT_Y_rb		(0.)
 
-#define CTRL_ATT_Z_Kp		(0.9474820)
-#define CTRL_ATT_Z_Kd		(0.4222301)
+#define CTRL_ATT_Z_Kp		(0.2707139)
+#define CTRL_ATT_Z_Kd		(0.1809589)
 #define CTRL_ATT_Z_Ki		(0.)
 #define CTRL_ATT_Z_maxI		(0.)
 #define CTRL_ATT_Z_useOfRb	(false)
 #define CTRL_ATT_Z_Krb		(0.)
 #define CTRL_ATT_Z_rbThd	(0.)
 #define CTRL_ATT_Z_rb		(0.)
+
+/* **************************************************** */
+/* Filter: coeff for attitude filter */
+#define FLT_ATTX_NUM_0		(  2.4675687)
+#define FLT_ATTX_NUM_1		(- 1.4763531)
+#define FLT_ATTX_DEN_0		(  1.0000000)
+#define FLT_ATTX_DEN_1		(  0.1137254)
+#define FLT_ATTX_NUM		{FLT_ATTX_NUM_0, FLT_ATTX_NUM_1}
+#define FLT_ATTX_DEN		{FLT_ATTX_DEN_0, FLT_ATTX_DEN_1}
+
+#define FLT_ATTY_NUM_0		(  2.4675687)
+#define FLT_ATTY_NUM_1		(- 1.4763531)
+#define FLT_ATTY_DEN_0		(  1.0000000)
+#define FLT_ATTY_DEN_1		(  0.1137254)
+#define FLT_ATTY_NUM		{FLT_ATTY_NUM_0, FLT_ATTY_NUM_1}
+#define FLT_ATTY_DEN		{FLT_ATTY_DEN_0, FLT_ATTY_DEN_1}
+
+#define FLT_ATTZ_NUM_0		(  1.0000000)
+#define FLT_ATTZ_NUM_1		(  0.0000000)
+#define FLT_ATTZ_DEN_0		(  1.0000000)
+#define FLT_ATTZ_DEN_1		(  0.0000000)
+#define FLT_ATTZ_NUM		{FLT_ATTZ_NUM_0, FLT_ATTZ_NUM_1}
+#define FLT_ATTZ_DEN		{FLT_ATTZ_DEN_0, FLT_ATTZ_DEN_1}
+
 
 /* **************************************************** */
 /* Estimator: gain and other parameters for Kalman filter */
@@ -101,21 +125,21 @@
 /* **************************************************** */
 /* Radio Parameters                                     */
 
-#define RC_CH1_MIN	1100
-#define RC_CH1_MAX	1900
+#define RC_CH1_MIN	1050
+#define RC_CH1_MAX	1950
 #define RC_CH1_TRIM	1500
 
-#define RC_CH2_MIN	1100
-#define RC_CH2_MAX	1900
+#define RC_CH2_MIN	1050
+#define RC_CH2_MAX	1950
 #define RC_CH2_TRIM	1500
 
-#define RC_CH3_MIN	1094
-#define RC_CH3_MAX	1939
-#define RC_CH3_TRIM	1516
+#define RC_CH3_MIN	1050
+#define RC_CH3_MAX	1950
+#define RC_CH3_TRIM	1500
 
-#define RC_CH4_MIN	1112
-#define RC_CH4_MAX	1932
-#define RC_CH4_TRIM	1522
+#define RC_CH4_MIN	1050
+#define RC_CH4_MAX	1950
+#define RC_CH4_TRIM	1500
 
 #define RC_CH5_MIN	1100
 #define RC_CH5_MAX	1900
@@ -207,20 +231,20 @@
 
 #define MODULATOR_DESCVECT		{MODULATOR_DESCVECT_0, MODULATOR_DESCVECT_1, MODULATOR_DESCVECT_2, MODULATOR_DESCVECT_3}
 
-#define MODULATOR_PWMMINOFFSET	1100
+#define MODULATOR_PWMMINOFFSET	1000
 
 /* **************************************************** */
 /* Mode parameters: auto-stabilized */
 
-#define MODE_AUTOSTAB_SCALE_ROLLPWM			( 11)
-#define MODE_AUTOSTAB_SCALE_ROLLPWMEXP		(-13)
-#define MODE_AUTOSTAB_SCALE_PITCHPWM		( 11)
-#define MODE_AUTOSTAB_SCALE_PITCHPWMEXP		(-13)
-#define MODE_AUTOSTAB_SCALE_YAWRATEPWM		( 11)
-#define MODE_AUTOSTAB_SCALE_YAWRATEPWMEXP	(-13)
-#define MODE_AUTOSTAB_SCALE_THRUSTPWM		(  1)
-#define MODE_AUTOSTAB_SCALE_THRUSTPWMEXP	(- 6)
-#define MODE_AUTOSTAB_DEADZONE				( 10)
+#define MODE_AUTOSTAB_SCALE_ROLLPWM			(  11)
+#define MODE_AUTOSTAB_SCALE_ROLLPWMEXP		(- 13)
+#define MODE_AUTOSTAB_SCALE_PITCHPWM		(  11)
+#define MODE_AUTOSTAB_SCALE_PITCHPWMEXP		(- 13)
+#define MODE_AUTOSTAB_SCALE_YAWRATEPWM		(  11)
+#define MODE_AUTOSTAB_SCALE_YAWRATEPWMEXP	(- 13)
+#define MODE_AUTOSTAB_SCALE_THRUSTPWM		(   1)
+#define MODE_AUTOSTAB_SCALE_THRUSTPWMEXP	(-  6)
+#define MODE_AUTOSTAB_DEADZONE				( 150)
 #define MODE_AUTOSTAB_THRUSTDIR_B_X	(0.)
 #define MODE_AUTOSTAB_THRUSTDIR_B_Y	(0.)
 #define MODE_AUTOSTAB_THRUSTDIR_B_Z	(1.)
@@ -244,5 +268,5 @@
 /* **************************************************** */
 /* MAVLINK configuration */
 
-#define CONFIG_MAVLINK_EEPROMREV	(0x0005)
+#define CONFIG_MAVLINK_EEPROMREV	(0x0007)
 #endif /* NRD_H_ */

@@ -419,8 +419,8 @@ autom::Ancs::Param config_ancs = {
 		{ /* procGrdDetect */
 				PHYSICS_GRAVITY*PHYSICS_MASS*0.2588190, /* detectThd ==> gravity force projected on X (with 15deg of estimation error) */
 				PHYSICS_GRAVITY*PHYSICS_MASS*0.2588190, /* detectThd ==> gravity force projected on Y (with 15deg of estimation error)*/
-				PHYSICS_GRAVITY*PHYSICS_MASS*0.10, /* detectThd ==> 10% of gravity force */
-				20 /* filtDur */
+				PHYSICS_GRAVITY*PHYSICS_MASS*0.50, /* detectThd ==> 10% of gravity force */
+				10 /* filtDur */
 		}, /* procGrdDetect */
 		{ /* smFlying */
 				150, /* armingTimer [50Hz ticks] */
@@ -553,8 +553,19 @@ autom::Ancs::Param config_ancs = {
 				RC_CH8_TRIM, /* trim */
 				RC_CH8_MAX /* max */
 			} /* 8 */
-		} /* radioChannel */
-
+		}, /* radioChannel */
+		{ /* filtX */
+				FLT_ATTX_NUM, /* coeffNum[2] */
+				FLT_ATTX_DEN /* coeffDen[2] */
+		}, /* filtX */
+		{ /* filtY */
+				FLT_ATTY_NUM, /* coeffNum[2] */
+				FLT_ATTY_DEN /* coeffDen[2] */
+		}, /* filtY */
+		{ /* filtZ */
+				FLT_ATTZ_NUM, /* coeffNum[2] */
+				FLT_ATTZ_DEN /* coeffDen[2] */
+		} /* filtZ */
 };
 
 
