@@ -12,7 +12,7 @@
 
 #define SCHED_NB_FRAME			 2
 #define SCHED_FRAME0_NB_PROC	 9
-#define SCHED_FRAME1_NB_PROC	 9
+#define SCHED_FRAME1_NB_PROC	 8
 
 namespace autom {
 

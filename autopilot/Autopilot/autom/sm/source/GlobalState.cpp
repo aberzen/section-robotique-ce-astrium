@@ -5,6 +5,7 @@
  *      Author: Robotique
  */
 
+#include <hw/serial/include/FastSerial.hpp>
 #include <autom/sm/include/GlobalState.hpp>
 #include <system/system/include/System.hpp>
 
@@ -29,10 +30,9 @@ GlobalState::GlobalState()
 	_frame1Processes[2] = &system::System::system.board.baro;
 	_frame1Processes[3] = &system::System::system.board.gps;
 	_frame1Processes[4] = &system::System::system.ancs.est;
-	_frame1Processes[5] = &system::System::system.ancs.attCtrl;
-	_frame1Processes[6] = &system::System::system.ancs.modulator;
-	_frame1Processes[7] = &system::System::system.ancs.gimbal;
-	_frame1Processes[8] = &system::System::system.board.pwm;
+	_frame1Processes[5] = &system::System::system.ancs.modulator;
+	_frame1Processes[6] = &system::System::system.ancs.gimbal;
+	_frame1Processes[7] = &system::System::system.board.pwm;
 
 	/* Set frame 1 */
 	_frames[0].nb = SCHED_FRAME0_NB_PROC;
@@ -111,6 +111,7 @@ void GlobalState::processInitImu()
 	{
 		system::System::system.ancs.procCompDec.reset();
 		_state = E_STATE_INITIALIZING_COMPASS;
+		Serial.print("INITIALIZING_COMPASS\n");
 	}
 	else if (system::System::system.ancs.procImuCalib.getState() == ProcCalibGyroBias::E_PROCCALIBIMU_FAILED)
 	{
@@ -132,6 +133,7 @@ void GlobalState::processInitCompass()
 		system::System::system.ancs.smFlyingState.start();
 
 		_state = E_STATE_READY;
+		Serial.print("READY\n");
 	}
 }
 
