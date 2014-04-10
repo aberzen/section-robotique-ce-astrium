@@ -14,7 +14,7 @@
 #include <system/system/include/System.hpp>
 
 #include <gcs/include/SerialChannel.hpp>
-
+// test merge vincent
 board::Apm25::Param param = {
 	{ /* imu */
 		hw::HalImuMpu6000::E_GYR_CNF_500DPS, /* gyrCnf */
