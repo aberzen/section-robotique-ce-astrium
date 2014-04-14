@@ -5,7 +5,7 @@
  #endif
  
 +#ifdef __AVR_ATmega2560__
-+	#include <../portable/GCC/ATMega2560/portmacro.h>
++	#include <portable/GCC/ATMega2560/portmacro.h>
 +#endif
 +
  #ifdef IAR_MEGA_AVR
