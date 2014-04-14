@@ -46,4 +46,12 @@ patch < ../../../../FreeRTOS_patches/portable.h.patch
 Note that FreeRTOS is not expected to be part of the GIT repository.
 Never add FreeRTOS files to Git repository.
  
-  
+------------------------------------------------------------------------------------------------
+-- WinAVR 2010/01/10 or upper
+------------------------------------------------------------------------------------------------
+GCC, path and lib to be used for compiling the project
+
+------------------------------------------------------------------------------------------------
+-- Ardnuino 1.0.5 or upper
+------------------------------------------------------------------------------------------------
+AVR Dude from Ardnuino and arduconf
