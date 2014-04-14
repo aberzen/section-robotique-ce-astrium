@@ -5,6 +5,7 @@
  *      Author: Robotique
  */
 
+#include <math.h>
 #include <autom/mgt/include/ModeStabilized.hpp>
 #include <autom/ctrl/include/AttitudeControlError.hpp>
 #include <system/system/include/System.hpp>
