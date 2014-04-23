@@ -42,11 +42,24 @@ Apm25::Apm25(
 Apm25::~Apm25() {
 }
 
+#define USB_MUX_PIN 23
 /** @brief Init the process */
 void Apm25::initialize()
 {
 	/* Initialize Serial */
-	Serial.begin(115200);
+//	Serial.begin(115200);
+
+    // on the APM2 board we have a mux thet switches UART0 between
+    // USB and the board header. If the right ArduPPM firmware is
+    // installed we can detect if USB is connected using the
+    // USB_MUX_PIN
+    pinMode(USB_MUX_PIN, INPUT);
+
+    bool usb_connected = !digitalRead(USB_MUX_PIN);
+
+	Serial.begin(57600);
+
+	//Serial.printf("usb_connected = %d\n", usb_connected);
 
 	/* Disable magnetometer */
     pinMode(63, OUTPUT);
