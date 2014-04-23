@@ -10,6 +10,7 @@
 #include <math.h>
 #include <infra/include/CyclicTask.hpp>
 #include <autom/mgt/include/Ancs.hpp>
+#include <hw/Screen/include/Screen.hpp>
 
 namespace test {
 
@@ -29,6 +30,9 @@ public:
 
 protected:
 	virtual void runCycle(void);
+	hw::Screen myScreen;
+	uint16_t nbcycle,nbcycle1;//demo screen
+
 };
 
 } /* namespace test */
