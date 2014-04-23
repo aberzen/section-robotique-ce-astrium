@@ -5,7 +5,6 @@
  *      Author: Robotique
  */
 
-#include <hw/serial/include/FastSerial.hpp>
 #include <autom/sm/include/GlobalState.hpp>
 #include <system/system/include/System.hpp>
 
@@ -111,7 +110,6 @@ void GlobalState::processInitImu()
 	{
 		system::System::system.ancs.procCompDec.reset();
 		_state = E_STATE_INITIALIZING_COMPASS;
-		Serial.print("INITIALIZING_COMPASS\n");
 	}
 	else if (system::System::system.ancs.procImuCalib.getState() == ProcCalibGyroBias::E_PROCCALIBIMU_FAILED)
 	{
@@ -133,7 +131,6 @@ void GlobalState::processInitCompass()
 		system::System::system.ancs.smFlyingState.start();
 
 		_state = E_STATE_READY;
-		Serial.print("READY\n");
 	}
 }
 

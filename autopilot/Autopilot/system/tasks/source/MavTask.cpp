@@ -33,7 +33,7 @@ void MavTask::run(void)
 {
 	while(true)
 	{
-#if 0
+#if 1
 		/* Run mavlink */
 		system::System::system.getMavSvcMgr().execute();
 #endif
