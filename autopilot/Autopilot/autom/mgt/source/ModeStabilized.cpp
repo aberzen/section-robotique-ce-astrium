@@ -81,7 +81,8 @@ void ModeStabilized::execute()
 	else
 	{
 		/* On ground or similar */
-		executeOnGround();
+		executeFlying();
+//		executeOnGround();
 	}
 }
 
@@ -139,8 +140,8 @@ void ModeStabilized::executeFlying()
 
 		/* Apply filter */
 		system::System::system.ancs.torque_B.x = system::System::system.ancs.filtX.apply(system::System::system.ancs.torquePid_B.x);
-		system::System::system.ancs.torque_B.y = system::System::system.ancs.filtX.apply(system::System::system.ancs.torquePid_B.y);
-		system::System::system.ancs.torque_B.z = system::System::system.ancs.filtX.apply(system::System::system.ancs.torquePid_B.z);
+		system::System::system.ancs.torque_B.y = system::System::system.ancs.filtY.apply(system::System::system.ancs.torquePid_B.y);
+		system::System::system.ancs.torque_B.z = system::System::system.ancs.filtZ.apply(system::System::system.ancs.torquePid_B.z);
 	}
 	else
 	{
