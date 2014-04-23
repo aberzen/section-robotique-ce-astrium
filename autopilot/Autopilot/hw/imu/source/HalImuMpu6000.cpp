@@ -268,8 +268,8 @@ void HalImuMpu6000::initialize()
 //    // FS & DLPF   de-activate the filtering
 //    register_write(MPUREG_CONFIG, BITS_DLPF_CFG_256HZ_NOLPF2);
 
-	// FS & DLPF activate filtering at 98HZ
-	register_write(MPUREG_CONFIG, BITS_DLPF_CFG_98HZ);
+	// FS & DLPF activate filtering at 42HZ
+	register_write(MPUREG_CONFIG, BITS_DLPF_CFG_42HZ);
 
     // Sample rate (since no filter activated, the sampling rate is
     // 8kHz instead of 1kHz)
