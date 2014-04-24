@@ -5,7 +5,7 @@
  *      Author: Aberzen
  */
 
-#include <gcs/include/Channel.hpp>
+#include <gcs/channel/include/Channel.hpp>
 #include <protocol.h>
 
 namespace mavlink {

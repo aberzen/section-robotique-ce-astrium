@@ -10,7 +10,7 @@
 #include <avr/pgmspace.h>
 
 #include "../include/ParameterMgt.hpp"
-#include <gcs/include/Channel.hpp>
+#include <gcs/channel/include/Channel.hpp>
 
 #include <system/params/include/Nrd.hpp>
 

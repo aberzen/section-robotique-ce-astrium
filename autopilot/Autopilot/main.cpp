@@ -13,7 +13,7 @@
 #include <system/tasks/include/MavTask.hpp>
 #include <system/system/include/System.hpp>
 
-#include <gcs/include/SerialChannel.hpp>
+#include <gcs/channel/include/SerialChannel.hpp>
 board::Apm25::Param param = {
 	{ /* imu */
 		hw::HalImuMpu6000::E_GYR_CNF_500DPS, /* gyrCnf */

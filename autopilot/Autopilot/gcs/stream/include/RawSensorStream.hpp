@@ -8,7 +8,7 @@
 #ifndef RAWSENSORSTREAM_HPP_
 #define RAWSENSORSTREAM_HPP_
 
-#include <gcs/include/DataStream.hpp>
+#include <gcs/stream/include/DataStream.hpp>
 #include <math/include/Vector3.hpp>
 #include <board/gen/include/Board.hpp>
 

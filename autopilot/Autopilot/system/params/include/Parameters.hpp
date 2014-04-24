@@ -9,7 +9,7 @@
 #define PARAMETERS_HPP_
 
 #include <avr/pgmspace.h>
-#include <gcs/include/ParameterMgt.hpp>
+#include <gcs/param/include/ParameterMgt.hpp>
 #include <autom/mgt/include/Ancs.hpp>
 #include "Nrd.hpp"
 

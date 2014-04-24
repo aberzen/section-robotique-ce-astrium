@@ -9,8 +9,8 @@
 #define HOUSEKEEPINGMGT_HPP_
 
 #include <common/mavlink.h>
-#include "RawSensorStream.hpp"
-#include "EstimatorStream.hpp"
+#include <gcs/stream/include/RawSensorStream.hpp>
+#include <gcs/stream/include/EstimatorStream.hpp>
 
 namespace mavlink {
 

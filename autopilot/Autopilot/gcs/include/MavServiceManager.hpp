@@ -11,16 +11,16 @@
 #include <avr/pgmspace.h>
 
 #include <infra/app/include/Process.hpp>
-#include "Channel.hpp"
+#include <gcs/channel/include/Channel.hpp>
 
-#include "ModeMgt.hpp"
-#include "ParameterMgt.hpp"
-#include "WaypointMgt.hpp"
-#include "HouseKeepingMgt.hpp"
-#include "CommandMgt.hpp"
-#include "MountMgt.hpp"
-#include "FenceMgt.hpp"
-#include "DigivcamMgt.hpp"
+#include <gcs/param/include/ParameterMgt.hpp>
+#include <gcs/mission/include/ModeMgt.hpp>
+#include <gcs/mission/include/WaypointMgt.hpp>
+#include <gcs/hk/include/HouseKeepingMgt.hpp>
+#include <gcs/include/CommandMgt.hpp>
+#include <gcs/include/MountMgt.hpp>
+#include <gcs/include/FenceMgt.hpp>
+#include <gcs/include/DigivcamMgt.hpp>
 
 namespace mavlink {
 

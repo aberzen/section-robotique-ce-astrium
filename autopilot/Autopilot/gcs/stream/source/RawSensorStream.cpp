@@ -5,8 +5,8 @@
  *      Author: Aberzen
  */
 
-#include <gcs/include/Channel.hpp>
-#include "../include/RawSensorStream.hpp"
+#include <gcs/channel/include/Channel.hpp>
+#include <gcs/stream/include/RawSensorStream.hpp>
 #include <system/system/include/System.hpp>
 #include <Arduino.h>
 

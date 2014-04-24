@@ -6,7 +6,7 @@
  */
 
 #include <infra/include/Task.hpp>
-#include <gcs/include/Channel.hpp>
+#include <gcs/channel/include/Channel.hpp>
 #include "../include/EstimatorStream.hpp"
 #include <system/system/include/System.hpp>
 #include <Arduino.h>
