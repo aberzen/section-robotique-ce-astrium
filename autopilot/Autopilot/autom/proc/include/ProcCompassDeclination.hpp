@@ -32,6 +32,7 @@ public:
 
 	typedef struct
 	{
+		math::Vector3f magDir_I;
 		float invNrm;
 	} Output ;
 public:
@@ -81,6 +82,9 @@ protected:
 
 	/** @brief Filter (low pass) to estimate the declination (X axis) */
 	autom::DiscreteFilter<float, float, 2, 2> _filtX;
+
+	/** @brief Filter (low pass) to estimate the declination (Z axis) */
+	autom::DiscreteFilter<float, float, 2, 2> _filtZ;
 
 	/** @brief Count */
 	uint16_t _count;

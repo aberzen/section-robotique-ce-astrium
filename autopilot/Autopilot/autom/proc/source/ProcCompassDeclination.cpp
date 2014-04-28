@@ -21,6 +21,7 @@ ProcCompassDeclination::ProcCompassDeclination(
   _out(out),
   _param(param),
   _filtX(_param.filt),
+  _filtZ(_param.filt),
   _count(param.nbMeas)
 {
 }
@@ -35,6 +36,7 @@ void ProcCompassDeclination::start()
 	_state = E_STATE_INIT;
 	_count = _param.nbMeas;
 	_filtX.reset();
+	_filtZ.reset();
 }
 
 /** @brief Stop procedure */
@@ -61,18 +63,21 @@ void ProcCompassDeclination::onTick()
 		{
 			float X[2];
 			::math::Vector3f accoMeasDir_B = (_meas.imu.accoMeas_B - _est.imuAccoBias_B);
-//			Serial.printf("accoMeas_B=%.3f %.3f %.3f\n", _meas.imu.accoMeas_B.x, _meas.imu.accoMeas_B.y, _meas.imu.accoMeas_B.z);
-//			Serial.printf("imuAccoBias_B=%.3f %.3f %.3f\n", _est.imuAccoBias_B, _est.imuAccoBias_B, _est.imuAccoBias_B);
-//			Serial.printf("accoMeasDir_B=%.3f %.3f %.3f\n", accoMeasDir_B.x, accoMeasDir_B.y, accoMeasDir_B.z);
-			accoMeasDir_B.normalize(3,1./9.81);
-//			Serial.printf("accoMeasDir_B=%.3f %.3f %.3f\n", accoMeasDir_B.x, accoMeasDir_B.y, accoMeasDir_B.z);
+			accoMeasDir_B /= accoMeasDir_B.norm();
 			::math::Vector3f tmp = (accoMeasDir_B % (_meas.compass.magMeas_B % accoMeasDir_B));
-//			Serial.printf("magMeas_B=%.3f %.3f %.3f\n", _meas.compass.magMeas_B.x, _meas.compass.magMeas_B.y, _meas.compass.magMeas_B.z);
-//			Serial.printf("tmp=%.3f %.3f %.3f\n", tmp.x, tmp.y, tmp.z);
+
 			X[0] = tmp.norm();
 			X[1] = X[0];
-
+			_out.magDir_I.x = X[0];
 			_filtX.reset(X, X);
+
+			_out.magDir_I.y = 0.;
+
+			X[0] = _meas.compass.magMeas_B * accoMeasDir_B;
+			X[1] = X[0];
+			_out.magDir_I.z = X[0];
+			_filtZ.reset(X, X);
+
 			_count = _param.nbMeas;
 			_state = E_STATE_RUNNING;
 		}
@@ -80,43 +85,30 @@ void ProcCompassDeclination::onTick()
 	case E_STATE_RUNNING:
 		if (_meas.imu.isAvailable && _meas.compass.isAvailable)
 		{
-			float yaw = 0.;
-//			Serial.printf("filt=%.3f %.3f / %.3f %.3f\n",
-//					_param.filt.coeffNum[0],
-//					_param.filt.coeffNum[1],
-//					_param.filt.coeffDen[0],
-//					_param.filt.coeffDen[1]);
-
 			/* Only consider when both measurements are available */
 			::math::Vector3f accoMeasDir_B = (_meas.imu.accoMeas_B - _est.imuAccoBias_B);
-//			Serial.printf("accoMeasDir_B=%.3f %.3f %.3f\n", accoMeasDir_B.x, accoMeasDir_B.y, accoMeasDir_B.z);
-			accoMeasDir_B.normalize(3,1./9.81);
-//			Serial.printf("accoMeasDir_B=%.3f %.3f %.3f\n", accoMeasDir_B.x, accoMeasDir_B.y, accoMeasDir_B.z);
+			accoMeasDir_B /= accoMeasDir_B.norm();
+
 			::math::Vector3f tmp = (accoMeasDir_B % (_meas.compass.magMeas_B % accoMeasDir_B));
-//			Serial.printf("magMeas_B=%.3f %.3f %.3f\n", _meas.compass.magMeas_B.x, _meas.compass.magMeas_B.y, _meas.compass.magMeas_B.z);
-//			Serial.printf("tmp=%.3f %.3f %.3f\n", tmp.x, tmp.y, tmp.z);
-			_out.invNrm = 1./_filtX.apply(tmp.norm());
-//			Serial.printf("invNrm=%.3f\n",_out.invNrm);
-			tmp *= _out.invNrm;
-			::math::Vector3f x_I(1.,0.,0.);
-			yaw = atan2((tmp%x_I).norm(),tmp*x_I);
-//			Serial.printf("yaw=%.3f\n",yaw);
+			_out.magDir_I.x = _filtX.apply(tmp.norm());
+			_out.magDir_I.z = _filtZ.apply(_meas.compass.magMeas_B * accoMeasDir_B);
+
+			_out.invNrm = 1./_out.magDir_I.norm();
+			_out.magDir_I *= _out.invNrm;
+
 			if (_count != 0)
 			{
 				_count --;
 			}
 			else
 			{
-				/* Use yaw to initialize the attitude */
-				::math::Vector3f z(0.,0.,1.);
-				z *= sin(yaw*0.5);
-				_est.attitude_IB(cos(yaw*0.5),z);
-//				Serial.printf("q_IB=%.3f %.3f %.3f %.3f\n",
-//						_est.attitude_IB.scalar,
-//						_est.attitude_IB.vector.x,
-//						_est.attitude_IB.vector.y,
-//						_est.attitude_IB.vector.z
-//					);
+				/* Normalize */
+				math::Matrix3f dcm_IB;
+				dcm_IB.a = tmp / tmp.norm();
+				dcm_IB.c = accoMeasDir_B;
+				dcm_IB.b = dcm_IB.c % dcm_IB.a;
+
+				_est.attitude_IB.from_dcm(dcm_IB);
 
 				/* Procedure is over */
 				_state = E_STATE_ENDED;

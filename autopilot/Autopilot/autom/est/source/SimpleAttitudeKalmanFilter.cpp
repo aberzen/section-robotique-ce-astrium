@@ -87,11 +87,9 @@ infra::status SimpleAttitudeKalmanFilter::computeInnov()
 			}
 		    if (_meas.compass.isAvailable)
 		    {
-				::math::Vector3f x_I(1., 0., 0.);
-				::math::Vector3f x_B = _attitudePred_IB.rotateQconjVQ(x_I);
-				::math::Vector3f magDir_B = (acc_B % (_meas.compass.magMeas_B% acc_B));
-				_invNrmMagProjPrev = magDir_B.normalize(1,_invNrmMagProjPrev);
-				innovCompass_B = ((acc_B % (magDir_B % acc_B)) % x_B) * (0.5 * _param.gainCompass);
+				::math::Vector3f magDirTh_B = _attitudePred_IB.rotateQconjVQ(_param.declination.magDir_I);
+				::math::Vector3f magDir_B = _meas.compass.magMeas_B * _param.declination.invNrm;
+				innovCompass_B = (magDir_B % magDirTh_B) * (0.5 * _param.gainCompass);
 		    }
 		}
 	}
