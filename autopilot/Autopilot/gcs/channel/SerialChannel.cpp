@@ -5,30 +5,41 @@
  *      Author: Aberzen
  */
 
-#include "../include/SerialChannel.hpp"
+#include "SerialChannel.hpp"
+#include <mavlink_helpers.h>
 
 namespace mavlink {
 
-SerialChannel::SerialChannel(mavlink_channel_t chan, FastSerial& serial):
-	Channel(chan),
-	_serial(serial) {
+SerialChannel::SerialChannel(mavlink_channel_t chan, hw::Serial& serial)
+: Channel(chan),
+  _serial(serial)
+{
 }
+
 SerialChannel::~SerialChannel(){
 }
 
-bool SerialChannel::receiveMessage(mavlink_message_t* r_message) {
+bool SerialChannel::receiveMessage(mavlink_message_t** r_message) {
+	*r_message = NULL;
 	while(_serial.available())
 	{
-		if (this->parseChar((uint8_t)_serial.read(),r_message)) {
+		if (this->parseChar((uint8_t)_serial.read()))
+		{
+			*r_message = &_r_message;
 			return true;
 		}
 	}
 	return false;
 }
 
-void SerialChannel::sendChar(uint8_t ch) {
-	_serial.write(ch);
+bool SerialChannel::sendMessage(const uint8_t* buffer, size_t len)
+{
+	return len == _serial.write(buffer, len);
 }
 
+bool SerialChannel::canSend(size_t len)
+{
+	return (len<=_serial.freespace());
+}
 
 } /* namespace mavlink */

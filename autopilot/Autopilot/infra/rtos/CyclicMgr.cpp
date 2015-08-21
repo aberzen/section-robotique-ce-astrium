@@ -5,7 +5,7 @@
  *      Author: Aberzen
  */
 
-#include "../include/CyclicMgr.hpp"
+#include "CyclicMgr.hpp"
 
 namespace infra {
 

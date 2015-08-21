@@ -5,8 +5,8 @@
  *      Author: Aberzen
  */
 
-#include "../include/CyclicTask.hpp"
-#include "../include/CyclicMgr.hpp"
+#include "CyclicTask.hpp"
+#include "CyclicMgr.hpp"
 
 namespace infra {
 

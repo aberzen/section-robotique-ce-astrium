@@ -9,16 +9,16 @@
 #include <avr/eeprom.h>
 #include <avr/pgmspace.h>
 
-#include "../include/ParameterMgt.hpp"
-#include <gcs/include/Channel.hpp>
+#include "ParameterMgt.hpp"
+#include <gcs/channel/Channel.hpp>
 
-#include <system/params/include/Nrd.hpp>
+#include <system/params/Nrd.hpp>
 
 namespace mavlink {
 
 const uint16_t ParameterMgt::eepromRefRevision = CONFIG_MAVLINK_EEPROMREV;
 
-ParameterMgt::ParameterMgt(const ParamInfo* infos, uint8_t paramCount) :
+ParameterMgt::ParameterMgt(const ParamInfo* infos, uint16_t paramCount) :
 		infos(infos),
 		paramCount(paramCount)
 {
@@ -31,13 +31,13 @@ ParameterMgt::~ParameterMgt() {
 
 }
 
-bool ParameterMgt::read(uint8_t idx, Value& value)
+bool ParameterMgt::read(uint16_t idx, Value& value)
 {
 	/* Get type */
 	return getFullInfo(idx, NULL, NULL, NULL, &value);
 }
 
-bool ParameterMgt::write(uint8_t idx, const Value& value)
+bool ParameterMgt::write(uint16_t idx, const Value& value)
 {
 	enum MAV_PARAM_TYPE type;
 	void* currentValue;
@@ -54,7 +54,7 @@ bool ParameterMgt::write(uint8_t idx, const Value& value)
 }
 
 
-bool ParameterMgt::find(const char* name, uint8_t& idx)
+bool ParameterMgt::find(const char* name, uint16_t& idx)
 {
 	for(idx=0 ; idx<paramCount ; idx++)
 	{
@@ -69,7 +69,7 @@ bool ParameterMgt::find(const char* name, uint8_t& idx)
 	return false;
 }
 
-bool ParameterMgt::getFullInfo(uint8_t idx, enum MAV_PARAM_TYPE* type, char* name, void** currentValue, Value* eepromValue)
+bool ParameterMgt::getFullInfo(uint16_t idx, enum MAV_PARAM_TYPE* type, char* name, void** currentValue, Value* eepromValue)
 {
 	if (idx<paramCount)
 	{
@@ -94,7 +94,7 @@ bool ParameterMgt::getFullInfo(uint8_t idx, enum MAV_PARAM_TYPE* type, char* nam
 	return false;
 }
 
-bool ParameterMgt::save(uint8_t paramIdx, bool updateCrc)
+bool ParameterMgt::save(uint16_t paramIdx, bool updateCrc)
 {
 	const ParamInfo* info;
 	Value newEepromValue;
@@ -125,7 +125,7 @@ bool ParameterMgt::save(uint8_t paramIdx, bool updateCrc)
 	return false;
 }
 
-bool ParameterMgt::load(uint8_t paramIdx)
+bool ParameterMgt::load(uint16_t paramIdx)
 {
 	const ParamInfo* info;
 	Value eepromValue;
@@ -146,7 +146,7 @@ bool ParameterMgt::load(uint8_t paramIdx)
 	return false;
 }
 
-bool ParameterMgt::loadDefault(uint8_t paramIdx)
+bool ParameterMgt::loadDefault(uint16_t paramIdx)
 {
 	const ParamInfo* info;
 	Value defaultValue;
@@ -227,8 +227,8 @@ bool ParameterMgt::checkCrc()
 // Reset all parameters value stored into eeprom with the default value of the flash
 int16_t ParameterMgt::resetToDefaultValues()
 {
-	uint8_t paramIdx;
-	uint8_t succesCount=0;
+	uint16_t paramIdx;
+	uint16_t succesCount=0;
 	for (paramIdx=0 ; paramIdx < paramCount ; paramIdx++)
 	{
 		/* Load default value */
@@ -269,8 +269,8 @@ void ParameterMgt::resetHeader()
 // Load all values from eeprom
 int16_t ParameterMgt::loadAllValues()
 {
-	uint8_t paramIdx;
-	uint8_t succesCount=0;
+	uint16_t paramIdx;
+	uint16_t succesCount=0;
 	/* For each Parameter, load the value */
 	for (paramIdx=0 ; paramIdx < paramCount ; paramIdx++)
 	{
@@ -283,8 +283,8 @@ int16_t ParameterMgt::loadAllValues()
 // Save all values to eeprom
 int16_t ParameterMgt::saveAllValues()
 {
-	uint8_t paramIdx;
-	uint8_t succesCount=0;
+	uint16_t paramIdx;
+	uint16_t succesCount=0;
 	/* For each Parameter, load the value */
 	for (paramIdx=0 ; paramIdx < paramCount ; paramIdx++)
 	{

@@ -75,7 +75,10 @@ Changes from V2.6.0
 	  WinAVR.
 */
 
+//#define __AVR_LIBC_DEPRECATED_ENABLE__ 1
+
 #include <stdlib.h>
+#include <avr/io.h>
 #include <avr/interrupt.h>
 
 #include <FreeRTOS.h>
@@ -92,7 +95,7 @@ Changes from V2.6.0
 #ifdef USE_RTC_TIMER
 	#if defined(__AVR_ATmega640__) || defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 		#define __ATmegaxx0__
-		#define TIMER_COMPARE_SIG	SIG_OUTPUT_COMPARE2A
+		#define TIMER_COMPARE_SIG	TIMER2_COMPA_vect
 	#else
 		#define TIMER_COMPARE_SIG	SIG_OUTPUT_COMPARE0A
 	#endif
@@ -734,8 +737,8 @@ static void prvSetupTimerInterrupt( void )
 	 * the context is saved at the start of vPortYieldFromTick().  The tick
 	 * count is incremented after the context is saved.
 	 */
-	void SIG_OUTPUT_COMPARE2A( void ) __attribute__ ( ( signal, naked ) );
-	void SIG_OUTPUT_COMPARE2A( void )
+	void TIMER2_COMPA_vect( void ) __attribute__ ( ( signal, naked ) );
+	void TIMER2_COMPA_vect( void )
 	{
 		vPortYieldFromTick();
 		asm volatile ( "reti" );

@@ -5,8 +5,10 @@
  *      Author: Aberzen
  */
 
-#include <gcs/include/Channel.hpp>
-#include <protocol.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <gcs/channel/Channel.hpp>
+#include <ardupilotmega/mavlink.h>
 
 namespace mavlink {
 
@@ -40,19 +42,14 @@ mavlink_status_t* Channel::getStatus() {
 	return mavlink_get_channel_status(_chan);
 }
 
-uint8_t Channel::parseChar(uint8_t c, mavlink_message_t* r_message){
-	mavlink_status_t r_mavlink_status;
-	return mavlink_parse_char(this->_chan, c, r_message, &r_mavlink_status);
+uint8_t Channel::parseChar(uint8_t c)
+{
+	return mavlink_parse_char(this->_chan, c, &_r_message, &_r_mavlink_status);
 }
+
+
 
 
 
 } /* namespace mavlink */
 
-
-void comm_send_ch(mavlink_channel_t chan, uint8_t ch)
-{
-	mavlink::Channel* channel = mavlink::Channel::getChannel(chan);
-	if (channel != NULL)
-		channel->sendChar(ch);
-}
