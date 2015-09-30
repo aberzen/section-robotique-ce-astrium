@@ -26,7 +26,6 @@ extern float safe_asin(float v);
 extern float safe_sqrt(float v);
 
 extern float iter_invSqrt(float guess, int8_t nIter, const float& S);
-
 }
 
 #endif /* MATHUTILS_HPP_ */

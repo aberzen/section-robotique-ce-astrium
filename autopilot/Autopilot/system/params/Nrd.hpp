@@ -13,12 +13,15 @@
 
 #define SCALE_INFLUENCE_MATRIX  (10)
 #define SCALE_TORSOR            (10)
-#define SCALE_ATT_CTRL_GAIN     (15)
+#define SCALE_ATT_CTRL_GAIN     (10)
 
 #define CNF_PWM_NUM_FROM_DEVICE     (8)
 #define CNF_PWM_NUM_TO_DEVICE       (11)
 
 #define CNF_NB_MOTORS     (4)
+
+#define CNF_TIMER_ARM     (300)
+
 
 /* **************************************************** */
 /* Physics */
@@ -70,18 +73,17 @@
 #define EST_MAX_CONSECUTIVE_MISSING_MEAS_GPS (3)
 
 /* **************************************************** */
+/* Attitude Guidance */
+
+#define ATTITUDE_GUIDANCE_MODE_AUTOSTAB_PWM_SCALE_ROLL 		(0.0013090) /* rad/pwm */
+#define ATTITUDE_GUIDANCE_MODE_AUTOSTAB_PWM_SCALE_PITCH 	(0.0013090) /* rad/pwm */
+#define ATTITUDE_GUIDANCE_MODE_AUTOSTAB_PWM_SCALE_YAW	 	(0.0013090) /* rad/s/pwm */
+
+
+
+/* **************************************************** */
 /* MAVLINK configuration */
 
-#define CONFIG_MAVLINK_EEPROMREV	(0x200A)
-
-#include <avr/pgmspace.h>
-#include <gcs/param/ParameterMgt.hpp>
-
-namespace system {
-
-extern PROGMEM const mavlink::ParameterMgt::ParamInfo info[];
-extern uint16_t paramCount;
-
-}
+#define CONFIG_MAVLINK_EEPROMREV	(0x0011)
 
 #endif /* NRD_H_ */

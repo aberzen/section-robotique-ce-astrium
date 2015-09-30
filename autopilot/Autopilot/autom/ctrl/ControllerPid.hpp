@@ -44,12 +44,16 @@ template<typename T>
 class ControllerPid {
 
 public:
+	typedef struct {
+		T Kp;
+		T Kd;
+		T Ki;
+		T maxI;
+	} Parameter ;
+public:
 	ControllerPid(
 			/* Parameters */
-			const T& Kp,
-			const T& Kd,
-			const T& Ki,
-			const T& maxI);
+			const Parameter& param);
 	virtual ~ControllerPid();
 
 	/** @brief Init the process */
@@ -61,18 +65,11 @@ public:
 			const T& derivCtrlErr,
 			T& command);
 
-	inline void setParam(
-			const T& Kp,
-			const T& Kd,
-			const T& Ki,
-			const T& maxI);
+	inline void setParam(const Parameter& param);
 
 protected:
 	/** @brief Controller parameters */
-	const T& _Kp;
-	const T& _Kd;
-	const T& _Ki;
-	const T& _maxI;
+	const Parameter& _param;
 
 	/** @brief Previous control error (used for integral term computation) */
 	T _ctrlErrPrev;
@@ -83,28 +80,16 @@ protected:
 
 template <typename T>
 void ControllerPid<T>::setParam(
-		const T& Kp,
-		const T& Kd,
-		const T& Ki,
-		const T& maxI)
+		const Parameter& param)
 {
-	_Kp = Kp;
-	_Kd = Kd;
-	_Ki = Ki;
-	_maxI = maxI;
+	_param = param;
 }
 
 template<typename T>
 ControllerPid<T>::ControllerPid(
 		/* Parameters */
-		const T& Kp,
-		const T& Kd,
-		const T& Ki,
-		const T& maxI)
-: _Kp(Kp),
-  _Kd(Kd),
-  _Ki(Ki),
-  _maxI(maxI),
+		const Parameter& param)
+: _param(param),
   _ctrlErrPrev((T)0),
   _intCtrlErr((T)0)
 {
@@ -131,18 +116,16 @@ void ControllerPid<T>::computeCommand(
 {
 
 	/* 1) Compute integral term */
-	_intCtrlErr +=  ((ctrlErr+_ctrlErrPrev)>>1);
-	_ctrlErrPrev = ctrlErr;
+	_intCtrlErr +=  this->_param.Ki * ctrlErr;
 
 	/* 2) Saturation of integral term */
-	if (math_abs(_intCtrlErr)>this->_maxI){
-		_intCtrlErr  = math_sign(_intCtrlErr) * this->_maxI;
-	}
+	_intCtrlErr  = math_min(_intCtrlErr,  this->_param.maxI);
+	_intCtrlErr  = math_max(_intCtrlErr, -this->_param.maxI);
 
 	/* 3) Compute the command summing the different terms */
-	command = this->_Kp * ctrlErr
-			+ this->_Ki * this->_intCtrlErr
-			+ this->_Kd * derivCtrlErr;
+	command = _param.Kp * ctrlErr
+			+ _intCtrlErr
+			+ _param.Kd * derivCtrlErr;
 }
 
 } /* namespace autom */

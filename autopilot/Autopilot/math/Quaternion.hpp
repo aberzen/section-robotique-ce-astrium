@@ -63,7 +63,7 @@ public:
     Quaternion operator ~ () const;
 
     /** @brief Norm */
-    float norm();
+    float norm() const;
 
     /** @brief Normalize */
     float normalize(int8_t nIter = 3, float guess = 1.);

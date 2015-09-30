@@ -54,8 +54,12 @@ public:
 	hw::pwm_t pwm_inputs[CNF_PWM_NUM_FROM_DEVICE];
 	hw::pwm_t pwm_outputs[CNF_PWM_NUM_TO_DEVICE];
 
-	math::Vector3l ctrlErrAttB;
-	math::Vector3l ctrlErrRateB;
+	math::Quaternion ctrlAttAngErrB;
+	math::Vector3f ctrlAttRateErrB;
+	math::Vector3f ctrlNavPosErrI;
+	math::Vector3f ctrlNavVelErrI;
+	math::Vector3f ctrlFrcDemI;
+
 	math::Vector3l ctrlFrcDemB;
 	math::Vector3l ctrlTrqDemB;
 

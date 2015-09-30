@@ -16,21 +16,27 @@
 
 
 #define MODULATOR_MOTOR_MAX ((int32_t) (MAX_PULSEWIDTH - MIN_PULSEWIDTH))
+#define MODULATOR_AXIS_X (0)
+#define MODULATOR_AXIS_Y (1)
+#define MODULATOR_AXIS_Z (2)
+#define MODULATOR_AXIS_NB (3)
+
 
 namespace autom {
 
 class Modulator {
 public:
-	typedef int32_t InfluenceMatrix[6][CNF_NB_MOTORS];
+	typedef struct {
+		int32_t inflMat[CNF_NB_MOTORS][6];
+		int32_t frcMaxPos_B[MODULATOR_AXIS_NB];
+		int32_t frcMaxNeg_B[MODULATOR_AXIS_NB];
+		int32_t trqMaxPos_B[MODULATOR_AXIS_NB];
+		int32_t trqMaxNeg_B[MODULATOR_AXIS_NB];
+	} Parameter;
 
 public:
 
-	Modulator(
-			const InfluenceMatrix& inflMat,
-			const math::Vector3l& frcMaxPos_B,
-			const math::Vector3l& frcMaxNeg_B,
-			const math::Vector3l& trqMaxPos_B,
-			const math::Vector3l& trqMaxNeg_B);
+	Modulator(const Parameter& param);
 	virtual ~Modulator();
 
 	/** @brief Init the process */
@@ -57,19 +63,7 @@ protected:
 			hw::pwm_t command[CNF_NB_MOTORS]) = 0 ;
 
 	/** @brief Parameter */
-	const InfluenceMatrix& _inflMat;
-
-	/** @brief Max positive force */
-	const math::Vector3l& _frcMaxPos_B;
-
-	/** @brief Max negative force */
-	const math::Vector3l& _frcMaxNeg_B;
-
-	/** @brief Max positive torque */
-	const math::Vector3l& _trqMaxPos_B;
-
-	/** @brief Max negative torque */
-	const math::Vector3l& _trqMaxNeg_B;
+	const Parameter& _param;
 };
 
 } /* namespace autom */

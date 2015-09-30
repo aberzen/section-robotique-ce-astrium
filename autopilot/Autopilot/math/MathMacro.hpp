@@ -32,4 +32,13 @@
 #define math_sign(a) \
 	(((a)<0) ? (-1) : (1))
 
+/** @brief Check bounds */
+#define math_check_bounds(val, lb, ub) \
+	((lb<=val) && (val<=ub))
+
+/** @brief Saturate */
+#define math_saturate(val, lb, ub) \
+	(math_max(math_min(val,ub),lb))
+
+
 #endif /* MATHMACRO_HPP_ */

@@ -1136,7 +1136,7 @@ bool Gcs::sendHeartbeat()
 					mavlink_system.type,
 					MAV_AUTOPILOT_GENERIC,
 					mavlink_system.mode,
-					0,
+					mavlink_system.nav_mode,
 					mavlink_system.state);
 
 			result = true;

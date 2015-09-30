@@ -6,7 +6,7 @@
  */
 
 #include <Arduino.h>
-#include <autom/gimbal/GimbalMgt.hpp>
+#include "GimbalMgt.hpp"
 #include <hw/servo/Servo.hpp>
 
 extern hw::Servo gimbalPitch;

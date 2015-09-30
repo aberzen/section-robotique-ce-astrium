@@ -180,7 +180,9 @@ public:
     // uniform scaling
     Vector3<T> &operator *=(const T num)
     {
-    	x*=num; y*=num; z*=num;
+    	x*=num;
+    	y*=num;
+    	z*=num;
     	return *this;
     }
 

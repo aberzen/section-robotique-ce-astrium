@@ -11,55 +11,150 @@
 #include "System.hpp"
 
 #include <infra/rtos/Task.hpp>
+#include <system/params/NrdGen.hpp>
 
-#define PARAM(type, name, addr, defVal) { MAV_PARAM_TYPE_ ## type, name, addr, {type : defVal} }
+
+#define PARAM(type, name, addr, defVal) { MAV_PARAM_TYPE_##type, name, addr, {type : defVal} }
 #define USB_MUX_PIN 23
 
 
 namespace system {
 
-const autom::Modulator::InfluenceMatrix paramModInflMat = {
-	 {   0,       0,       0,       0,     },
-	 {   0,       0,       0,       0,     },
-	 {   6000,    6000,    6000,    6000,  },
-	 {   2546,  - 2546,    2546,  - 2546,  },
-	 { - 2546,    2546,    2546,  - 2546,  },
-	 {   600,     600,   - 600,   - 600,   }
+
+const autom::Modulator::Parameter paramMod = {
+		K_MOD_INFLMAT,
+		/* frcMaxPos_B */
+		K_MOD_FMAXPOS,
+		/* frcMaxNeg_B */
+		K_MOD_FMAXNEG,
+		/* trqMaxPos_B */
+		K_MOD_TMAXPOS,
+		/* trqMaxNeg_B */
+		K_MOD_TMAXNEG
 };
 
 #ifdef MODULATORPINV
 autom::ModulatorPinv::DescentVector paramModModDesc = {};
 autom::ModulatorPinv::PInvInflMat paramModModPInv = {};
 #else
-const autom::ModulatorLut::LutVectorFrc paramModLutFrc = {
-	    {{-0,      -0,      -0,      -0     },
-	    {  0,       0,       0,       0     }},
-	    {{-0,      -0,      -0,      -0     },
-	    {  0,       0,       0,       0     }},
-	    {{-0,      -0,      -0,      -0     },
-	    {  44,      44,      44,      44    }}
+const autom::ModulatorLut::Parameter paramModLut =
+{
+	/* lutTrq */
+	K_MOD_LUTTRQ,
+	/* lutFrc */
+	K_MOD_LUTFRC
 };
 
-const autom::ModulatorLut::LutVectorTrq paramModLutTrq = {
-	    {{-0,      -206,    -0,      -206   },
-	    {  206,     0,       206,     0     }},
-	    {{-206,    -0,      -0,      -206   },
-	    {  0,       206,     206,     0     }},
-	    {{-0,      -0,      -874,    -874   },
-	    {  874,     874,     0,       0     }}
-};
-//const uint8_t paramModScaleRequest = 10;
-//const uint8_t paramModScaleInflMat = 10;
-const math::Vector3l paramModFrcMaxPos_B( 0L, 0L, 28125L);
-const math::Vector3l paramModFrcMaxNeg_B( 0L, 0L, 0L);
-const math::Vector3l paramModTrqMaxPos_B( 5967L, 5967L, 1406L);
-const math::Vector3l paramModTrqMaxNeg_B(-5967L,-5967L,-1406L);
 #endif
 
-math::Vector3l attCtrlKp(0,0,0);
-math::Vector3l attCtrlKd(0,0,0);
-math::Vector3l attCtrlKi(0,0,0);
-math::Vector3l attCtrlIntMax(0,0,0);
+const attitude::AttitudeManager::Parameter attMgrParam =
+{
+		/* ctrl */
+		{
+				/* ctrl */
+				{
+						/* axes */
+						{
+								{
+										/* Kp */
+										K_ATTCTRL_KP_0,
+										/* Kd */
+										K_ATTCTRL_KD_0,
+										/* Ki; */
+										K_ATTCTRL_KI_0,
+										/* maxI */
+										K_ATTCTRL_MAXI_0
+								},
+								{
+										/* Kp */
+										K_ATTCTRL_KP_1,
+										/* Kd */
+										K_ATTCTRL_KD_1,
+										/* Ki; */
+										K_ATTCTRL_KI_1,
+										/* maxI */
+										K_ATTCTRL_MAXI_1
+								},
+								{
+										/* Kp */
+										K_ATTCTRL_KP_2,
+										/* Kd */
+										K_ATTCTRL_KD_2,
+										/* Ki; */
+										K_ATTCTRL_KI_2,
+										/* maxI */
+										K_ATTCTRL_MAXI_2
+								}
+						}
+				},
+				/* maxCosAngOverTwoErr */
+				K_ATTCTRL_MAXERRCOS,
+				/* maxSinAngOverTwoErr */
+				K_ATTCTRL_MAXERRSIN
+		}
+} ;
+
+const navigation::NavigationManager::Parameter navMgrParam =
+{
+		/* paramCtrl */
+		{
+				/* paramCtrl */
+				{
+						/* axes */
+						{
+								{
+										/* Kp */
+										K_NAVCTRL_KP_0,
+										/* Kd */
+										K_NAVCTRL_KD_0,
+										/* Ki; */
+										K_NAVCTRL_KI_0,
+										/* maxI */
+										K_NAVCTRL_MAXI_0
+								},
+								{
+										/* Kp */
+										K_NAVCTRL_KP_1,
+										/* Kd */
+										K_NAVCTRL_KD_1,
+										/* Ki; */
+										K_NAVCTRL_KI_1,
+										/* maxI */
+										K_NAVCTRL_MAXI_1
+								},
+								{
+										/* Kp */
+										K_NAVCTRL_KP_2,
+										/* Kd */
+										K_NAVCTRL_KD_2,
+										/* Ki; */
+										K_NAVCTRL_KI_2,
+										/* maxI */
+										K_NAVCTRL_MAXI_2
+								}
+						}
+				},
+				/* mass */
+				1.6,
+		},
+		/* paramDirectThrust */
+		{
+				/* unitThrust */
+				{0, 0, 1755546}
+		},
+} ;
+
+const hw::Radio::Parameter paramRadio =
+{
+		/* reversed */
+		{0},
+		/* pwmZero */
+		{(MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1, (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1, (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1, (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1, (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1, (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1, (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1, (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1},
+		/* pwmMin */
+		{MIN_PULSEWIDTH, MIN_PULSEWIDTH, MIN_PULSEWIDTH, MIN_PULSEWIDTH, MIN_PULSEWIDTH, MIN_PULSEWIDTH, MIN_PULSEWIDTH, MIN_PULSEWIDTH},
+		/* pwmMax */
+		{MAX_PULSEWIDTH, MAX_PULSEWIDTH, MAX_PULSEWIDTH, MAX_PULSEWIDTH, MAX_PULSEWIDTH, MAX_PULSEWIDTH, MAX_PULSEWIDTH, MAX_PULSEWIDTH}
+};
 
 /** @brief Handlers for COM0 interrupts */
 SerialHandler(0);
@@ -67,6 +162,7 @@ SerialHandler(0);
 
 System::System()
 : dataPool(),
+  _mode(E_SYS_MODE_NONE),
   _buffRx0(&_buffRx0_buffer[0], SERIAL0_RX_LEN),
   _buffTx0(&_buffTx0_buffer[0], SERIAL0_TX_LEN),
   _spiBus(),
@@ -80,6 +176,7 @@ System::System()
   _compass(_i2c),
   SerialPortConstParam(_com0, 0, _buffRx0, _buffTx0),
   _pwm(),
+  _radio(paramRadio),
   _paramMgt(info, paramCount),
   _mavChannel(MAVLINK_COMM_0,_com0),
   _gcs(MAVLINK_COMM_0),
@@ -87,18 +184,12 @@ System::System()
 #ifdef MODULATORPINV
 #else
   _modulator(
-			paramModInflMat,
-			paramModFrcMaxPos_B,
-			paramModFrcMaxNeg_B,
-			paramModTrqMaxPos_B,
-			paramModTrqMaxNeg_B,
-			paramModLutFrc,
-			paramModLutTrq),
+			paramMod,
+			paramModLut),
 #endif
-  _ctrl(attCtrlKp, attCtrlKd, attCtrlKi, attCtrlIntMax),
-  _motorArmed(false),
-  _navAuto(false)
-  /*_radio()*/
+  _attMgr(attMgrParam),
+  _navMgr(navMgrParam),
+  _timerArmMgt(0)
 {
 
 }
@@ -159,10 +250,6 @@ void System::initialize()
 
 	/* pwm */
 	_pwm.initialize();
-	for (uint8_t idx=0 ; idx<CNF_NB_MOTORS ; idx++)
-	{
-		_pwm.enable_out(idx);
-	}
 
 	/* Estimator */
 	_estimator.initialize();
@@ -172,9 +259,63 @@ void System::initialize()
 
 	/* GCS */
 	_gcs.initialize();
+
 }
 
 void System::execute()
+{
+	switch (_mode)
+	{
+	case E_SYS_MODE_INIT:
+		/* Execute init */
+		executeInitMode();
+		break;
+	case E_SYS_MODE_READY:
+		/* Execute ready */
+		executeReadyMode();
+		break;
+	case E_SYS_MODE_ARMED:
+		/* Execute ready */
+		executeArmedMode();
+		break;
+	case E_SYS_MODE_FAILSAFE:
+		/* Execute failsafe */
+		executeFailsafeMode();
+		break;
+	case E_SYS_MODE_NONE:
+	default:
+		/* Switch to init mode */
+		setMode(E_SYS_MODE_INIT);
+		break;
+	}
+}
+
+/** @brief Execute init mode */
+void System::executeInitMode()
+{
+	/* Process GCS new messages */
+	_gcs.processNewMessages();
+
+	/* Process sensors */
+	processRawSensors();
+
+	/* Post process sensors */
+	postProcessSensors();
+
+	/* Process estimation */
+	processEstimation();
+
+	/* Process GCS services */
+	_gcs.processServices();
+
+	/* Auto switch to ready */
+	_timerArmMgt++;
+	if (_timerArmMgt >= 1000)
+		setMode(E_SYS_MODE_READY);
+}
+
+/** @brief Execute ready mode */
+void System::executeReadyMode()
 {
 	/* Process GCS new messages */
 	_gcs.processNewMessages();
@@ -191,21 +332,198 @@ void System::execute()
 	/* Process estimation */
 	processEstimation();
 
-	/* Process guidance */
-	processGuidance();
+	/* Process actuator */
+	processActuators();
 
-	/* Process Attitude controller */
-	processAttitudeController();
+	/* Process GCS services */
+	_gcs.processServices();
 
-	/* Process Navigation controller */
-	processNavigationController();
+
+	/* Check if arm order is send */
+	bool verifCond = true;
+//	char message[50];
+//	sprintf(message,"%d %d %d %d",
+//			_radio.getSigned(RADIO_IDX_ROLL),
+//			_radio.getSigned(RADIO_IDX_PITCH),
+//			_radio.getUnsigned(RADIO_IDX_THRUST),
+//			_radio.getSigned(RADIO_IDX_YAW));
+//	mavlink_msg_statustext_send(MAVLINK_COMM_0, MAV_SEVERITY_INFO, message);
+	verifCond = verifCond && (math_abs(_radio.getSigned(RADIO_IDX_ROLL))<100);
+	verifCond = verifCond && (math_abs(_radio.getSigned(RADIO_IDX_PITCH))<100);
+	verifCond = verifCond && (_radio.getUnsigned(RADIO_IDX_THRUST)<100);
+	verifCond = verifCond && ((_radio.getSignedMaxVal(RADIO_IDX_YAW)-100)<=_radio.getSigned(RADIO_IDX_YAW));
+	// TODO add control mode verification (today only stabilized)
+
+	/* Timer management */
+	if (verifCond)
+		_timerArmMgt++;
+	else
+		_timerArmMgt = 0;
+
+	/* Check mode transition */
+	if (_timerArmMgt >= CNF_TIMER_ARM)
+		setMode(E_SYS_MODE_ARMED);
+
+}
+
+/** @brief Execute armed mode */
+void System::executeArmedMode()
+{
+	/* Process GCS new messages */
+	_gcs.processNewMessages();
+
+	/* Process sensors */
+	processRawSensors();
+
+	/* Process radio */
+	processRadio();
+
+	/* Post process sensors */
+	postProcessSensors();
+
+	/* Process estimation */
+	processEstimation();
+
+	/* Process Navigation */
+	processNavigation();
+
+	/* Process Attitude */
+	processAttitude();
 
 	/* Process actuator */
 	processActuators();
 
 	/* Process GCS services */
 	_gcs.processServices();
+
+
+	/* Check transitions conditions */
+	bool verifCond = true;
+//	char message[50];
+//	sprintf(message,"%d %d %d %d",
+//			_radio.getSigned(RADIO_IDX_ROLL),
+//			_radio.getSigned(RADIO_IDX_PITCH),
+//			_radio.getUnsigned(RADIO_IDX_THRUST),
+//			_radio.getSigned(RADIO_IDX_YAW));
+//	mavlink_msg_statustext_send(MAVLINK_COMM_0, MAV_SEVERITY_INFO, message);
+	verifCond = verifCond && (math_abs(_radio.getSigned(RADIO_IDX_ROLL))<100);
+	verifCond = verifCond && (math_abs(_radio.getSigned(RADIO_IDX_PITCH))<100);
+	verifCond = verifCond && (_radio.getUnsigned(RADIO_IDX_THRUST)<100);
+	verifCond = verifCond && (math_abs(_radio.getSigned(RADIO_IDX_YAW))<100);
+	// TODO add control mode verification (today only stabilized)
+
+	/* Timer management */
+	if (verifCond)
+		_timerArmMgt++;
+	else
+		_timerArmMgt = 0;
+
+	/* Check mode transition */
+	if (_timerArmMgt >= CNF_TIMER_ARM)
+	{
+		setMode(E_SYS_MODE_READY);
+	}
 }
+
+/** @brief Execute fail safe mode */
+void System::executeFailsafeMode()
+{
+
+}
+
+/** @Brief Set new mode */
+bool System::setMode(Mode mode)
+{
+	bool result = false;
+
+	/* Check with current mode */
+	if (_mode == mode)
+		return true;
+
+	switch (mode)
+	{
+	case E_SYS_MODE_INIT:
+		/* Switch to initialization */
+		result = switchToInitMode();
+		break;
+	case E_SYS_MODE_READY:
+		/* Switch to ready */
+		result = switchToReadyMode();
+		break;
+	case E_SYS_MODE_ARMED:
+		/* Switch to ready */
+		result = switchToArmedMode();
+		break;
+	case E_SYS_MODE_FAILSAFE:
+		/* Switch to failsafe */
+		result = switchToFailsafeMode();
+		break;
+	case E_SYS_MODE_NONE:
+	default:
+		/* Do nothing, invalid mode */
+		break;
+	}
+
+	/* If transition accepted, switch to mode */
+	if (result)
+		_mode = mode;
+
+	/* Return result */
+	return result;
+}
+
+
+/** @brief Switch to init mode */
+bool System::switchToInitMode()
+{
+	return true;
+}
+
+/** @brief Switch to ready mode */
+bool System::switchToReadyMode()
+{
+	/* reset counter */
+	_timerArmMgt = 0;
+
+	return true;
+}
+
+/** @brief Switch to armed mode */
+bool System::switchToArmedMode()
+{
+	bool result = true;
+
+	/* Switch the attitude and nav to demanded modes */
+	result &= _attMgr.getGuidanceManager().setMode(attitude::AttitudeGuidanceManager::E_MODE_AUTOSTAB_NOYAW);
+	result &= _navMgr.setMode(navigation::NavigationManager::E_NAV_MODE_DIRECTTHRUST);
+
+	if (result)
+	{
+		/* Arm motors */
+		armMotor();
+
+	}
+	/* reset counter */
+	_timerArmMgt = 0;
+
+	return result;
+}
+
+
+/** @brief Switch to fail safe mode */
+bool System::switchToFailsafeMode()
+{
+	/* Set commanded force and torque to zero */
+	dataPool.ctrlTrqDemB(0,0,0);
+	dataPool.ctrlFrcDemB(0,0,0);
+
+	/* Disarm motors */
+	disarmMotor();
+
+	return true;
+}
+
+
 
 /** @brief Process sensors (raw) */
 void System::processRawSensors()
@@ -234,7 +552,7 @@ void System::processRawSensors()
 /** @brief Process RC (raw) */
 void System::processRadio()
 {
-//	_pwm.read(&dataPool.pwm_inputs[0]);
+	_pwm.read(&dataPool.pwm_inputs[0]);
 }
 
 /** @brief Post process sensors */
@@ -267,27 +585,24 @@ void System::processEstimation()
 	_estimator.update();
 }
 
-/** @brief Process mode */
-void System::processGuidance()
-{
-
-}
-
 /** @brief Process actuators */
 void System::processActuators()
 {
-	if (_motorArmed)
+	if (_radio.getUnsigned(RADIO_IDX_THRUST) < 50)
+	{
+		/* Inhibit motors when radio thrust is set to zero */
+		for (uint8_t iMotor=0 ; iMotor<CNF_NB_MOTORS ; iMotor++)
+		{
+			dataPool.pwm_outputs[iMotor] = MIN_PULSEWIDTH;
+		}
+	}
+	else
 	{
 		/* Compute motor inputs */
 		_modulator.calcMotorCommand(
 				dataPool.ctrlFrcDemB,
 				dataPool.ctrlTrqDemB,
 				&dataPool.pwm_outputs[0]);
-	}
-	else
-	{
-		for (uint8_t iMotor=0 ; iMotor<CNF_NB_MOTORS ; iMotor++)
-			dataPool.pwm_outputs[iMotor] = MIN_PULSEWIDTH;
 	}
 
 	/* write PWM outputs */
@@ -301,33 +616,68 @@ void System::processActuators()
 }
 
 /** @brief Process attitude controller */
-void System::processAttitudeController()
+void System::processAttitude()
 {
-	if (_motorArmed)
-	{
-		_ctrl.computeTorque(
-				dataPool.guidAtt_IB,
-				dataPool.estAtt_IB,
-				dataPool.guidRate_B,
-				dataPool.estRate_B);
-	}
+	_attMgr.execute();
 }
 
 /** @brief Process navigation controller */
-void System::processNavigationController()
+void System::processNavigation()
 {
-	if (_motorArmed)
+	_navMgr.execute();
+}
+
+/** @brief Arm motors */
+void System::armMotor()
+{
+	/* Arm motors */
+	for (uint8_t idx=0 ; idx<CNF_NB_MOTORS ; idx++)
 	{
+		_pwm.enable_out(idx);
 	}
 }
 
-static int8_t test = 0;
+/** @brief Disarm motors */
+void System::disarmMotor()
+{
+	/* Set out values to min PWM values and disarm */
+	for (uint8_t iMotor=0 ; iMotor<CNF_NB_MOTORS ; iMotor++)
+	{
+		dataPool.pwm_outputs[iMotor] = MIN_PULSEWIDTH;
+		_pwm.write(iMotor, dataPool.pwm_outputs[iMotor]);
+		_pwm.disable_out(iMotor);
+	}
+}
 
 
-PROGMEM const mavlink::ParameterMgt::ParamInfo info[10] = {
-		PARAM(INT8,"TEST", &test, 10)
+PROGMEM const mavlink::ParameterMgt::ParamInfo info[] = {
+		PARAM(UINT16,"RD_MIN_0", (void*)&paramRadio.pwmMin[0], MIN_PULSEWIDTH),
+		PARAM(UINT16,"RD_MIN_1", (void*)&paramRadio.pwmMin[1], MIN_PULSEWIDTH),
+		PARAM(UINT16,"RD_MIN_2", (void*)&paramRadio.pwmMin[2], MIN_PULSEWIDTH),
+		PARAM(UINT16,"RD_MIN_3", (void*)&paramRadio.pwmMin[3], MIN_PULSEWIDTH),
+		PARAM(UINT16,"RD_MIN_4", (void*)&paramRadio.pwmMin[4], MIN_PULSEWIDTH),
+		PARAM(UINT16,"RD_MIN_5", (void*)&paramRadio.pwmMin[5], MIN_PULSEWIDTH),
+		PARAM(UINT16,"RD_MIN_6", (void*)&paramRadio.pwmMin[6], MIN_PULSEWIDTH),
+		PARAM(UINT16,"RD_MIN_7", (void*)&paramRadio.pwmMin[7], MIN_PULSEWIDTH),
+		PARAM(UINT16,"RD_MAX_0", (void*)&paramRadio.pwmMax[0], MAX_PULSEWIDTH),
+		PARAM(UINT16,"RD_MAX_1", (void*)&paramRadio.pwmMax[1], MAX_PULSEWIDTH),
+		PARAM(UINT16,"RD_MAX_2", (void*)&paramRadio.pwmMax[2], MAX_PULSEWIDTH),
+		PARAM(UINT16,"RD_MAX_3", (void*)&paramRadio.pwmMax[3], MAX_PULSEWIDTH),
+		PARAM(UINT16,"RD_MAX_4", (void*)&paramRadio.pwmMax[4], MAX_PULSEWIDTH),
+		PARAM(UINT16,"RD_MAX_5", (void*)&paramRadio.pwmMax[5], MAX_PULSEWIDTH),
+		PARAM(UINT16,"RD_MAX_6", (void*)&paramRadio.pwmMax[6], MAX_PULSEWIDTH),
+		PARAM(UINT16,"RD_MAX_7", (void*)&paramRadio.pwmMax[7], MAX_PULSEWIDTH),
+		PARAM(UINT16,"RD_ZERO_0", (void*)&paramRadio.pwmZero[0], (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1),
+		PARAM(UINT16,"RD_ZERO_1", (void*)&paramRadio.pwmZero[1], (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1),
+		PARAM(UINT16,"RD_ZERO_2", (void*)&paramRadio.pwmZero[2], (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1),
+		PARAM(UINT16,"RD_ZERO_3", (void*)&paramRadio.pwmZero[3], (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1),
+		PARAM(UINT16,"RD_ZERO_4", (void*)&paramRadio.pwmZero[4], (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1),
+		PARAM(UINT16,"RD_ZERO_5", (void*)&paramRadio.pwmZero[5], (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1),
+		PARAM(UINT16,"RD_ZERO_6", (void*)&paramRadio.pwmZero[6], (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1),
+		PARAM(UINT16,"RD_ZERO_7", (void*)&paramRadio.pwmZero[7], (MAX_PULSEWIDTH+MIN_PULSEWIDTH)>>1),
+		PARAM(UINT16,"RD_REVERS", (void*)&paramRadio.reversed, 0)
 };
-uint16_t paramCount = 1;
+uint16_t paramCount = 25;
 
 
 System system = System();

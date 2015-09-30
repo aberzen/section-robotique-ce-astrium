@@ -16,22 +16,19 @@ namespace autom {
 template <typename T>
 class ControllerPid3Axes {
 public:
+	typedef struct {
+		typename ControllerPid<T>::Parameter axes[3];
+	} Parameter ;
+public:
 	ControllerPid3Axes(
-			const math::Vector3<T>& Kp,
-			const math::Vector3<T>& Kd,
-			const math::Vector3<T>& Ki,
-			const math::Vector3<T>& maxI) ;
+			const Parameter& param) ;
 	virtual ~ControllerPid3Axes();
 
 	/** @brief Init the process */
 	virtual void initialize();
 
 	/** @brief Setter method of controller parameters */
-	inline void setParam(
-			const math::Vector3<T>& Kp,
-			const math::Vector3<T>& Kd,
-			const math::Vector3<T>& Ki,
-			const math::Vector3<T>& maxI);
+	inline void setParam(const Parameter& param);
 
 	/** @brief Compute the command */
 	virtual void computeCommand(
@@ -53,27 +50,11 @@ protected:
 
 /** @brief Setter method of controller parameters */
 template <typename T>
-void ControllerPid3Axes<T>::setParam(
-		const math::Vector3<T>& Kp,
-		const math::Vector3<T>& Kd,
-		const math::Vector3<T>& Ki,
-		const math::Vector3<T>& maxI)
+void ControllerPid3Axes<T>::setParam(const Parameter& param)
 {
-	_ctrl_x.setParam(
-			Kp.x,
-			Kd.x,
-			Ki.x,
-			maxI.x);
-	_ctrl_y.setParam(
-			Kp.y,
-			Kd.y,
-			Ki.y,
-			maxI.y);
-	_ctrl_z.setParam(
-			Kp.z,
-			Kd.z,
-			Ki.z,
-			maxI.z);
+	_ctrl_x.setParam(param.axes[0]);
+	_ctrl_y.setParam(param.axes[1]);
+	_ctrl_z.setParam(param.axes[2]);
 }
 
 /**
@@ -87,25 +68,10 @@ void ControllerPid3Axes<T>::setParam(
 template <typename T>
 ControllerPid3Axes<T>::ControllerPid3Axes (
 		/* Parameters */
-		const math::Vector3<T>& Kp,
-		const math::Vector3<T>& Kd,
-		const math::Vector3<T>& Ki,
-		const math::Vector3<T>& maxI)
-: _ctrl_x(
-		Kp.x,
-		Kd.x,
-		Ki.x,
-		maxI.x),
-  _ctrl_y(
-		Kp.y,
-		Kd.y,
-		Ki.y,
-		maxI.y),
-  _ctrl_z(
-		Kp.z,
-		Kd.z,
-		Ki.z,
-		maxI.z)
+		const ControllerPid3Axes<T>::Parameter& param)
+: _ctrl_x(param.axes[0]),
+  _ctrl_y(param.axes[1]),
+  _ctrl_z(param.axes[2])
 {
 } ;
 

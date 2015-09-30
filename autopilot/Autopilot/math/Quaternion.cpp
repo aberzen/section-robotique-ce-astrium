@@ -250,7 +250,7 @@ Quaternion Quaternion::operator ~ () const
 }
 
 /** @brief Norm */
-float Quaternion::norm()
+float Quaternion::norm() const
 {
 	return sqrt(scalar*scalar+vector*vector);
 }

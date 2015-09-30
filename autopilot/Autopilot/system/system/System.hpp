@@ -8,6 +8,7 @@
 #ifndef SYSTEM_HPP_
 #define SYSTEM_HPP_
 
+#include <avr/pgmspace.h>
 
 #include <gcs/channel/SerialChannel.hpp>
 
@@ -20,25 +21,27 @@
 #include <hw/serial/Serial.hpp>
 #include <hw/pwm/PwmApm25.hpp>
 
+#include <hw/radio/Radio.hpp>
+
 #include <system/params/Nrd.hpp>
 
 #include <gcs/gcs/Gcs.hpp>
 #include <gcs/channel/SerialChannel.hpp>
 #include <gcs/param/ParameterMgt.hpp>
 
-#include <autom/ctrl/AttitudeController.hpp>
 #include <autom/est/SimpleAttitudeKalmanFilter.hpp>
 #ifdef MODULATORPINV
 #include <autom/mod/ModulatorPinv.hpp>
 #else
 #include <autom/mod/ModulatorLut.hpp>
 #endif
-#include <autom/radio/RadioChannel.hpp>
+#include <att/mgt/AttitudeManager.hpp>
+#include <nav/mgt/NavigationManager.hpp>
 
 #include <system/system/DataPool.hpp>
 
 #ifndef SERIAL0_RX_LEN
-#define SERIAL0_RX_LEN (128)
+#define SERIAL0_RX_LEN (256)
 #endif
 
 #ifndef SERIAL0_TX_LEN
@@ -50,6 +53,16 @@ namespace system {
 
 class System
 {
+public:
+	typedef enum
+	{
+		E_SYS_MODE_NONE = 0,
+		E_SYS_MODE_INIT,
+		E_SYS_MODE_READY,
+		E_SYS_MODE_ARMED,
+		E_SYS_MODE_FAILSAFE
+	} Mode;
+
 public:
 	/** @brief Default constructor */
 	System();
@@ -63,7 +76,42 @@ public:
 	/** @Brief Execute the system */
 	void execute();
 
+	/* ----- States ----------------------------------- */
+public:
+
+	/** @Brief Getter for current mode */
+	inline Mode getMode();
+
+	/** @Brief Set new mode */
+	bool setMode(Mode mode);
+
+protected:
+	/** @brief Execute init mode */
+	void executeInitMode();
+
+	/** @brief Execute ready mode */
+	void executeReadyMode();
+
+	/** @brief Execute armed mode */
+	void executeArmedMode();
+
+	/** @brief Execute fail safe mode */
+	void executeFailsafeMode();
+
+	/** @brief Switch to init mode */
+	bool switchToInitMode();
+
+	/** @brief Switch to armed mode */
+	bool switchToArmedMode();
+
+	/** @brief Switch to ready mode */
+	bool switchToReadyMode();
+
+	/** @brief Switch to fail safe mode */
+	bool switchToFailsafeMode();
+
 	/* ----- Hardware ----------------------------------- */
+public:
 
 	/** @brief Getter method for SPI bus object */
 	inline hw::SpiBus& getSpiBus();
@@ -91,17 +139,23 @@ public:
 	/** @brief Getter method for Modulator Service */
 	inline autom::Modulator& getModulator();
 
-	/* ----- States ----------------------------------- */
+	/** @brief Getter method for radio service */
+	inline hw::Radio& getRadio();
+
+
+	/* ----- Motors ----------------------------------- */
+protected:
 
 	/** @brief Arm motors */
-	inline void armMotor();
+	void armMotor();
 
 	/** @brief Disarm motors */
-	inline void disarmMotor();
+	void disarmMotor();
 
 
-
+	/* ----- Others ----------------------------------- */
 protected:
+
 	/** @brief Process sensors (raw) */
 	void processRawSensors();
 
@@ -114,14 +168,11 @@ protected:
 	/** @brief Process estimation */
 	void processEstimation();
 
-	/** @brief Process guidance */
-	void processGuidance();
+	/** @brief Process attitude */
+	void processAttitude();
 
-	/** @brief Process attitude controller */
-	void processAttitudeController();
-
-	/** @brief Process navigation controller */
-	void processNavigationController();
+	/** @brief Process navigation*/
+	void processNavigation();
 
 	/** @brief Process actuators */
 	void processActuators();
@@ -132,6 +183,8 @@ public:
 	DataPool dataPool;
 
 protected:
+	/** @brief Current mode */
+	Mode _mode;
 
 	/** @brief Raw buffer for RX0 circular buffer */
 	uint8_t _buffRx0_buffer[SERIAL0_RX_LEN];
@@ -166,6 +219,9 @@ protected:
 	/** @brief PWM */
 	hw::PwmApm25 _pwm;
 
+	/** @Radio */
+	hw::Radio _radio;
+
 	/** @brief Parameter Management object */
 	mavlink::ParameterMgt _paramMgt;
 
@@ -181,15 +237,14 @@ protected:
 	/** @brief Modulator */
 	autom::ModulatorLut _modulator;
 
-	/** @brief Attitude controller */
-	autom::AttitudeController _ctrl;
+	/** @brief Attitude Manager */
+	attitude::AttitudeManager _attMgr;
 
-	/** @brief Is motor armed */
-	bool _motorArmed;
+	/** @brief Navigation Manager */
+	navigation::NavigationManager _navMgr;
 
-	/** @brief Is autonomous navigation */
-	bool _navAuto;
-
+	/** @brief arm/disarm timer */
+	uint16_t _timerArmMgt;
 };
 
 hw::Serial& System::getCom0()
@@ -233,19 +288,23 @@ autom::Modulator& System::getModulator()
 	return _modulator;
 }
 
-/** @brief Arm motors */
-void System::armMotor()
+/** @brief Getter method for radio service */
+hw::Radio& System::getRadio()
 {
-	_motorArmed = true;
+	return _radio;
 }
 
-/** @brief Disarm motors */
-void System::disarmMotor()
+/** @Brief Getter for current mode */
+System::Mode System::getMode()
 {
-	_motorArmed = false;
+	return _mode;
 }
+
 
 extern System system;
+extern PROGMEM const mavlink::ParameterMgt::ParamInfo info[];
+extern uint16_t paramCount;
+
 
 } /* namespace system */
 
