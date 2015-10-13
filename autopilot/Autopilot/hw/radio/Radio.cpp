@@ -17,38 +17,38 @@ Radio::Radio(const Parameter& param)
 }
 
 
-int16_t Radio::getSigned(uint8_t iChannel)
+int16_t Radio::getSigned(Channel channel)
 {
-	if (iChannel>=CNF_PWM_NUM_FROM_DEVICE)
+	if (channel>=CNF_PWM_NUM_FROM_DEVICE)
 		return 0;
 
 	uint16_t tmp = math_min(
 			math_max(
-					system::system.dataPool.pwm_inputs[iChannel],
-					_param.pwmMin[iChannel]),
-			_param.pwmMax[iChannel]);
+					system::system.dataPool.pwm_inputs[channel],
+					_param.pwmMin[channel]),
+			_param.pwmMax[channel]);
 
-	if (isReversed(iChannel))
-		return (int16_t) (_param.pwmZero[iChannel]-tmp);
+	if (isReversed(channel))
+		return (int16_t) (_param.pwmZero[channel]-tmp);
 	else
-		return (int16_t) (tmp-_param.pwmZero[iChannel]);
+		return (int16_t) (tmp-_param.pwmZero[channel]);
 }
 
-uint16_t Radio::getUnsigned(uint8_t iChannel)
+uint16_t Radio::getUnsigned(Channel channel)
 {
-	if (iChannel>=CNF_PWM_NUM_FROM_DEVICE)
+	if (channel>=CNF_PWM_NUM_FROM_DEVICE)
 		return 0;
 
 	uint16_t tmp = math_min(
 			math_max(
-					system::system.dataPool.pwm_inputs[iChannel],
-					_param.pwmMin[iChannel]),
-			_param.pwmMax[iChannel]);
+					system::system.dataPool.pwm_inputs[channel],
+					_param.pwmMin[channel]),
+			_param.pwmMax[channel]);
 
-	if (isReversed(iChannel))
-		return (_param.pwmMax[iChannel]-tmp);
+	if (isReversed(channel))
+		return (_param.pwmMax[channel]-tmp);
 	else
-		return (tmp-_param.pwmMin[iChannel]);
+		return (tmp-_param.pwmMin[channel]);
 }
 
 
@@ -56,5 +56,35 @@ uint16_t Radio::getUnsigned(uint8_t iChannel)
 Radio::~Radio() {
 	// TODO Auto-generated destructor stub
 }
+
+bool Radio::isReversed(uint8_t idx)
+{
+	uint8_t idx2 = idx>>4;
+	uint8_t idx3 = idx - (idx2<<4);
+	return ((_param.reversed[idx2] & (1<<idx3)) != 0);
+}
+
+int16_t Radio::getSignedMaxVal(Channel channel)
+{
+	if (channel < CNF_PWM_NUM_FROM_DEVICE)
+		return _param.pwmMax[channel]-_param.pwmZero[channel];
+
+	return 0;
+}
+int16_t Radio::getSignedMinVal(Channel channel)
+{
+	if (channel < CNF_PWM_NUM_FROM_DEVICE)
+		return _param.pwmMin[channel]-_param.pwmZero[channel];
+
+	return 0;
+}
+uint16_t Radio::getUnsignedMaxVal(Channel channel)
+{
+	if (channel < CNF_PWM_NUM_FROM_DEVICE)
+		return (_param.pwmMax[channel]-_param.pwmMin[channel]);
+
+	return 0;
+}
+
 
 } /* namespace hw */

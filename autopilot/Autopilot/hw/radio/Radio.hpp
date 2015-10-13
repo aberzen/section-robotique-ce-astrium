@@ -11,15 +11,6 @@
 #include <stdint.h>
 #include <system/params/Nrd.hpp>
 
-#define RADIO_IDX_ROLL   	(0)
-#define RADIO_IDX_PITCH  	(1)
-#define RADIO_IDX_THRUST 	(2)
-#define RADIO_IDX_YAW    	(3)
-#define RADIO_IDX_OPT0	   	(4)
-#define RADIO_IDX_OPT1 	  	(5)
-#define RADIO_IDX_OPT2 	  	(6)
-#define RADIO_IDX_OPT3   	(7)
-
 namespace hw {
 
 class Radio {
@@ -32,52 +23,35 @@ public:
 		uint16_t pwmMax[CNF_PWM_NUM_FROM_DEVICE];
 	} Parameter ;
 
+	typedef enum
+	{
+		E_RADIO_CHANNEL_ROLL = 0,
+		E_RADIO_CHANNEL_PITCH,
+		E_RADIO_CHANNEL_THRUST,
+		E_RADIO_CHANNEL_YAW,
+		E_RADIO_CHANNEL_OPT0,
+		E_RADIO_CHANNEL_OPT1,
+		E_RADIO_CHANNEL_OPT2,
+		E_RADIO_CHANNEL_OPT3
+	} Channel;
+
 public:
 	Radio(const Parameter& param);
 	virtual ~Radio();
 
-	int16_t getSigned(uint8_t iChannel);
-	inline int16_t getSignedMaxVal(uint8_t iChannel);
-	inline int16_t getSignedMinVal(uint8_t iChannel);
+	int16_t getSigned(Channel channel);
+	int16_t getSignedMaxVal(Channel channel);
+	int16_t getSignedMinVal(Channel channel);
 
-	uint16_t getUnsigned(uint8_t iChannel);
-	inline uint16_t getUnsignedMaxVal(uint8_t iChannel);
+	uint16_t getUnsigned(Channel channel);
+	uint16_t getUnsignedMaxVal(Channel channel);
 
 protected:
 
-	inline bool isReversed(uint8_t idx);
+	bool isReversed(uint8_t idx);
 
 	const Parameter& _param;
 };
-
-bool Radio::isReversed(uint8_t idx)
-{
-	uint8_t idx2 = idx>>4;
-	uint8_t idx3 = idx - (idx2<<4);
-	return ((_param.reversed[idx2] & (1<<idx3)) != 0);
-}
-
-int16_t Radio::getSignedMaxVal(uint8_t iChannel)
-{
-	if (iChannel < CNF_PWM_NUM_FROM_DEVICE)
-		return _param.pwmMax[iChannel]-_param.pwmZero[iChannel];
-
-	return 0;
-}
-int16_t Radio::getSignedMinVal(uint8_t iChannel)
-{
-	if (iChannel < CNF_PWM_NUM_FROM_DEVICE)
-		return _param.pwmMin[iChannel]-_param.pwmZero[iChannel];
-
-	return 0;
-}
-uint16_t Radio::getUnsignedMaxVal(uint8_t iChannel)
-{
-	if (iChannel < CNF_PWM_NUM_FROM_DEVICE)
-		return (_param.pwmMax[iChannel]-_param.pwmMin[iChannel]);
-
-	return 0;
-}
 
 
 } /* namespace hw */
