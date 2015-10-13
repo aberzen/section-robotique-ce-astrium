@@ -31,7 +31,7 @@ public:
     virtual T        apply(T sample);
 
     // reset - clear the filter
-    virtual void        reset();
+    virtual void        reset(T value);
 };
 
 /* Implementation and declaration of classes with template must be in the same file */

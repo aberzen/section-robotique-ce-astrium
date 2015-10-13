@@ -31,12 +31,12 @@ class DiscreteFilter : public Filter<T> {
 public:
 	typedef struct
 	{
-		T coeffNum[FILTER_SIZE_Y];
-		T coeffDen[FILTER_SIZE_X];
-	} Param;
+		T coeffNum[FILTER_SIZE_X];
+		T coeffDen[FILTER_SIZE_Y];
+	} Parameter;
 public:
 	DiscreteFilter(
-			const Param& param
+			const Parameter& param
 			);
 	virtual ~DiscreteFilter();
 
@@ -44,10 +44,7 @@ public:
     virtual T apply(T sample);
 
     // reset - clear the filter
-    virtual void reset();
-
-    // reset to the initial conditions
-    virtual void reset(const T initCondX[FILTER_SIZE_X], const T initCondY[FILTER_SIZE_Y]);
+    virtual void reset(T value);
 
 protected:
     /** @brief Pointer to the next empty slot in the buffer */
@@ -56,7 +53,7 @@ protected:
     uint8_t _sampleIdxX;
 
     /** @brief bk coefficients of the filter */
-    const Param& _param;
+    const Parameter& _param;
 
     /** @brief Saved Y(t-kT) values */
     T _valuesY[FILTER_SIZE_Y];

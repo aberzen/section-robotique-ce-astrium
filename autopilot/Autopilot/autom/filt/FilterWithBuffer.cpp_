@@ -5,16 +5,16 @@
  *      Author: Aberzen
  */
 
-#include <MathUtils.hpp>
+#include <math/MathUtils.hpp>
 
 // Constructor
 template <class T, uint8_t FILTER_SIZE>
-FilterWithBuffer<T,FILTER_SIZE>::FilterWithBuffer() :
-    Filter<T>(),
-    sample_index(0)
+FilterWithBuffer<T,FILTER_SIZE>::FilterWithBuffer()
+: Filter<T>(),
+  sample_index(0)
 {
     // clear sample buffer
-    reset();
+    reset(0);
 }
 
 // Destructor
@@ -26,14 +26,14 @@ FilterWithBuffer<T,FILTER_SIZE>::~FilterWithBuffer()
 
 // reset - clear all samples from the buffer
 template <class T, uint8_t FILTER_SIZE>
-void FilterWithBuffer<T,FILTER_SIZE>::reset()
+void FilterWithBuffer<T,FILTER_SIZE>::reset(T value)
 {
     // call base class reset
-    Filter<T>::reset();
+    Filter<T>::reset(value);
 
     // clear samples buffer
     for( int8_t i=0; i<FILTER_SIZE; i++ ) {
-        samples[i] = 0;
+        samples[i] = value;
     }
 
     // reset index back to beginning of the array
@@ -44,15 +44,16 @@ void FilterWithBuffer<T,FILTER_SIZE>::reset()
 template <class T, uint8_t FILTER_SIZE>
 T FilterWithBuffer<T,FILTER_SIZE>::apply(T sample)
 {
-    // add sample to array
-    samples[sample_index++] = sample;
-
-    // wrap index if necessary
-    if( sample_index >= FILTER_SIZE )
-    	sample_index = 0;
-
+	T result = samples[sample_index];
+	samples[sample_index] = sample;
+	
+	sample_index ++;
+	
+	if (sample_index>=FILTER_SIZE)
+		sample_index = 0;
+	
     // base class doesn't know what filtering to do so we just return the raw sample
-    return sample;
+    return result;
 }
 
 

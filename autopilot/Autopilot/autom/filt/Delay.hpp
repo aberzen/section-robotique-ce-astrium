@@ -16,7 +16,7 @@
 #define DELAY_HPP_
 
 #include <inttypes.h>
-#include <FilterWithBuffer.hpp>
+#include "FilterWithBuffer.hpp"
 
 namespace autom {
 
@@ -29,17 +29,10 @@ public:
 
     // constructor
     virtual ~Delay();
-
-    // apply - Add a new raw value to the filter, retrieve the filtered result
-    virtual T apply(T sample);
-
-protected:
-    T               samples[DELAY_STEP];       // buffer of samples
-    uint8_t         sample_index;               // pointer to the next empty slot in the buffer
 };
 
 /* Implementation and declaration of classes with template must be in the same file */
-#include "../source/Delay.cpp_"
+#include "Delay.cpp_"
 
 // Typedef for convenience
 typedef Delay<int16_t,2> DelayInt16_Size2;

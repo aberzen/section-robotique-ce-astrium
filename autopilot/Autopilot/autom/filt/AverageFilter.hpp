@@ -12,14 +12,14 @@
 #ifndef AverageFilter_h
 #define AverageFilter_h
 
-#include "FilterWithBuffer.hpp"
+#include "Delay.hpp"
 
 namespace autom {
 // 1st parameter <T> is the type of data being filtered.
 // 2nd parameter <U> is a larger data type used during summation to prevent overflows
 // 3rd parameter <FILTER_SIZE> is the number of elements in the filter
 template <class T, class U, uint8_t FILTER_SIZE>
-class AverageFilter : public FilterWithBuffer<T,FILTER_SIZE>
+class AverageFilter : public Delay<T,FILTER_SIZE>
 {
 public:
     // constructor
@@ -31,15 +31,15 @@ public:
     // apply - Add a new raw value to the filter, retrieve the filtered result
     virtual T apply(T sample);
 
-    // reset - clear the filter
-    virtual void reset();
+    // Reset
+    virtual void reset(T value);
 
 protected:
-    uint8_t        _num_samples; // the number of samples in the filter, maxes out at size of the filter
+    U _sumVal;
 };
 
 /* Implementation and declaration of classes with template must be in the same file */
-#include "../source/AverageFilter.cpp_"
+#include "AverageFilter.cpp_"
 
 // Typedef for convenience (1st argument is the data type, 2nd is a larger datatype to handle overflows, 3rd is buffer size)
 typedef AverageFilter<int8_t,int16_t,2> AverageFilterInt8_Size2;

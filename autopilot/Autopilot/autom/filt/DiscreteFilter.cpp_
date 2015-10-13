@@ -11,7 +11,7 @@ namespace autom {
 
 template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
 DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::DiscreteFilter(
-		const Param& param)
+		const Parameter& param)
 : Filter<T>(),
  _sampleIdxY(0),
  _sampleIdxX(0),
@@ -96,37 +96,29 @@ T DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::apply(T sample){
 
 // reset - clear the filter
 template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
-void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::reset(){
+void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::reset(T value){
 	uint8_t idx;
-	// Resetinitial condition to the state
-	for (idx=0 ; idx<FILTER_SIZE_X ; idx++)
-	{
-		_valuesX[idx] = (T) 0;
-	}
+	U sumCoeffNum = (U) 0;
+	U sumCoeffDen = (U) 0;
+	T initYVal = (T) 0;
 
-	for (idx=0 ; idx<FILTER_SIZE_Y ; idx++)
-	{
-		_valuesY[idx] = (T) 0;
-	}
-	// Reset sampling idx to zero
-	_sampleIdxX = 0;
-	_sampleIdxY = 0;
-}
-
-// reset to the initial conditions
-template <class T, class U, uint8_t FILTER_SIZE_X, uint8_t FILTER_SIZE_Y>
-void DiscreteFilter<T,U,FILTER_SIZE_X,FILTER_SIZE_Y>::reset(const T initCondX[FILTER_SIZE_X], const T initCondY[FILTER_SIZE_Y])
-{
-	uint8_t idx;
 	// Reset initial condition to the state
 	for (idx=0 ; idx<FILTER_SIZE_X ; idx++)
 	{
-		_valuesX[idx] = (T) initCondX[idx];
+		_valuesX[idx] = value;
+		sumCoeffNum += (U) _param.coeffNum[idx];
 	}
 
 	for (idx=0 ; idx<FILTER_SIZE_Y ; idx++)
 	{
-		_valuesY[idx] = (T) initCondY[idx];
+		sumCoeffDen += (U) _param.coeffDen[idx];
+	}
+
+	initYVal = (T) ((sumCoeffNum * (U)value) / sumCoeffDen) ;
+
+	for (idx=0 ; idx<FILTER_SIZE_Y ; idx++)
+	{
+		_valuesY[idx] = (T) initYVal;
 	}
 	// Reset sampling idx to zero
 	_sampleIdxX = 0;

@@ -34,7 +34,7 @@ public:
     virtual T apply(T sample);
 
     // reset - clear the filter
-    virtual void reset();
+    virtual void reset(T value);
 
 protected:
     T               samples[FILTER_SIZE];       // buffer of samples
@@ -42,7 +42,7 @@ protected:
 };
 
 /* Implementation and declaration of classes with template must be in the same file */
-#include "../source/FilterWithBuffer.cpp_"
+#include "FilterWithBuffer.cpp_"
 
 // Typedef for convenience
 typedef FilterWithBuffer<int16_t,2> FilterWithBufferInt16_Size2;

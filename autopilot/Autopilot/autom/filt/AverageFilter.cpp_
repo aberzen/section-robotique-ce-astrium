@@ -8,9 +8,9 @@
 
 // constructor
 template <class T, class U, uint8_t FILTER_SIZE>
-AverageFilter<T,U,FILTER_SIZE>::AverageFilter() :
-	FilterWithBuffer<T,FILTER_SIZE>(),
-	_num_samples(0) {
+AverageFilter<T,U,FILTER_SIZE>::AverageFilter() 
+: Delay<T,FILTER_SIZE>()
+{
 };
 
 // Destructor
@@ -21,33 +21,27 @@ AverageFilter<T,U,FILTER_SIZE>::~AverageFilter(){
 template <class T, class U, uint8_t FILTER_SIZE>
 T AverageFilter<T,U,FILTER_SIZE>::apply(T sample)
 {
-    U        result = 0;
-    uint8_t sampleIdx;
+    T result;
+    /* Add sample to the sum */
+    _sumVal += sample;
 
-    // call parent's apply function to get the sample into the array
-    FilterWithBuffer<T,FILTER_SIZE>::apply(sample);
+    /* Save newest value, and get oldest one */
+    T oldestValue = Delay<T,FILTER_SIZE>::apply(sample);
 
-    // increment the number of samples so far
-    if( _num_samples < FILTER_SIZE)
-        _num_samples++;
+    /* Compute mean value */
+    result = (T) (_sumVal / (FILTER_SIZE+1));
 
-    // get sum of all values - there is a risk of overflow here that we ignore
-    for(sampleIdx=0; sampleIdx<FILTER_SIZE; sampleIdx++)
-        result += FilterWithBuffer<T,FILTER_SIZE>::samples[sampleIdx];
+    /* Remove oldest value from sum */
+    _sumVal -= (U) oldestValue;
 
-    return (T)(result / _num_samples);
+    return result;
 }
 
-// reset - clear all samples
+// Reset
 template <class T, class U, uint8_t FILTER_SIZE>
-void AverageFilter<T,U,FILTER_SIZE>::reset()
+void AverageFilter<T,U,FILTER_SIZE>::reset(T value)
 {
-    // call parent's apply function to get the sample into the array
-    FilterWithBuffer<T,FILTER_SIZE>::reset();
-
-    // clear our variable
-    _num_samples = 0;
+	Delay<T,FILTER_SIZE>::reset(value);
+	_sumVal = (FILTER_SIZE+1) * value;
 }
-
-
 
