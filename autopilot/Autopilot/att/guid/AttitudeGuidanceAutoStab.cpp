@@ -70,7 +70,7 @@ void AttitudeGuidanceAutoStab::calcGuidance(
 		bool updateYaw)
 {
 	/* Compute yaw rate from PWM */
-	float rateYaw = ((float)radio.getSigned(ATTITUDE_GUIDANCE_IDX_YAW))*_paramScalePwm[ATTITUDE_GUIDANCE_IDX_YAW];
+	float rateYaw = ((float)radio.getSigned(hw::Radio::E_RADIO_CHANNEL_YAW))*_paramScalePwm[ATTITUDE_GUIDANCE_IDX_YAW];
 
 	/* Case no yaw */
 	if (!updateYaw)
@@ -91,8 +91,8 @@ void AttitudeGuidanceAutoStab::calcGuidance(
 			sinf(ldexpf(_angYawPrev, -1)));
 
 	/* Build seat rotation */
-	float angRoll = ((float)radio.getSigned(ATTITUDE_GUIDANCE_IDX_ROLL))*_paramScalePwm[ATTITUDE_GUIDANCE_IDX_ROLL];
-	float angPitch = ((float)radio.getSigned(ATTITUDE_GUIDANCE_IDX_PITCH))*_paramScalePwm[ATTITUDE_GUIDANCE_IDX_PITCH];
+	float angRoll = ((float)radio.getSigned(hw::Radio::E_RADIO_CHANNEL_ROLL))*_paramScalePwm[ATTITUDE_GUIDANCE_IDX_ROLL];
+	float angPitch = ((float)radio.getSigned(hw::Radio::E_RADIO_CHANNEL_PITCH))*_paramScalePwm[ATTITUDE_GUIDANCE_IDX_PITCH];
 
 	math::Quaternion guidQuat_BYawB(
 			1 - ldexpf(angRoll*angRoll + angPitch*angPitch, -1),
@@ -106,8 +106,8 @@ void AttitudeGuidanceAutoStab::calcGuidance(
 
 	/* Compute rate */
 	guidRate_B(
-			(angRoll - _angRollPrev) / FSW_TASK_CTRL_PERIOD_TICK_PER_SEC,
-			(angPitch - _angPitchPrev) / FSW_TASK_CTRL_PERIOD_TICK_PER_SEC,
+			(angRoll - _angRollPrev) * 2.000000000000E+01,
+			(angPitch - _angPitchPrev) * 2.000000000000E+01,
 			rateYaw);
 
 	_angRollPrev = angRoll;
