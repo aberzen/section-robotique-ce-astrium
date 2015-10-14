@@ -204,6 +204,7 @@ bool HalBarometerMs5611OverSpi::sample(
 	/* Release the spi */
 	_spiBus.release(BARO_MS5611_SPI_CS_PIN);
 
+	return false;
 }
 
 
