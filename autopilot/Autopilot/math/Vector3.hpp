@@ -73,7 +73,9 @@ public:
     // function call operator
     void operator ()(const T x0, const T y0, const T z0)
     {
-    	x= x0; y= y0; z= z0;
+    	x= x0;
+    	y= y0;
+    	z= z0;
     }
 
     // function call operator
@@ -302,7 +304,10 @@ Vector3<T>& Vector3<T>::operator /= (const Vector3<T>& v)
 template <typename T>
 Vector3<T> Vector3<T>::operator %(const Vector3<T> &v) const
 {
-    Vector3<T> temp(y*v.z - z*v.y, z*v.x - x*v.z, x*v.y - y*v.x);
+    Vector3<T> temp(
+    		y*v.z - z*v.y,
+			z*v.x - x*v.z,
+			x*v.y - y*v.x);
     return temp;
 }
 
