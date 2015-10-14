@@ -35,11 +35,11 @@ void AttitudeGuidanceAccro::calcGuidance(
 		math::Vector3f& guidRate_B)
 {
 	/* Build rate from pwm inputs */
-	guidRate_B.x = ((float) radio.getSigned(ATTITUDE_GUIDANCE_IDX_ROLL) )
+	guidRate_B.x = ((float) radio.getSigned(hw::Radio::E_RADIO_CHANNEL_ROLL) )
 			* _paramScalePwm[ATTITUDE_GUIDANCE_IDX_ROLL];
-	guidRate_B.y = ((float) radio.getSigned(ATTITUDE_GUIDANCE_IDX_PITCH) )
+	guidRate_B.y = ((float) radio.getSigned(hw::Radio::E_RADIO_CHANNEL_PITCH) )
 			* _paramScalePwm[ATTITUDE_GUIDANCE_IDX_PITCH];
-	guidRate_B.z = ((float) radio.getSigned(ATTITUDE_GUIDANCE_IDX_YAW) )
+	guidRate_B.z = ((float) radio.getSigned(hw::Radio::E_RADIO_CHANNEL_YAW) )
 			*_paramScalePwm[ATTITUDE_GUIDANCE_IDX_YAW];
 
 	/* Integrate rate */
