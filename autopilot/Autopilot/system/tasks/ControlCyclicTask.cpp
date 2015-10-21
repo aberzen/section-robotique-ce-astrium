@@ -12,13 +12,12 @@
 
 namespace system {
 
-ControlCyclicTask::ControlCyclicTask(
-		const signed char * pcName,
-        unsigned portSHORT usStackDepth,
-        unsigned portBASE_TYPE uxPriority,
-        uint16_t period,
-        uint16_t delay)
-: infra::CyclicTask(pcName,usStackDepth,uxPriority,period,delay)
+ControlCyclicTask::ControlCyclicTask()
+: infra::CyclicTask((const signed char*)"CTRL",
+		(unsigned portSHORT)750,
+		(unsigned portBASE_TYPE)2,
+		FSW_TASK_CTRL_PERIOD_TICK,
+        0)
 {
 }
 
@@ -28,27 +27,25 @@ ControlCyclicTask::~ControlCyclicTask() {
 /** @brief Non returning function executed as the task body function. */
 void ControlCyclicTask::init(void)
 {
-	/* Execute Sensors */
+	/* Initialize the system */
 	system.initialize();
 
-//	hw::Serial& com = system::getCom0();
-//	com.write((uint8_t *)"Hello\n",6);
-
+	/* Call super class */
 	Task::init();
 }
 
 void ControlCyclicTask::runCycle(void)
 {
+	/* Handle missing cycles */
 	if (_missed != 0)
 	{
+		fdir::FdirManager& fdir = system.getFdir();
+		fdir.signalMissingCycles(_missed);
 		_missed = 0;
 	}
 
-	// Execute
-//	hw::Serial& com = system::getCom0();
-//	com.write((uint8_t*)"Execute\n",8);
 	system.execute();
-}
 
+}
 
 } /* namespace test */
