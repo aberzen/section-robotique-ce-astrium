@@ -39,6 +39,7 @@
 #define FSW_TASK_CTRL_PERIOD_TICK           (10)	/* tick */
 #define FSW_TASK_CTRL_PERIOD_TICK_PER_MSEC  (FSW_TASK_CTRL_PERIOD_TICK*FSW_SYSTEM_TICK_PER_MSEC)	/* tick/period/ms */
 #define FSW_TASK_CTRL_PERIOD_TICK_PER_SEC   (((float)(FSW_TASK_CTRL_PERIOD_TICK*FSW_SYSTEM_TICK_PER_MSEC))/1000.)	/* tick/period/ms */
+#define FSW_TASK_CTRL_FREQ   (1000./((float)(FSW_TASK_CTRL_PERIOD_TICK*FSW_SYSTEM_TICK_PER_MSEC)))	/* tick/period/ms */
 
 /* **************************************************** */
 /* Attitude controller: angular attitude with rate bias */
@@ -61,10 +62,10 @@
 /* **************************************************** */
 /* Estimator: gain and other parameters for Kalman filter */
 
-#define EST_GAIN_ACCO_ANGLE	( 0.029321531433505)  /* gainAcco / angle */
-#define EST_GAIN_ACCO_DRIFT	( 0.00000043864908449)  /* gainAcco / drift */
-#define EST_GAIN_COMPASS_ANGLE	( 0.029321531433505)  /* gainAcco / angle */
-#define EST_GAIN_COMPASS_DRIFT	( 0.00000043864908449)  /* gainAcco / drift */
+#define EST_GAIN_ACCO_ANGLE	( 2.9321531433e-02)  /* gainAcco / angle */
+#define EST_GAIN_ACCO_DRIFT	( 4.3864908449e-10)  /* gainAcco / drift */
+#define EST_GAIN_COMPASS_ANGLE	( 2.9321531433e-02)  /* gainAcco / angle */
+#define EST_GAIN_COMPASS_DRIFT	( 4.3864908449e-10)  /* gainAcco / drift */
 
 #define EST_MAX_CONSECUTIVE_MISSING_MEAS_GYRO (3)
 #define EST_MAX_CONSECUTIVE_MISSING_MEAS_ACCO (3)
