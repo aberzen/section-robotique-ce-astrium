@@ -10,6 +10,7 @@
 
 #include <hw/radio/Radio.hpp>
 #include "AttitudeGuidance.hpp"
+#include <autom/filt/SecondOrderFilter.hpp>
 
 namespace attitude {
 
@@ -45,6 +46,11 @@ protected:
 
 	/** @brief Norm */
 	float _attNormInv;
+
+	autom::SecondOrderFilter _chanFiltersRoll;
+	autom::SecondOrderFilter _chanFiltersPitch;
+	autom::SecondOrderFilter _chanFiltersYaw;
+
 };
 
 } /* namespace attitude */
