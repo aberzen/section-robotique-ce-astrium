@@ -20,41 +20,82 @@ AttitudeManager::~AttitudeManager()
 {
 }
 
+bool AttitudeManager::setMode(AttitudeManager::Mode mode)
+{
+	bool result = false;
+
+	if (_mode == mode)
+		return true;
+
+	switch (mode)
+	{
+	case E_ATT_MODE_STABNOYAW:
+		result = switchToAutoStab();
+		break;
+	case E_ATT_MODE_NONE:
+	default:
+		result = switchToNone();
+		break;
+	}
+
+	if (result)
+		_mode = mode;
+
+	return result;
+}
 
 /** @brief periodic execution */
 void AttitudeManager::execute()
 {
-	/* Execute the guidance */
-	_guidMgt.execute();
+	switch (_mode)
+	{
+	case E_ATT_MODE_STABNOYAW:
+		/* Execute the guidance */
+		_guidMgt.execute();
 
-	/* Execute the controller */
-	_ctrl.execute();
+		/* Execute the controller */
+		_ctrl.execute();
 
-//	{
-//		char message[100];
-//		sprintf(message, "ctrlAttAngErrB={%.3e,{%.3e,%.3e,%.3e}}\n",
-//				system::system.dataPool.ctrlAttAngErrB.scalar,
-//				system::system.dataPool.ctrlAttAngErrB.vector.x,
-//				system::system.dataPool.ctrlAttAngErrB.vector.y,
-//				system::system.dataPool.ctrlAttAngErrB.vector.z);
-//		mavlink_msg_statustext_send(MAVLINK_COMM_0, MAV_SEVERITY_INFO, message);
-//		sprintf(message, "ctrlErrAttB={%d,%d,%d}\n",
-//				ctrlErrAttB.x,
-//				ctrlErrAttB.y,
-//				ctrlErrAttB.z);
-//		mavlink_msg_statustext_send(MAVLINK_COMM_0, MAV_SEVERITY_INFO, message);
-//		sprintf(message, "crlAttRateErrB={%d,%d,%d}\n",
-//				crlAttRateErrB.x,
-//				crlAttRateErrB.y,
-//				crlAttRateErrB.z);
-//		mavlink_msg_statustext_send(MAVLINK_COMM_0, MAV_SEVERITY_INFO, message);
-//		sprintf(message, "ctrlTrqDemB={%d,%d,%d}\n",
-//				dataPool.ctrlTrqDemB.x,
-//				dataPool.ctrlTrqDemB.y,
-//				dataPool.ctrlTrqDemB.z);
-//		mavlink_msg_statustext_send(MAVLINK_COMM_0, MAV_SEVERITY_INFO, message);
-//	}
+		break;
+	case E_ATT_MODE_NONE:
+	default:
+		/* Nothing to do */
+		break;
+	}
+}
 
+/** @brief Switch to auto stab */
+bool AttitudeManager::switchToAutoStab()
+{
+	bool result = false;
+
+	/* switch to auto stab guidance */
+	result = _guidMgt.setMode(AttitudeGuidanceManager::E_MODE_AUTOSTAB_NOYAW);
+
+	if (result && (_mode == E_ATT_MODE_NONE))
+	{
+		/* Reset the controller */
+		_ctrl.reset();
+	}
+
+	return result;
+}
+
+/** @brief Switch to none */
+bool AttitudeManager::switchToNone()
+{
+	bool result = false;
+
+	/* switch to auto stab guidance */
+	result = _guidMgt.setMode(AttitudeGuidanceManager::E_MODE_NONE);
+
+	if (result && (_mode == E_ATT_MODE_NONE))
+	{
+		/* Reset the controller */
+		_ctrl.reset();
+	}
+
+	return result;
 }
 
 } /* namespace attitude */
