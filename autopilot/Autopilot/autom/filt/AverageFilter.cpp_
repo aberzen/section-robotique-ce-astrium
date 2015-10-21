@@ -29,7 +29,7 @@ T AverageFilter<T,U,FILTER_SIZE>::apply(T sample)
     T oldestValue = Delay<T,FILTER_SIZE>::apply(sample);
 
     /* Compute mean value */
-    result = (T) (_sumVal / (FILTER_SIZE+1));
+    result = (T) (_sumVal / ((U)(FILTER_SIZE+1)));
 
     /* Remove oldest value from sum */
     _sumVal -= (U) oldestValue;
