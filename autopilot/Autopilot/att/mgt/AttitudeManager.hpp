@@ -16,6 +16,12 @@ namespace attitude {
 class AttitudeManager {
 public:
 
+	typedef enum
+	{
+		E_ATT_MODE_NONE = 0,
+		E_ATT_MODE_STABNOYAW,
+	} Mode;
+
 	typedef struct {
 		AttitudeController::Parameter ctrl;
 	} Parameter;
@@ -27,32 +33,34 @@ public:
 	/** @brief periodic execution */
 	void execute();
 
-	/** @brief Getter method for Guidance Manager */
-	inline AttitudeGuidanceManager& getGuidanceManager();
+	/** @brief Set mode */
+	bool setMode(Mode mode);
 
-	/** @brief Getter method for Controller */
-	inline AttitudeController& getController();
+	/** @brief Get mode */
+	inline Mode getMode();
 
 protected:
+	/** @brief Switch to auto stab */
+	bool switchToAutoStab();
 
+	/** @brief Switch to none */
+	bool switchToNone();
+
+protected:
 	/** @brief Guidance manager */
 	AttitudeGuidanceManager _guidMgt;
 
 	/** @brief Controller manager */
 	AttitudeController _ctrl;
 
+	/** @brief Current mode */
+	Mode _mode;
 };
 
-/** @brief Getter method for Guidance Manager */
-AttitudeGuidanceManager& AttitudeManager::getGuidanceManager()
+/** @brief Get current mode */
+AttitudeManager::Mode AttitudeManager::getMode()
 {
-	return _guidMgt;
-}
-
-/** @brief Getter method for Controller */
-AttitudeController& AttitudeManager::getController()
-{
-	return _ctrl;
+	return _mode;
 }
 
 
